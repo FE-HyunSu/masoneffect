@@ -1,8 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
-import { terser } from 'rollup-plugin-terser';
-import vue from 'rollup-plugin-vue';
+import terser from '@rollup/plugin-terser';
 
 const basePlugins = [
   resolve({
@@ -35,10 +34,10 @@ const coreBuild = {
   plugins: [
     ...basePlugins,
     typescript({
-      tsconfig: false,
-      include: ['src/core/**/*', 'src/index.js'],
+      tsconfig: './tsconfig.json',
       declaration: true,
       declarationDir: 'dist',
+      rootDir: 'src',
     }),
     terser(),
   ],
@@ -63,10 +62,10 @@ const reactBuild = {
   plugins: [
     ...basePlugins,
     typescript({
-      tsconfig: false,
-      include: ['src/react/**/*', 'src/core/**/*'],
+      tsconfig: './tsconfig.json',
       declaration: true,
       declarationDir: 'dist/react',
+      rootDir: 'src',
     }),
     terser(),
   ],

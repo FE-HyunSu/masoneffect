@@ -2,18 +2,18 @@
   "name": "masoneffect",
   "version": "0.1.0",
   "description": "파티클 모핑 효과를 제공하는 라이브러리 - React, Vue, 바닐라 JS 지원",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.min.js",
+  "module": "dist/index.esm.min.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.js",
+      "import": "./dist/index.esm.min.js",
+      "require": "./dist/index.min.js",
       "types": "./dist/index.d.ts"
     },
     "./react": {
-      "import": "./dist/react/MasonEffect.js",
-      "require": "./dist/react/MasonEffect.cjs",
+      "import": "./dist/react/MasonEffect.min.js",
+      "require": "./dist/react/MasonEffect.min.cjs",
       "types": "./dist/react/MasonEffect.d.ts"
     },
     "./vue": {
@@ -25,8 +25,8 @@
     "src"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "rollup -c rollup.config.mjs",
+    "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",
     "precheck": "node scripts/check-before-publish.js",
@@ -54,10 +54,14 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "rollup": "^4.9.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-vue": "^6.0.0",
+    "tslib": "^2.8.1",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
@@ -73,4 +77,3 @@
     }
   }
 }
-
