@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MasonEffect - 바닐라 JS 예제</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      height: 70vh;
+      margin: 20px;
+    }
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+  <h1>MasonEffect - 바닐라 JS 예제</h1>
+  <div id="mason-container" class="container"></div>
+  <div class="controls">
+    <button id="morph-btn">Morph</button>
+    <button id="scatter-btn">Scatter</button>
+    <button id="change-text-btn">텍스트 변경</button>
+  </div>
+
+  <!-- 
+    주의: 이 파일은 로컬 개발 서버를 통해 실행해야 합니다.
+    브라우저에서 직접 열면 CORS 에러가 발생합니다.
+    
+    실행 방법:
+    1. npm run serve (또는 npm run dev:example)
+    2. 또는 http-server, python -m http.server 등 사용
+    3. 또는 빌드 후 dist/index.esm.js 사용
+  -->
+  <script type="module">
+    // 개발 모드: 소스 파일 사용 (로컬 서버 필요)
+    import { MasonEffect } from '../src/core/index.js';
+    
+    // 프로덕션 모드: 빌드된 파일 사용 (아래 주석 해제)
+    // import { MasonEffect } from '../dist/index.esm.js';
+
+    const container = document.getElementById('mason-container');
+    const effect = new MasonEffect(container, {
+      text: 'Hello World',
+      particleColor: '#00ff88',
+      onReady: (instance) => {
+        console.log('MasonEffect 준비 완료!', instance);
+      }
+    });
+
+    document.getElementById('morph-btn').addEventListener('click', () => {
+      effect.morph();
+    });
+
+    document.getElementById('scatter-btn').addEventListener('click', () => {
+      effect.scatter();
+    });
+
+    document.getElementById('change-text-btn').addEventListener('click', () => {
+      const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles'];
+      const randomText = texts[Math.floor(Math.random() * texts.length)];
+      effect.morph(randomText);
+    });
+  </script>
+</body>
+</html>
+

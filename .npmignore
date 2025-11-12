@@ -1,0 +1,14 @@
+node_modules/
+*.log
+.DS_Store
+.vscode/
+.idea/
+rollup.config.js
+tsconfig.json
+index.html
+examples/
+.git/
+.gitignore
+PUBLISH.md
+QUICKSTART.md
+*.tgz

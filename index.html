@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Particles Morph</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100&family=Noto+Sans+KR:ital,wght@0,400;0,500;1,600;1,700&display=swap');
+    html,body{height:100%;margin:0;background:#000;color:#cdd5e1;font-family:system-ui,Segoe UI,Inter,Roboto,Helvetica,Arial,sans-serif}
+    .wrap{position:fixed;inset:0;display:grid;place-items:center}
+    #c{width:min(100vw,1200px);height:min(70vh,680px);display:block;border-radius:20px;background:transparent}
+    .ui{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;opacity:.9}
+    .btn{appearance:none;border:1px solid #233046;background:#10131a;color:#e5edf9;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600;letter-spacing:.2px}
+    .btn:hover{background:#141a25}
+    .hint{font-size:12px;opacity:.7;margin-left:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <canvas id="c"></canvas>
+  </div>
+  <div class="ui">
+    <button id="toggle" class="btn">Morph</button>
+    <button id="shuffle" class="btn">Scatter</button>
+    <span class="hint">• 마우스로 드래그 가능 • 리사이즈 반응형</span>
+  </div>
+
+<script>
+(() => {
+  // ====== 1. 기본 설정 ======
+  const canvas = document.getElementById('c'); // 메인 캔버스
+  const ctx = canvas.getContext('2d'); // 2D 컨텍스트
+
+  // 텍스트를 오프스크린 캔버스에 그려서 픽셀 정보를 추출할 용도
+  const off = document.createElement('canvas');
+  const offCtx = off.getContext('2d');
+
+  // 상태 값
+  let W = 0, H = 0; // 캔버스 크기
+  let DPR = Math.min(devicePixelRatio || 1, 1.8); // 고해상도 대응
+  let particles = []; // 파티클 배열
+  let mouse = { x: 0, y: 0, down: false }; // 마우스 상태
+
+  // 설정값들 (밀도, 점 크기 등)
+  const CONFIG = {
+    densityStep: 2,   // 글자 샘플링 밀도 (값이 작을수록 촘촘함)
+    maxParticles: 3200, // 최대 파티클 수
+    pointSize: 0.5,       // 점 크기
+    ease: 0.05,         // 이동 가속도 (목표로 끌려가는 세기)
+    repelRadius: 150,    // 마우스 반발 범위
+    repelStrength: 1 // 마우스 반발 세기
+  };
+
+  // ====== 2. 캔버스 리사이즈 및 초기화 ======
+  function resize() {
+    const vw = Math.min(window.innerWidth, 1920);
+    const vh = Math.min(window.innerHeight * 0.7, 1080);
+    W = Math.floor(vw * DPR);
+    H = Math.floor(vh * DPR);
+    canvas.width = W; canvas.height = H;
+    canvas.style.width = vw + 'px';
+    canvas.style.height = vh + 'px';
+
+    buildTargets(); // 목표(글자) 좌표 생성
+    if (!particles.length) initParticles(); // 첫 실행 시 파티클 생성
+  }
+
+  // ====== 3. 글자를 오프스크린에 그리고, 픽셀 샘플링 ======
+  function buildTargets() {
+    const text = 'mason crawler'; // 모양을 만들 텍스트
+    off.width = W; off.height = H;
+    offCtx.clearRect(0,0,off.width,off.height);
+
+    const base = Math.min(W, H);
+    const fontSize = Math.max(80, Math.floor(base * 0.18));
+    offCtx.fillStyle = '#ffffff';
+    offCtx.textAlign = 'center';
+    offCtx.textBaseline = 'middle';
+    offCtx.font = `400 ${fontSize}px Inter, system-ui, Arial`;
+
+    // 글자 간격을 직접 계산해서 가운데 정렬로 그림
+    const chars = text.split('');
+    const spacing = fontSize * 0.05;
+    const totalWidth = offCtx.measureText(text).width + spacing * (chars.length - 1);
+    let x = W/2 - totalWidth/2;
+    for (const ch of chars) {
+      offCtx.fillText(ch, x + offCtx.measureText(ch).width/2, H/2);
+      x += offCtx.measureText(ch).width + spacing;
+    }
+
+    // 글자 부분의 밝은 픽셀만 추출해서 좌표 배열 생성
+    const step = Math.max(2, CONFIG.densityStep);
+    const img = offCtx.getImageData(0,0,W,H).data;
+    const targets = [];
+    for (let y=0; y<H; y+=step) {
+      for (let x=0; x<W; x+=step) {
+        const i = (y*W + x) * 4;
+        if (img[i] + img[i+1] + img[i+2] > 600) { // 흰색 근처 픽셀만 수집
+          targets.push({ x, y });
+        }
+      }
+    }
+
+    // 너무 많으면 랜덤으로 제거해 개수를 제한
+    while (targets.length > CONFIG.maxParticles) {
+      targets.splice(Math.floor(Math.random()*targets.length), 1);
+    }
+
+    // 파티클 수를 타겟 수에 맞게 조정
+    if (particles.length < targets.length) {
+      const need = targets.length - particles.length;
+      for (let i=0;i<need;i++) particles.push(makeParticle());
+    } else if (particles.length > targets.length) {
+      particles.length = targets.length;
+    }
+
+    // 각 파티클에 목표 좌표를 할당
+    for (let i=0;i<particles.length;i++) {
+      const p = particles[i];
+      const t = targets[i];
+      p.tx = t.x; p.ty = t.y;
+    }
+  }
+
+  // ====== 4. 파티클 생성 함수 ======
+  function makeParticle() {
+    const m = 0.12; // 경계 여백 비율
+    const sx = (m + Math.random()*(1-2*m)) * W;
+    const sy = (m + Math.random()*(1-2*m)) * H;
+    return {
+      x: sx, y: sy, // 현재 위치
+      vx: 0, vy: 0, // 속도
+      tx: sx, ty: sy, // 목표 좌표 (초기엔 자기 위치)
+      j: Math.random()*Math.PI*2 // 진동 위상 (숨쉬기용 미세 움직임)
+    };
+  }
+
+  // ====== 5. 파티클 초기 배치 ======
+  function initParticles() {
+    for (const p of particles) {
+      p.x = (0.12 + Math.random() * 1.76) * W;
+      p.y = (0.12 + Math.random() * 1.76) * H;
+      p.vx = p.vy = 0;
+    }
+  }
+
+  // ====== 6. Scatter (흩어지는 동작) ======
+  function scatter() {
+    for (const p of particles) {
+      p.tx = (0.12 + Math.random() * 1.76) * W;
+      p.ty = (0.12 + Math.random() * 1.76) * H;
+    }
+  }
+
+  // ====== 7. Morph (글자 형태로 모이기) ======
+  function morph() {
+    buildTargets(); // 글자 좌표 재생성
+  }
+
+  // ====== 8. 애니메이션 루프 ======
+  function step() {
+    ctx.clearRect(0,0,W,H); // 캔버스 초기화
+
+    for (const p of particles) {
+      // 기본: 목표 좌표 방향으로 당기는 힘
+      let ax = (p.tx - p.x) * CONFIG.ease;
+      let ay = (p.ty - p.y) * CONFIG.ease;
+
+      // 마우스 반발 또는 흡입 처리
+      if (mouse.x || mouse.y) {
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const d2 = dx*dx + dy*dy;
+        const r = CONFIG.repelRadius * DPR;
+        if (d2 < r*r) {
+          const d = Math.sqrt(d2) + 0.0001;
+          const f = (mouse.down ? -1 : 1) * CONFIG.repelStrength * (1 - d/r);
+          ax += (dx/d) * f * 6.0;
+          ay += (dy/d) * f * 6.0;
+        }
+      }
+
+      // // 약한 진동 효과 (생동감 부여)
+      p.j += 2;
+      ax += Math.cos(p.j) * 0.05;
+      ay += Math.sin(p.j*1.3) * 0.05;
+
+      // // 속도와 위치 업데이트 (감속 포함)
+      p.vx = (p.vx + ax) * Math.random();
+      p.vy = (p.vy + ay) * Math.random();
+      p.x += p.vx;
+      p.y += p.vy;
+
+    }
+
+    // ====== 9. 파티클 그리기 ======
+    ctx.fillStyle = '#fff'; // 점 색상
+    const r = CONFIG.pointSize * DPR; // 점 크기
+    for (const p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(step); // 다음 프레임 예약
+  }
+
+  // ====== 10. 이벤트 등록 ======
+  window.addEventListener('resize', resize);
+  canvas.addEventListener('mousemove', (e)=>{
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = (e.clientX - rect.left) * DPR;
+    mouse.y = (e.clientY - rect.top) * DPR;
+  });
+  canvas.addEventListener('mouseleave', ()=>{ mouse.x = mouse.y = 0; });
+  canvas.addEventListener('mousedown', ()=>{ mouse.down = true; });
+  window.addEventListener('mouseup', ()=>{ mouse.down = false; });
+
+  document.getElementById('toggle').addEventListener('click', morph);
+  document.getElementById('shuffle').addEventListener('click', scatter);
+
+  // ====== 11. 초기 실행 ======
+  resize();
+  requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
