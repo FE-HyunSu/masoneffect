@@ -19,16 +19,18 @@ function App() {
   };
 
   return (
-    <div style={{ width: '100%', height: '70vh', background: '#000' }}>
-      <MasonEffect
-        ref={effectRef}
-        text="Hello React"
-        particleColor="#00ff88"
-        maxParticles={2000}
-        onReady={(instance) => {
-          console.log('Ready!', instance);
-        }}
-      />
+    <div style={{ width: '100%', height: '70vh', background: '#000', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, position: 'relative' }}>
+        <MasonEffect
+          ref={effectRef}
+          text="Hello React"
+          particleColor="#00ff88"
+          maxParticles={2000}
+          onReady={(instance) => {
+            console.log('Ready!', instance);
+          }}
+        />
+      </div>
       <div style={{ padding: '20px', display: 'flex', gap: '10px' }}>
         <button onClick={handleMorph}>Morph</button>
         <button onClick={handleScatter}>Scatter</button>

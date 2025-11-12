@@ -39,47 +39,82 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
     useEffect(() => {
       if (!containerRef.current) return;
 
-      const {
-        className,
-        style,
-        text,
-        densityStep,
-        maxParticles,
-        pointSize,
-        ease,
-        repelRadius,
-        repelStrength,
-        particleColor,
-        fontFamily,
-        fontSize,
-        width,
-        height,
-        devicePixelRatio,
-        onReady,
-        onUpdate,
-      } = props;
+      let resizeObserver: ResizeObserver | null = null;
+      let initTimeout: number | null = null;
 
-      const options: MasonEffectOptions = {
-        text,
-        densityStep,
-        maxParticles,
-        pointSize,
-        ease,
-        repelRadius,
-        repelStrength,
-        particleColor,
-        fontFamily,
-        fontSize,
-        width,
-        height,
-        devicePixelRatio,
-        onReady,
-        onUpdate,
+      // 컨테이너가 실제 크기를 가지도록 대기
+      const initEffect = () => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        // 컨테이너 크기가 0이면 다음 프레임에 다시 시도
+        const rect = container.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+          initTimeout = window.setTimeout(initEffect, 50);
+          return;
+        }
+
+        const {
+          className,
+          style,
+          text,
+          densityStep,
+          maxParticles,
+          pointSize,
+          ease,
+          repelRadius,
+          repelStrength,
+          particleColor,
+          fontFamily,
+          fontSize,
+          width,
+          height,
+          devicePixelRatio,
+          onReady,
+          onUpdate,
+        } = props;
+
+        const options: MasonEffectOptions = {
+          text,
+          densityStep,
+          maxParticles,
+          pointSize,
+          ease,
+          repelRadius,
+          repelStrength,
+          particleColor,
+          fontFamily,
+          fontSize,
+          width,
+          height,
+          devicePixelRatio,
+          onReady,
+          onUpdate,
+        };
+
+        instanceRef.current = new MasonEffect(container, options);
+
+        // ResizeObserver로 컨테이너 크기 변경 감지
+        if (typeof ResizeObserver !== 'undefined') {
+          resizeObserver = new ResizeObserver(() => {
+            if (instanceRef.current) {
+              instanceRef.current.resize();
+            }
+          });
+          resizeObserver.observe(container);
+        }
       };
 
-      instanceRef.current = new MasonEffect(containerRef.current, options);
+      // 다음 프레임에 초기화 (DOM이 완전히 렌더링된 후)
+      requestAnimationFrame(initEffect);
 
       return () => {
+        if (initTimeout) {
+          clearTimeout(initTimeout);
+        }
+        if (resizeObserver) {
+          resizeObserver.disconnect();
+        }
         if (instanceRef.current) {
           instanceRef.current.destroy();
           instanceRef.current = null;
@@ -154,11 +189,20 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
       },
     }));
 
+    // 기본 스타일: 컨테이너가 크기를 가지도록 함
+    const defaultStyle: React.CSSProperties = {
+      width: '100%',
+      height: '100%',
+      minHeight: props.height || 400,
+      position: 'relative',
+      ...props.style,
+    };
+
     return (
       <div
         ref={containerRef}
         className={props.className}
-        style={props.style}
+        style={defaultStyle}
       />
     );
   }
