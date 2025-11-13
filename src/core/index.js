@@ -177,9 +177,25 @@ export class MasonEffect {
   }
 
   scatter() {
+    // 중앙 좌표
+    const centerX = this.W / 2;
+    const centerY = this.H / 2;
+    
+    // 중앙에서 방사형으로 퍼지는 거리 범위
+    // 최소 거리: 캔버스 크기의 20%
+    // 최대 거리: 캔버스 크기의 80% (대각선 기준)
+    const minRadius = Math.min(this.W, this.H) * 0.2;
+    const maxRadius = Math.sqrt(this.W * this.W + this.H * this.H) * 0.4;
+    
     for (const p of this.particles) {
-      p.tx = (0.12 + Math.random() * 1.76) * this.W;
-      p.ty = (0.12 + Math.random() * 1.76) * this.H;
+      // 랜덤 각도 (0 ~ 2π)
+      const angle = Math.random() * Math.PI * 2;
+      // 랜덤 거리 (최소 ~ 최대)
+      const radius = minRadius + Math.random() * (maxRadius - minRadius);
+      
+      // 중앙에서 방사형으로 목표 위치 계산
+      p.tx = centerX + Math.cos(angle) * radius;
+      p.ty = centerY + Math.sin(angle) * radius;
     }
   }
 
