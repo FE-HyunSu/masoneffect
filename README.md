@@ -32,7 +32,7 @@ effect.morph({
   maxParticles: 3000,
 });
 
-// 파티클을 중앙에서 방사형으로 흩어지기
+// 파티클을 초기 위치로 돌아가기
 effect.scatter();
 ```
 
@@ -93,6 +93,7 @@ function App() {
       @ready="onReady"
     />
     <button @click="handleMorph">Morph</button>
+    <button @click="handleMorphWithOptions">Morph with Options</button>
     <button @click="handleScatter">Scatter</button>
   </div>
 </template>
@@ -105,6 +106,14 @@ const effectRef = ref(null);
 
 const handleMorph = () => {
   effectRef.value?.morph('New Text');
+};
+
+const handleMorphWithOptions = () => {
+  effectRef.value?.morph({
+    text: 'Hello',
+    particleColor: '#ff00ff',
+    maxParticles: 3000,
+  });
 };
 
 const handleScatter = () => {
@@ -161,7 +170,7 @@ effect.morph({
 ```
 
 #### `scatter()`
-파티클을 중앙에서 방사형으로 흩어지게 합니다. 캔버스 중앙을 기준으로 원형으로 퍼집니다.
+파티클을 초기 위치로 돌아가게 합니다. 각 파티클이 처음 생성되었을 때의 위치로 복귀합니다.
 
 #### `updateConfig(config: Partial<MasonEffectOptions>)`
 설정을 업데이트합니다.
@@ -178,7 +187,7 @@ effect.morph({
 - 🔧 React, Vue, 바닐라 JS 모두 지원
 - 🎯 TypeScript 타입 정의 포함
 - 💾 프로덕션 빌드 시 자동 난독화 및 최적화
-- 🎯 중앙에서 방사형으로 퍼지는 scatter 효과
+- 🔄 초기 위치로 복귀하는 scatter 효과
 
 ## 개발
 
