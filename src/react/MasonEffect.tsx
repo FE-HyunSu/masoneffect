@@ -175,17 +175,31 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
 
     useImperativeHandle(ref, () => ({
       morph: (textOrOptions?: string | Partial<MasonEffectOptions>) => {
-        instanceRef.current?.morph(textOrOptions);
+        if (!instanceRef.current) {
+          console.warn('MasonEffect: 인스턴스가 아직 초기화되지 않았습니다.');
+          return;
+        }
+        instanceRef.current.morph(textOrOptions);
       },
       scatter: () => {
-        instanceRef.current?.scatter();
+        if (!instanceRef.current) {
+          console.warn('MasonEffect: 인스턴스가 아직 초기화되지 않았습니다.');
+          return;
+        }
+        instanceRef.current.scatter();
       },
       updateConfig: (config: Partial<MasonEffectOptions>) => {
-        instanceRef.current?.updateConfig(config);
+        if (!instanceRef.current) {
+          console.warn('MasonEffect: 인스턴스가 아직 초기화되지 않았습니다.');
+          return;
+        }
+        instanceRef.current.updateConfig(config);
       },
       destroy: () => {
-        instanceRef.current?.destroy();
-        instanceRef.current = null;
+        if (instanceRef.current) {
+          instanceRef.current.destroy();
+          instanceRef.current = null;
+        }
       },
     }));
 

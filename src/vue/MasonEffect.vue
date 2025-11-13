@@ -11,7 +11,7 @@ export default defineComponent({
   props: {
     text: {
       type: String,
-      default: 'mason crawler',
+      default: 'mason effect',
     },
     densityStep: {
       type: Number,

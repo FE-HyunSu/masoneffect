@@ -16,7 +16,7 @@ export class MasonEffect {
 
     // 설정값들
     this.config = {
-      text: options.text || 'mason crawler',
+      text: options.text || 'mason effect',
       densityStep: options.densityStep ?? 2,
       maxParticles: options.maxParticles ?? 3200,
       pointSize: options.pointSize ?? 0.5,
@@ -202,6 +202,11 @@ export class MasonEffect {
   }
 
   morph(textOrOptions = null) {
+    // W와 H가 0이면 resize 먼저 실행
+    if (this.W === 0 || this.H === 0) {
+      this.resize();
+    }
+    
     if (typeof textOrOptions === 'string') {
       // 문자열인 경우: 기존 동작 유지
       this.config.text = textOrOptions;

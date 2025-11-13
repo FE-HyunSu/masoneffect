@@ -123,7 +123,7 @@ const onReady = (instance) => {
 
 | 옵션 | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
-| `text` | `string` | `'mason crawler'` | 표시할 텍스트 |
+| `text` | `string` | `'mason effect'` | 표시할 텍스트 |
 | `densityStep` | `number` | `2` | 파티클 샘플링 밀도 (작을수록 촘촘함) |
 | `maxParticles` | `number` | `3200` | 최대 파티클 수 |
 | `pointSize` | `number` | `0.5` | 파티클 점 크기 |
