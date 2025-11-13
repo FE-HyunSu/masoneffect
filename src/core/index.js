@@ -187,22 +187,28 @@ export class MasonEffect {
     const canvasWidth = this.W > 0 ? this.W : this.canvas.width;
     const canvasHeight = this.H > 0 ? this.H : this.canvas.height;
     
-    // 정확한 중앙 좌표 (index.html과 동일한 방식)
+    // 정확한 중앙 좌표
     const centerX = canvasWidth * 0.5;
     const centerY = canvasHeight * 0.5;
     
-    // 캔버스의 가로/세로 중 작은 값의 절반을 반경으로 사용
-    const maxRadius = Math.min(canvasWidth, canvasHeight) * 0.5;
+    // 화면 가득하게 퍼지도록 대각선 길이를 사용
+    // 중앙에서 가장 먼 모서리까지의 거리를 최대 반경으로 사용
+    const diagonal = Math.sqrt(canvasWidth * canvasWidth + canvasHeight * canvasHeight);
+    const maxRadius = diagonal * 0.5;
     
     for (const p of this.particles) {
       // 랜덤 각도 (0 ~ 2π) - 완전한 원형으로 퍼짐
       const angle = Math.random() * Math.PI * 2;
-      // 랜덤 거리 (0 ~ 최대 반경) - 중앙에서 원의 가장자리까지
+      // 랜덤 거리 (0 ~ 최대 반경) - 중앙에서 가장 먼 모서리까지
       const radius = Math.random() * maxRadius;
       
       // 중앙에서 방사형으로 목표 위치 계산
-      p.tx = centerX + Math.cos(angle) * radius;
-      p.ty = centerY + Math.sin(angle) * radius;
+      const targetX = centerX + Math.cos(angle) * radius;
+      const targetY = centerY + Math.sin(angle) * radius;
+      
+      // 캔버스 경계 내로 제한 (화면 밖으로 나가지 않도록)
+      p.tx = Math.max(0, Math.min(canvasWidth - 1, targetX));
+      p.ty = Math.max(0, Math.min(canvasHeight - 1, targetY));
     }
   }
 
