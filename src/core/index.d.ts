@@ -46,7 +46,7 @@ export class MasonEffect {
   makeParticle(): Particle;
   initParticles(): void;
   scatter(): void;
-  morph(text?: string): void;
+  morph(textOrOptions?: string | Partial<MasonEffectOptions>): void;
   update(): void;
   animate(): void;
   start(): void;

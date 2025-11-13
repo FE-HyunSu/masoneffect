@@ -183,11 +183,22 @@ export class MasonEffect {
     }
   }
 
-  morph(text = null) {
-    if (text) {
-      this.config.text = text;
+  morph(textOrOptions = null) {
+    if (typeof textOrOptions === 'string') {
+      // 문자열인 경우: 기존 동작 유지
+      this.config.text = textOrOptions;
+      this.buildTargets();
+    } else if (textOrOptions && typeof textOrOptions === 'object') {
+      // 객체인 경우: 텍스트와 함께 다른 설정도 변경
+      const needsRebuild = textOrOptions.text !== undefined;
+      this.config = { ...this.config, ...textOrOptions };
+      if (needsRebuild) {
+        this.buildTargets();
+      }
+    } else {
+      // null이거나 undefined인 경우: 현재 텍스트로 재빌드
+      this.buildTargets();
     }
-    this.buildTargets();
   }
 
   update() {

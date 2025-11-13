@@ -18,6 +18,16 @@ function App() {
     effectRef.current?.morph(randomText);
   };
 
+  const handleChangeWithOptions = () => {
+    // 텍스트와 함께 다른 속성도 변경
+    effectRef.current?.morph({
+      text: 'New Text',
+      particleColor: '#ff00ff',
+      maxParticles: 3000,
+      pointSize: 1.0,
+    });
+  };
+
   return (
     <div style={{ width: '100%', height: '70vh', background: '#000', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1, position: 'relative' }}>
@@ -35,6 +45,7 @@ function App() {
         <button onClick={handleMorph}>Morph</button>
         <button onClick={handleScatter}>Scatter</button>
         <button onClick={handleChangeText}>텍스트 변경</button>
+        <button onClick={handleChangeWithOptions}>텍스트+속성 변경</button>
       </div>
     </div>
   );

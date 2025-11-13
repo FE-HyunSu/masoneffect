@@ -20,7 +20,7 @@ export interface MasonEffectOptions {
 }
 
 export interface MasonEffectRef {
-  morph: (text?: string) => void;
+  morph: (textOrOptions?: string | Partial<MasonEffectOptions>) => void;
   scatter: () => void;
   updateConfig: (config: Partial<MasonEffectOptions>) => void;
   destroy: () => void;
@@ -174,8 +174,8 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
     ]);
 
     useImperativeHandle(ref, () => ({
-      morph: (text?: string) => {
-        instanceRef.current?.morph(text);
+      morph: (textOrOptions?: string | Partial<MasonEffectOptions>) => {
+        instanceRef.current?.morph(textOrOptions);
       },
       scatter: () => {
         instanceRef.current?.scatter();
