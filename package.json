@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "파티클 모핑 효과를 제공하는 라이브러리 - React, Vue, 바닐라 JS 지원",
   "main": "dist/index.min.js",
   "module": "dist/index.esm.min.js",
