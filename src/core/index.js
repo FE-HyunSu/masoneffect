@@ -164,6 +164,8 @@ export class MasonEffect {
       vy: 0,
       tx: sx,
       ty: sy,
+      initialX: sx, // 초기 위치 저장 (scatter 시 돌아갈 위치)
+      initialY: sy,
       j: Math.random() * Math.PI * 2,
     };
   }
@@ -171,44 +173,31 @@ export class MasonEffect {
   initParticles() {
     // 캔버스 전체에 골고루 분포 (여백 없이)
     for (const p of this.particles) {
-      p.x = Math.random() * this.W;
-      p.y = Math.random() * this.H;
+      const sx = Math.random() * this.W;
+      const sy = Math.random() * this.H;
+      p.x = sx;
+      p.y = sy;
       p.vx = p.vy = 0;
+      // 초기 위치 저장 (scatter 시 돌아갈 위치)
+      p.initialX = sx;
+      p.initialY = sy;
     }
   }
 
   scatter() {
-    // W와 H가 0이면 resize 먼저 실행
-    if (this.W === 0 || this.H === 0) {
-      this.resize();
-    }
-    
-    // resize 후에도 W와 H가 0이면 실제 캔버스 크기 사용
-    const canvasWidth = this.W > 0 ? this.W : this.canvas.width;
-    const canvasHeight = this.H > 0 ? this.H : this.canvas.height;
-    
-    // 정확한 중앙 좌표
-    const centerX = canvasWidth * 0.5;
-    const centerY = canvasHeight * 0.5;
-    
-    // 화면 가득하게 퍼지도록 대각선 길이를 사용
-    // 중앙에서 가장 먼 모서리까지의 거리를 최대 반경으로 사용
-    const diagonal = Math.sqrt(canvasWidth * canvasWidth + canvasHeight * canvasHeight);
-    const maxRadius = diagonal * 0.5;
-    
+    // 각 파티클을 초기 위치로 돌아가도록 설정
     for (const p of this.particles) {
-      // 랜덤 각도 (0 ~ 2π) - 완전한 원형으로 퍼짐
-      const angle = Math.random() * Math.PI * 2;
-      // 랜덤 거리 (0 ~ 최대 반경) - 중앙에서 가장 먼 모서리까지
-      const radius = Math.random() * maxRadius;
-      
-      // 중앙에서 방사형으로 목표 위치 계산
-      const targetX = centerX + Math.cos(angle) * radius;
-      const targetY = centerY + Math.sin(angle) * radius;
-      
-      // 캔버스 경계 내로 제한 (화면 밖으로 나가지 않도록)
-      p.tx = Math.max(0, Math.min(canvasWidth - 1, targetX));
-      p.ty = Math.max(0, Math.min(canvasHeight - 1, targetY));
+      // 초기 위치가 저장되어 있으면 그 위치로, 없으면 현재 위치 유지
+      if (p.initialX !== undefined && p.initialY !== undefined) {
+        p.tx = p.initialX;
+        p.ty = p.initialY;
+      } else {
+        // 초기 위치가 없으면 현재 위치를 초기 위치로 저장
+        p.initialX = p.x;
+        p.initialY = p.y;
+        p.tx = p.initialX;
+        p.ty = p.initialY;
+      }
     }
   }
 

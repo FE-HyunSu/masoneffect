@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MasonEffect 테스트</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .container {
+      width: 100%;
+      /* max-width: 1400px; */
+      height: 100vh;
+      min-height: 500px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #111;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 12px 24px;
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: #444;
+      border-color: #666;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    .info {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      max-width: 600px;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      background: #222;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>MasonEffect 테스트</h1>
+  <div id="mason-container" class="container"></div>
+  
+  <div class="controls">
+    <button id="morph-btn">Morph (텍스트로 모임)</button>
+    <button id="scatter-btn">Scatter (초기 위치로)</button>
+    <button id="change-text-btn">텍스트 변경</button>
+    <button id="change-color-btn">색상 변경</button>
+  </div>
+
+  <div class="info">
+    <p>• 마우스로 드래그 가능 (클릭 시 흡입, 이동 시 반발)</p>
+    <p>• 리사이즈 반응형</p>
+    <div class="status" id="status">초기화 중...</div>
+  </div>
+
+  <script type="module">
+    import { MasonEffect } from './src/core/index.js';
+
+    const container = document.getElementById('mason-container');
+    const statusEl = document.getElementById('status');
+    
+    let effect = null;
+    const texts = ['Mason', 'Effect', 'Particles', 'Morph', 'Canvas'];
+    const colors = ['#00ff88', '#ff00ff', '#00ffff', '#ffff00', '#ff8800', '#ffffff'];
+    let currentTextIndex = 0;
+    let currentColorIndex = 0;
+
+    try {
+      effect = new MasonEffect(container, {
+        text: 'Mason Effect',
+        particleColor: colors[0],
+        maxParticles: 2000,
+        onReady: (instance) => {
+          statusEl.textContent = `✅ 초기화 완료! 파티클 수: ${instance.particles.length}, 캔버스: ${instance.W}x${instance.H}`;
+          console.log('MasonEffect 준비 완료!', instance);
+        },
+        onUpdate: (instance) => {
+          // 업데이트마다 호출 (선택사항)
+        }
+      });
+
+      document.getElementById('morph-btn').addEventListener('click', () => {
+        effect.morph();
+        statusEl.textContent = '🔄 Morph 실행: 텍스트로 모임';
+      });
+
+      document.getElementById('scatter-btn').addEventListener('click', () => {
+        effect.scatter();
+        statusEl.textContent = '🔄 Scatter 실행: 초기 위치로 돌아감';
+      });
+
+      document.getElementById('change-text-btn').addEventListener('click', () => {
+        currentTextIndex = (currentTextIndex + 1) % texts.length;
+        const newText = texts[currentTextIndex];
+        effect.morph(newText);
+        statusEl.textContent = `📝 텍스트 변경: "${newText}"`;
+      });
+
+      document.getElementById('change-color-btn').addEventListener('click', () => {
+        currentColorIndex = (currentColorIndex + 1) % colors.length;
+        const newColor = colors[currentColorIndex];
+        effect.morph({
+          particleColor: newColor,
+        });
+        statusEl.textContent = `🎨 색상 변경: ${newColor}`;
+      });
+
+    } catch (error) {
+      statusEl.textContent = `❌ 에러: ${error.message}`;
+      statusEl.style.color = '#f00';
+      console.error('MasonEffect 초기화 실패:', error);
+    }
+  </script>
+</body>
+</html>
+
