@@ -25,7 +25,14 @@ const effect = new MasonEffect(container, {
 // 텍스트 변경
 effect.morph('New Text');
 
-// 파티클 흩어지기
+// 텍스트와 함께 다른 속성도 변경
+effect.morph({
+  text: 'New Text',
+  particleColor: '#ff00ff',
+  maxParticles: 3000,
+});
+
+// 파티클을 중앙에서 방사형으로 흩어지기
 effect.scatter();
 ```
 
@@ -39,26 +46,39 @@ function App() {
   const effectRef = useRef(null);
 
   return (
-    <div style={{ width: '100%', height: '70vh' }}>
-      <MasonEffect
-        ref={effectRef}
-        text="Hello React"
-        particleColor="#00ff88"
-        maxParticles={2000}
-        onReady={(instance) => {
-          console.log('Ready!', instance);
-        }}
-      />
-      <button onClick={() => effectRef.current?.morph('New Text')}>
-        Morph
-      </button>
-      <button onClick={() => effectRef.current?.scatter()}>
-        Scatter
-      </button>
+    <div style={{ width: '100%', height: '70vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, position: 'relative' }}>
+        <MasonEffect
+          ref={effectRef}
+          text="Hello React"
+          particleColor="#00ff88"
+          maxParticles={2000}
+          onReady={(instance) => {
+            console.log('Ready!', instance);
+          }}
+        />
+      </div>
+      <div style={{ padding: '20px', display: 'flex', gap: '10px' }}>
+        <button onClick={() => effectRef.current?.morph('New Text')}>
+          Morph
+        </button>
+        <button onClick={() => effectRef.current?.morph({
+          text: 'Hello',
+          particleColor: '#ff00ff',
+          maxParticles: 3000
+        })}>
+          Morph with Options
+        </button>
+        <button onClick={() => effectRef.current?.scatter()}>
+          Scatter
+        </button>
+      </div>
     </div>
   );
 }
 ```
+
+**⚠️ 주의**: React 컴포넌트 사용 시 컨테이너에 명시적인 크기를 지정해야 합니다. 자세한 내용은 [React 문제 해결 가이드](./REACT_TROUBLESHOOTING.md)를 참고하세요.
 
 ### Vue 3
 
@@ -103,7 +123,7 @@ const onReady = (instance) => {
 
 | 옵션 | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
-| `text` | `string` | `'mason effect'` | 표시할 텍스트 |
+| `text` | `string` | `'mason crawler'` | 표시할 텍스트 |
 | `densityStep` | `number` | `2` | 파티클 샘플링 밀도 (작을수록 촘촘함) |
 | `maxParticles` | `number` | `3200` | 최대 파티클 수 |
 | `pointSize` | `number` | `0.5` | 파티클 점 크기 |
@@ -121,11 +141,27 @@ const onReady = (instance) => {
 
 ### 메서드
 
-#### `morph(text?: string)`
-텍스트 형태로 파티클을 모핑합니다. 텍스트를 전달하면 해당 텍스트로 변경됩니다.
+#### `morph(textOrOptions?: string | Partial<MasonEffectOptions>)`
+텍스트 형태로 파티클을 모핑합니다.
+
+**문자열 사용:**
+```javascript
+effect.morph('New Text');
+```
+
+**객체 사용 (텍스트와 함께 다른 속성도 변경):**
+```javascript
+effect.morph({
+  text: 'New Text',
+  particleColor: '#ff00ff',
+  maxParticles: 3000,
+  pointSize: 1.0,
+  ease: 0.08,
+});
+```
 
 #### `scatter()`
-파티클을 무작위로 흩어지게 합니다.
+파티클을 중앙에서 방사형으로 흩어지게 합니다. 캔버스 중앙을 기준으로 원형으로 퍼집니다.
 
 #### `updateConfig(config: Partial<MasonEffectOptions>)`
 설정을 업데이트합니다.
@@ -141,6 +177,8 @@ const onReady = (instance) => {
 - ⚡ 고성능 Canvas 렌더링
 - 🔧 React, Vue, 바닐라 JS 모두 지원
 - 🎯 TypeScript 타입 정의 포함
+- 💾 프로덕션 빌드 시 자동 난독화 및 최적화
+- 🎯 중앙에서 방사형으로 퍼지는 scatter 효과
 
 ## 개발
 
@@ -148,12 +186,25 @@ const onReady = (instance) => {
 # 의존성 설치
 npm install
 
-# 개발 모드
+# 개발 모드 (watch)
 npm run dev
 
-# 빌드
+# 빌드 (프로덕션용 min 파일 생성)
 npm run build
+
+# 예제 테스트 서버
+npm run serve
 ```
+
+## 빌드 결과물
+
+빌드를 실행하면 다음 파일들이 생성됩니다:
+
+- **개발용**: `dist/index.js`, `dist/index.esm.js` (소스맵 포함)
+- **프로덕션용**: `dist/index.min.js`, `dist/index.esm.min.js` (난독화 및 최적화)
+- **React 컴포넌트**: `dist/react/MasonEffect.min.js` (난독화)
+
+npm으로 설치하면 자동으로 min 파일이 사용됩니다. 자세한 내용은 [빌드 가이드](./BUILD.md)를 참고하세요.
 
 ## 라이선스
 

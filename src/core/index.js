@@ -154,9 +154,9 @@ export class MasonEffect {
   }
 
   makeParticle() {
-    const m = 0.12;
-    const sx = (m + Math.random() * (1 - 2 * m)) * this.W;
-    const sy = (m + Math.random() * (1 - 2 * m)) * this.H;
+    // 캔버스 전체에 골고루 분포 (여백 없이)
+    const sx = Math.random() * this.W;
+    const sy = Math.random() * this.H;
     return {
       x: sx,
       y: sy,
@@ -169,29 +169,36 @@ export class MasonEffect {
   }
 
   initParticles() {
+    // 캔버스 전체에 골고루 분포 (여백 없이)
     for (const p of this.particles) {
-      p.x = (0.12 + Math.random() * 1.76) * this.W;
-      p.y = (0.12 + Math.random() * 1.76) * this.H;
+      p.x = Math.random() * this.W;
+      p.y = Math.random() * this.H;
       p.vx = p.vy = 0;
     }
   }
 
   scatter() {
-    // 중앙 좌표
-    const centerX = this.W / 2;
-    const centerY = this.H / 2;
+    // W와 H가 0이면 resize 먼저 실행
+    if (this.W === 0 || this.H === 0) {
+      this.resize();
+    }
     
-    // 중앙에서 방사형으로 퍼지는 거리 범위
-    // 최소 거리: 캔버스 크기의 20%
-    // 최대 거리: 캔버스 크기의 80% (대각선 기준)
-    const minRadius = Math.min(this.W, this.H) * 0.2;
-    const maxRadius = Math.sqrt(this.W * this.W + this.H * this.H) * 0.4;
+    // resize 후에도 W와 H가 0이면 실제 캔버스 크기 사용
+    const canvasWidth = this.W > 0 ? this.W : this.canvas.width;
+    const canvasHeight = this.H > 0 ? this.H : this.canvas.height;
+    
+    // 정확한 중앙 좌표 (index.html과 동일한 방식)
+    const centerX = canvasWidth * 0.5;
+    const centerY = canvasHeight * 0.5;
+    
+    // 캔버스의 가로/세로 중 작은 값의 절반을 반경으로 사용
+    const maxRadius = Math.min(canvasWidth, canvasHeight) * 0.5;
     
     for (const p of this.particles) {
-      // 랜덤 각도 (0 ~ 2π)
+      // 랜덤 각도 (0 ~ 2π) - 완전한 원형으로 퍼짐
       const angle = Math.random() * Math.PI * 2;
-      // 랜덤 거리 (최소 ~ 최대)
-      const radius = minRadius + Math.random() * (maxRadius - minRadius);
+      // 랜덤 거리 (0 ~ 최대 반경) - 중앙에서 원의 가장자리까지
+      const radius = Math.random() * maxRadius;
       
       // 중앙에서 방사형으로 목표 위치 계산
       p.tx = centerX + Math.cos(angle) * radius;
