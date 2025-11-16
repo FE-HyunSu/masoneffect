@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MasonEffect - 바닐라 JS 예제</title>
+  <title>MasonEffect - Vanilla JS Example</title>
   <style>
     body {
       margin: 0;
@@ -41,36 +41,24 @@
   </style>
 </head>
 <body>
-  <h1>MasonEffect - 바닐라 JS 예제</h1>
+  <h1>MasonEffect - Vanilla JS Example</h1>
   <div id="mason-container" class="container"></div>
   <div class="controls">
     <button id="morph-btn">Morph</button>
     <button id="scatter-btn">Scatter</button>
-    <button id="change-text-btn">텍스트 변경</button>
+    <button id="change-text-btn">Change Text</button>
   </div>
 
-  <!-- 
-    주의: 이 파일은 로컬 개발 서버를 통해 실행해야 합니다.
-    브라우저에서 직접 열면 CORS 에러가 발생합니다.
-    
-    실행 방법:
-    1. npm run serve (또는 npm run dev:example)
-    2. 또는 http-server, python -m http.server 등 사용
-    3. 또는 빌드 후 dist/index.esm.js 사용
-  -->
-  <script type="module">
-    // 개발 모드: 소스 파일 사용 (로컬 서버 필요)
-    import { MasonEffect } from '../src/core/index.js';
-    
-    // 프로덕션 모드: 빌드된 파일 사용 (아래 주석 해제)
-    // import { MasonEffect } from '../dist/index.esm.js';
-
+  <!-- CDN Example (works directly in browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.11/dist/index.umd.min.js"></script>
+  <script>
+    // MasonEffect loaded via CDN is available as a global variable
     const container = document.getElementById('mason-container');
-    const effect = new MasonEffect(container, {
+    const effect = new MasonEffect.MasonEffect(container, {
       text: 'Hello World',
       particleColor: '#00ff88',
       onReady: (instance) => {
-        console.log('MasonEffect 준비 완료!', instance);
+        console.log('MasonEffect ready!', instance);
       }
     });
 

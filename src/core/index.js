@@ -3,6 +3,19 @@
  * 바닐라 JS 코어 클래스
  */
 
+// 디바운스 유틸리티 함수
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func.apply(this, args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 export class MasonEffect {
   constructor(container, options = {}) {
     // 컨테이너 요소
@@ -51,13 +64,23 @@ export class MasonEffect {
     this.mouse = { x: 0, y: 0, down: false };
     this.animationId = null;
     this.isRunning = false;
+    this.isVisible = false;
+    this.intersectionObserver = null;
 
-    // 이벤트 핸들러 바인딩
-    this.handleResize = this.handleResize.bind(this);
+    // 디바운스 설정 (ms)
+    this.debounceDelay = options.debounceDelay ?? 150; // 기본 150ms
+
+    // 이벤트 핸들러 바인딩 (디바운스 적용 전에 바인딩)
+    const boundHandleResize = this.handleResize.bind(this);
+    this.handleResize = debounce(boundHandleResize, this.debounceDelay);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
+
+    // morph와 updateConfig를 위한 디바운스된 내부 메서드
+    this._debouncedMorph = debounce(this._morphInternal.bind(this), this.debounceDelay);
+    this._debouncedUpdateConfig = debounce(this._updateConfigInternal.bind(this), this.debounceDelay);
 
     // 초기화
     this.init();
@@ -66,11 +89,46 @@ export class MasonEffect {
   init() {
     this.resize();
     this.setupEventListeners();
-    this.start();
-    
+    this.setupIntersectionObserver();
+
     if (this.config.onReady) {
       this.config.onReady(this);
     }
+  }
+
+  setupIntersectionObserver() {
+    // IntersectionObserver가 지원되지 않는 환경에서는 항상 재생
+    if (typeof window === 'undefined' || typeof window.IntersectionObserver === 'undefined') {
+      this.isVisible = true;
+      this.start();
+      return;
+    }
+
+    // 이미 설정되어 있다면 다시 만들지 않음
+    if (this.intersectionObserver) {
+      return;
+    }
+
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target !== this.container) continue;
+
+          if (entry.isIntersecting) {
+            this.isVisible = true;
+            this.start();
+          } else {
+            this.isVisible = false;
+            this.stop();
+          }
+        }
+      },
+      {
+        threshold: 0.1, // 10% 이상 보일 때 동작
+      }
+    );
+
+    this.intersectionObserver.observe(this.container);
   }
 
   resize() {
@@ -202,6 +260,12 @@ export class MasonEffect {
   }
 
   morph(textOrOptions = null) {
+    // 즉시 실행이 필요한 경우 (예: 초기화 시)를 위해 내부 메서드 직접 호출
+    // 일반적인 경우에는 디바운스 적용
+    this._debouncedMorph(textOrOptions);
+  }
+
+  _morphInternal(textOrOptions = null) {
     // W와 H가 0이면 resize 먼저 실행
     if (this.W === 0 || this.H === 0) {
       this.resize();
@@ -332,6 +396,11 @@ export class MasonEffect {
 
   // 설정 업데이트
   updateConfig(newConfig) {
+    // 디바운스 적용
+    this._debouncedUpdateConfig(newConfig);
+  }
+
+  _updateConfigInternal(newConfig) {
     this.config = { ...this.config, ...newConfig };
     if (newConfig.text) {
       this.buildTargets();
@@ -342,6 +411,10 @@ export class MasonEffect {
   destroy() {
     this.stop();
     this.removeEventListeners();
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+      this.intersectionObserver = null;
+    }
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
     }

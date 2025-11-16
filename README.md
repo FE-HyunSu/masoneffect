@@ -12,6 +12,8 @@ npm install masoneffect
 
 ### Vanilla JavaScript
 
+#### Using npm (ES modules)
+
 ```javascript
 import { MasonEffect } from 'masoneffect';
 
@@ -34,6 +36,22 @@ effect.morph({
 
 // Return particles to initial position
 effect.scatter();
+```
+
+#### Using CDN (UMD)
+
+```html
+<script src="https://unpkg.com/masoneffect/dist/index.umd.min.js"></script>
+<script>
+  const container = document.getElementById('my-container');
+  const effect = new MasonEffect.MasonEffect(container, {
+    text: 'Hello World',
+    particleColor: '#00ff88',
+    maxParticles: 2000,
+  });
+
+  effect.morph('New Text');
+</script>
 ```
 
 ### React
@@ -145,13 +163,14 @@ const onReady = (instance) => {
 | `width` | `number \| null` | `null` | Canvas width (container size if null) |
 | `height` | `number \| null` | `null` | Canvas height (container size if null) |
 | `devicePixelRatio` | `number \| null` | `null` | Device pixel ratio (auto if null) |
+| `debounceDelay` | `number` | `150` | Debounce delay in milliseconds for resize, morph, and updateConfig (set to 0 to disable) |
 | `onReady` | `function` | `null` | Initialization complete callback |
 | `onUpdate` | `function` | `null` | Update callback |
 
 ### Methods
 
 #### `morph(textOrOptions?: string | Partial<MasonEffectOptions>)`
-Morphs particles into text form.
+Morphs particles into text form. This method is debounced to prevent excessive calls (default: 150ms delay).
 
 **Using string:**
 ```javascript
@@ -169,11 +188,13 @@ effect.morph({
 });
 ```
 
+**Note**: Multiple rapid calls will be debounced, and only the last call will be executed after the delay period.
+
 #### `scatter()`
 Returns particles to their initial position. Each particle returns to the position where it was first created.
 
 #### `updateConfig(config: Partial<MasonEffectOptions>)`
-Updates the configuration.
+Updates the configuration. This method is debounced to prevent excessive calls (default: 150ms delay).
 
 #### `destroy()`
 Destroys the instance and cleans up resources.
@@ -184,10 +205,13 @@ Destroys the instance and cleans up resources.
 - 🖱️ Mouse interaction support (repel/attract)
 - 📱 Responsive design
 - ⚡ High-performance Canvas rendering
-- 🔧 Supports React, Vue, and vanilla JS
+- 🔧 Supports React, Vue, and vanilla JS (including CDN)
 - 🎯 Includes TypeScript type definitions
 - 💾 Automatic obfuscation and optimization in production builds
 - 🔄 Scatter effect that returns to initial position
+- 👁️ **IntersectionObserver**: Automatically pauses animation when not visible (saves resources)
+- ⏱️ **Debouncing**: Prevents excessive calls on resize, morph, and updateConfig methods
+- 🎛️ **Configurable debounce delay**: Adjust or disable debouncing via `debounceDelay` option
 
 ## Development
 
@@ -209,11 +233,11 @@ npm run serve
 
 Running the build will generate the following files:
 
-- **Development**: `dist/index.js`, `dist/index.esm.js` (with source maps)
-- **Production**: `dist/index.min.js`, `dist/index.esm.min.js` (obfuscated and optimized)
+- **Development**: `dist/index.js`, `dist/index.esm.js`, `dist/index.umd.js` (with source maps)
+- **Production**: `dist/index.min.js`, `dist/index.esm.min.js`, `dist/index.umd.min.js` (obfuscated and optimized)
 - **React component**: `dist/react/MasonEffect.min.js` (obfuscated)
 
-When installed via npm, min files are automatically used. For more details, see the [Build Guide](./BUILD.md).
+When installed via npm, min files are automatically used. The UMD files (`index.umd.min.js`) can be used directly in browsers via CDN or script tags. For more details, see the [Build Guide](./BUILD.md).
 
 ## License
 
