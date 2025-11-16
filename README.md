@@ -41,10 +41,10 @@ effect.scatter();
 #### Using CDN (UMD)
 
 ```html
-<script src="https://unpkg.com/masoneffect/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.11/dist/index.umd.min.js"></script>
 <script>
   const container = document.getElementById('my-container');
-  const effect = new MasonEffect.MasonEffect(container, {
+  const effect = new MasonEffect(container, {
     text: 'Hello World',
     particleColor: '#00ff88',
     maxParticles: 2000,
