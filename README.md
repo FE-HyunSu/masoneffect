@@ -1,4 +1,4 @@
-# MasonEffect
+# MasonEffect ![npm](https://img.shields.io/npm/dw/masoneffect)
 
 A library that provides particle morphing effects. It can be used with React, Vue, and vanilla JavaScript.
 
