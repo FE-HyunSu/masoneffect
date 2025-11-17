@@ -43,7 +43,7 @@ const terserOptions = {
 
 // 코어 라이브러리 빌드 (개발용 - 소스맵 포함)
 const coreBuildDev = {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.js',
@@ -75,7 +75,7 @@ const coreBuildDev = {
 
 // 코어 라이브러리 빌드 (프로덕션용 - min + 난독화)
 const coreBuildProd = {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.min.js',

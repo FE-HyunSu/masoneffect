@@ -3,24 +3,87 @@
  * 바닐라 JS 코어 클래스
  */
 
+export interface MasonEffectOptions {
+  text?: string;
+  densityStep?: number;
+  maxParticles?: number;
+  pointSize?: number;
+  ease?: number;
+  repelRadius?: number;
+  repelStrength?: number;
+  particleColor?: string;
+  fontFamily?: string;
+  fontSize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  devicePixelRatio?: number | null;
+  debounceDelay?: number;
+  onReady?: (instance: MasonEffect) => void;
+  onUpdate?: (instance: MasonEffect) => void;
+}
+
+export interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  tx: number;
+  ty: number;
+  initialX?: number;
+  initialY?: number;
+  j: number;
+}
+
 // 디바운스 유틸리티 함수
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  return function executedFunction(...args: Parameters<T>) {
     const later = () => {
-      clearTimeout(timeout);
+      timeout = null;
       func.apply(this, args);
     };
-    clearTimeout(timeout);
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
     timeout = setTimeout(later, wait);
   };
 }
 
 export class MasonEffect {
-  constructor(container, options = {}) {
+  container: HTMLElement;
+  config: Required<Omit<MasonEffectOptions, 'onReady' | 'onUpdate'>> & {
+    onReady: MasonEffectOptions['onReady'];
+    onUpdate: MasonEffectOptions['onUpdate'];
+  };
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+  offCanvas: HTMLCanvasElement;
+  offCtx: CanvasRenderingContext2D;
+  W: number;
+  H: number;
+  DPR: number;
+  particles: Particle[];
+  mouse: { x: number; y: number; down: boolean };
+  animationId: number | null;
+  isRunning: boolean;
+  isVisible: boolean;
+  intersectionObserver: IntersectionObserver | null;
+  debounceDelay: number;
+  handleResize: () => void;
+  handleMouseMove: (e: MouseEvent) => void;
+  handleMouseLeave: () => void;
+  handleMouseDown: () => void;
+  handleMouseUp: () => void;
+  _debouncedMorph: (textOrOptions?: string | Partial<MasonEffectOptions> | null) => void;
+  _debouncedUpdateConfig: (newConfig: Partial<MasonEffectOptions>) => void;
+
+  constructor(container: HTMLElement | string, options: MasonEffectOptions = {}) {
     // 컨테이너 요소
     this.container = typeof container === 'string' 
-      ? document.querySelector(container) 
+      ? document.querySelector(container) as HTMLElement
       : container;
     
     if (!this.container) {
@@ -38,23 +101,31 @@ export class MasonEffect {
       repelStrength: options.repelStrength ?? 1,
       particleColor: options.particleColor || '#fff',
       fontFamily: options.fontFamily || 'Inter, system-ui, Arial',
-      fontSize: options.fontSize || null, // null이면 자동 계산
-      width: options.width || null, // null이면 컨테이너 크기
-      height: options.height || null, // null이면 컨테이너 크기
-      devicePixelRatio: options.devicePixelRatio ?? null, // null이면 자동
+      fontSize: options.fontSize || null,
+      width: options.width || null,
+      height: options.height || null,
+      devicePixelRatio: options.devicePixelRatio ?? null,
       onReady: options.onReady || null,
       onUpdate: options.onUpdate || null,
     };
 
     // 캔버스 생성
     this.canvas = document.createElement('canvas');
-    this.ctx = this.canvas.getContext('2d');
+    const ctx = this.canvas.getContext('2d');
+    if (!ctx) {
+      throw new Error('Canvas context not available');
+    }
+    this.ctx = ctx;
     this.container.appendChild(this.canvas);
     this.canvas.style.display = 'block';
 
     // 오프스크린 캔버스 (텍스트 렌더링용)
     this.offCanvas = document.createElement('canvas');
-    this.offCtx = this.offCanvas.getContext('2d');
+    const offCtx = this.offCanvas.getContext('2d');
+    if (!offCtx) {
+      throw new Error('Offscreen canvas context not available');
+    }
+    this.offCtx = offCtx;
 
     // 상태
     this.W = 0;
@@ -68,7 +139,7 @@ export class MasonEffect {
     this.intersectionObserver = null;
 
     // 디바운스 설정 (ms)
-    this.debounceDelay = options.debounceDelay ?? 150; // 기본 150ms
+    this.debounceDelay = options.debounceDelay ?? 150;
 
     // 이벤트 핸들러 바인딩 (디바운스 적용 전에 바인딩)
     const boundHandleResize = this.handleResize.bind(this);
@@ -86,7 +157,7 @@ export class MasonEffect {
     this.init();
   }
 
-  init() {
+  init(): void {
     this.resize();
     this.setupEventListeners();
     this.setupIntersectionObserver();
@@ -96,7 +167,7 @@ export class MasonEffect {
     }
   }
 
-  setupIntersectionObserver() {
+  setupIntersectionObserver(): void {
     // IntersectionObserver가 지원되지 않는 환경에서는 항상 재생
     if (typeof window === 'undefined' || typeof window.IntersectionObserver === 'undefined') {
       this.isVisible = true;
@@ -131,7 +202,7 @@ export class MasonEffect {
     this.intersectionObserver.observe(this.container);
   }
 
-  resize() {
+  resize(): void {
     const width = this.config.width || this.container.clientWidth || window.innerWidth;
     const height = this.config.height || this.container.clientHeight || window.innerHeight * 0.7;
     
@@ -149,7 +220,7 @@ export class MasonEffect {
     }
   }
 
-  buildTargets() {
+  buildTargets(): void {
     const text = this.config.text;
     this.offCanvas.width = this.W;
     this.offCanvas.height = this.H;
@@ -176,7 +247,7 @@ export class MasonEffect {
     // 픽셀 샘플링
     const step = Math.max(2, this.config.densityStep);
     const img = this.offCtx.getImageData(0, 0, this.W, this.H).data;
-    const targets = [];
+    const targets: Array<{ x: number; y: number }> = [];
     
     for (let y = 0; y < this.H; y += step) {
       for (let x = 0; x < this.W; x += step) {
@@ -211,7 +282,7 @@ export class MasonEffect {
     }
   }
 
-  makeParticle() {
+  makeParticle(): Particle {
     // 캔버스 전체에 골고루 분포 (여백 없이)
     const sx = Math.random() * this.W;
     const sy = Math.random() * this.H;
@@ -228,7 +299,7 @@ export class MasonEffect {
     };
   }
 
-  initParticles() {
+  initParticles(): void {
     // 캔버스 전체에 골고루 분포 (여백 없이)
     for (const p of this.particles) {
       const sx = Math.random() * this.W;
@@ -242,7 +313,7 @@ export class MasonEffect {
     }
   }
 
-  scatter() {
+  scatter(): void {
     // 각 파티클을 초기 위치로 돌아가도록 설정
     for (const p of this.particles) {
       // 초기 위치가 저장되어 있으면 그 위치로, 없으면 현재 위치 유지
@@ -259,13 +330,13 @@ export class MasonEffect {
     }
   }
 
-  morph(textOrOptions = null) {
+  morph(textOrOptions?: string | Partial<MasonEffectOptions> | null): void {
     // 즉시 실행이 필요한 경우 (예: 초기화 시)를 위해 내부 메서드 직접 호출
     // 일반적인 경우에는 디바운스 적용
     this._debouncedMorph(textOrOptions);
   }
 
-  _morphInternal(textOrOptions = null) {
+  _morphInternal(textOrOptions?: string | Partial<MasonEffectOptions> | null): void {
     // W와 H가 0이면 resize 먼저 실행
     if (this.W === 0 || this.H === 0) {
       this.resize();
@@ -288,7 +359,7 @@ export class MasonEffect {
     }
   }
 
-  update() {
+  update(): void {
     this.ctx.clearRect(0, 0, this.W, this.H);
 
     for (const p of this.particles) {
@@ -336,19 +407,19 @@ export class MasonEffect {
     }
   }
 
-  animate() {
+  animate(): void {
     if (!this.isRunning) return;
     this.update();
     this.animationId = requestAnimationFrame(() => this.animate());
   }
 
-  start() {
+  start(): void {
     if (this.isRunning) return;
     this.isRunning = true;
     this.animate();
   }
 
-  stop() {
+  stop(): void {
     this.isRunning = false;
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
@@ -356,7 +427,7 @@ export class MasonEffect {
     }
   }
 
-  setupEventListeners() {
+  setupEventListeners(): void {
     window.addEventListener('resize', this.handleResize);
     this.canvas.addEventListener('mousemove', this.handleMouseMove);
     this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
@@ -364,7 +435,7 @@ export class MasonEffect {
     window.addEventListener('mouseup', this.handleMouseUp);
   }
 
-  removeEventListeners() {
+  removeEventListeners(): void {
     window.removeEventListener('resize', this.handleResize);
     this.canvas.removeEventListener('mousemove', this.handleMouseMove);
     this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
@@ -372,35 +443,35 @@ export class MasonEffect {
     window.removeEventListener('mouseup', this.handleMouseUp);
   }
 
-  handleResize() {
+  handleResize(): void {
     this.resize();
   }
 
-  handleMouseMove(e) {
+  handleMouseMove(e: MouseEvent): void {
     const rect = this.canvas.getBoundingClientRect();
     this.mouse.x = (e.clientX - rect.left) * this.DPR;
     this.mouse.y = (e.clientY - rect.top) * this.DPR;
   }
 
-  handleMouseLeave() {
+  handleMouseLeave(): void {
     this.mouse.x = this.mouse.y = 0;
   }
 
-  handleMouseDown() {
+  handleMouseDown(): void {
     this.mouse.down = true;
   }
 
-  handleMouseUp() {
+  handleMouseUp(): void {
     this.mouse.down = false;
   }
 
   // 설정 업데이트
-  updateConfig(newConfig) {
+  updateConfig(newConfig: Partial<MasonEffectOptions>): void {
     // 디바운스 적용
     this._debouncedUpdateConfig(newConfig);
   }
 
-  _updateConfigInternal(newConfig) {
+  _updateConfigInternal(newConfig: Partial<MasonEffectOptions>): void {
     this.config = { ...this.config, ...newConfig };
     if (newConfig.text) {
       this.buildTargets();
@@ -408,7 +479,7 @@ export class MasonEffect {
   }
 
   // 파괴 및 정리
-  destroy() {
+  destroy(): void {
     this.stop();
     this.removeEventListeners();
     if (this.intersectionObserver) {
