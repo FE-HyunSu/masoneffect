@@ -50,20 +50,21 @@
   </div>
 
   <!-- CDN Example (works directly in browser) -->
-  <script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.14/dist/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.15/dist/index.umd.min.js"></script>
   <script>
     // MasonEffect loaded via CDN is available as a global variable
     const container = document.getElementById('mason-container');
     const effect = new MasonEffect(container, {
       text: 'Hello World',
       particleColor: '#00ff88',
+      maxParticles: 2000,
       onReady: (instance) => {
         console.log('MasonEffect ready!', instance);
       }
     });
 
     document.getElementById('morph-btn').addEventListener('click', () => {
-      effect.morph();
+      effect.morph({ text: 'Morphed!' });
     });
 
     document.getElementById('scatter-btn').addEventListener('click', () => {
@@ -73,7 +74,7 @@
     document.getElementById('change-text-btn').addEventListener('click', () => {
       const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles'];
       const randomText = texts[Math.floor(Math.random() * texts.length)];
-      effect.morph(randomText);
+      effect.morph({ text: randomText });
     });
   </script>
 </body>

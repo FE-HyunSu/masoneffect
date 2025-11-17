@@ -41,7 +41,7 @@ effect.scatter();
 #### Using CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.11/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.15/dist/index.umd.min.js"></script>
 <script>
   const container = document.getElementById('my-container');
   const effect = new MasonEffect(container, {
@@ -50,7 +50,11 @@ effect.scatter();
     maxParticles: 2000,
   });
 
-  effect.morph('New Text');
+  // Change text
+  effect.morph({ text: 'New Text' });
+
+  // Return particles to initial position
+  effect.scatter();
 </script>
 ```
 
