@@ -55,6 +55,22 @@ const coreBuildDev = {
       format: 'esm',
       sourcemap: true,
     },
+  ],
+  plugins: [
+    ...basePlugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: true,
+      declarationDir: 'dist',
+      rootDir: 'src',
+    }),
+  ],
+};
+
+// UMD 빌드 (개발용 - 소스맵 포함)
+const umdBuildDev = {
+  input: 'src/index.umd.ts',
+  output: [
     {
       file: 'dist/index.umd.js',
       format: 'umd',
@@ -87,6 +103,24 @@ const coreBuildProd = {
       format: 'esm',
       sourcemap: false,
     },
+  ],
+  plugins: [
+    ...basePlugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: false, // min 파일은 타입 정의 불필요
+      declarationMap: false,
+      sourceMap: false,
+      rootDir: 'src',
+    }),
+    terser(terserOptions),
+  ],
+};
+
+// UMD 빌드 (프로덕션용 - min + 난독화)
+const umdBuildProd = {
+  input: 'src/index.umd.ts',
+  output: [
     {
       file: 'dist/index.umd.min.js',
       format: 'umd',
@@ -166,7 +200,9 @@ const reactBuildProd = {
 
 export default [
   coreBuildDev,
+  umdBuildDev,
   coreBuildProd,
+  umdBuildProd,
   reactBuildDev,
   reactBuildProd,
 ];

@@ -54,7 +54,7 @@ function debounce<T extends (...args: any[]) => any>(
 
 export class MasonEffect {
   container: HTMLElement;
-  config: Required<Omit<MasonEffectOptions, 'onReady' | 'onUpdate'>> & {
+  config: Required<Omit<MasonEffectOptions, 'onReady' | 'onUpdate' | 'debounceDelay'>> & {
     onReady: MasonEffectOptions['onReady'];
     onUpdate: MasonEffectOptions['onUpdate'];
   };
@@ -72,13 +72,8 @@ export class MasonEffect {
   isVisible: boolean;
   intersectionObserver: IntersectionObserver | null;
   debounceDelay: number;
-  handleResize: () => void;
-  handleMouseMove: (e: MouseEvent) => void;
-  handleMouseLeave: () => void;
-  handleMouseDown: () => void;
-  handleMouseUp: () => void;
-  _debouncedMorph: (textOrOptions?: string | Partial<MasonEffectOptions> | null) => void;
-  _debouncedUpdateConfig: (newConfig: Partial<MasonEffectOptions>) => void;
+  _debouncedMorph!: (textOrOptions?: string | Partial<MasonEffectOptions> | null) => void;
+  _debouncedUpdateConfig!: (newConfig: Partial<MasonEffectOptions>) => void;
 
   constructor(container: HTMLElement | string, options: MasonEffectOptions = {}) {
     // 컨테이너 요소
@@ -107,7 +102,7 @@ export class MasonEffect {
       devicePixelRatio: options.devicePixelRatio ?? null,
       onReady: options.onReady || null,
       onUpdate: options.onUpdate || null,
-    };
+    } as typeof this.config;
 
     // 캔버스 생성
     this.canvas = document.createElement('canvas');

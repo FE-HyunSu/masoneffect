@@ -4,7 +4,7 @@
 
 import MasonEffect from './core/index.js';
 
-// Named export
+// Named export (ES modules, CommonJS용)
 export { MasonEffect };
 export type { MasonEffectOptions, Particle } from './core/index.js';
 
