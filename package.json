@@ -2,30 +2,26 @@
   "name": "masoneffect",
   "version": "0.1.19",
   "description": "파티클 모핑 효과를 제공하는 라이브러리 - React, Vue, 바닐라 JS 지원",
-  "main": "dist/index.min.js",
-  "module": "dist/index.esm.min.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.esm.min.js",
-      "require": "./dist/index.min.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
-    "./react": {
-      "import": "./dist/react/MasonEffect.min.js",
-      "require": "./dist/react/MasonEffect.min.cjs",
-      "types": "./dist/react/index.d.ts"
-    },
     "./vue": {
-      "import": "./src/vue/MasonEffect.vue"
+      "import": "./dist/vue/index.mjs",
+      "require": "./dist/vue/index.cjs",
+      "types": "./dist/vue/index.d.ts"
     }
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs && node scripts/generate-react-types.js",
+    "build": "rollup -c rollup.config.mjs && vite build && node scripts/generate-react-types.js",
     "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",
@@ -58,11 +54,14 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-vue": "^5.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "rollup": "^4.9.0",
     "tslib": "^2.8.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.6.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0 || >=19.0.0-0",

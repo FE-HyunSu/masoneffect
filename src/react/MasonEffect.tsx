@@ -47,6 +47,17 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
         const container = containerRef.current;
         if (!container) return;
 
+        // 이미 인스턴스가 있으면 생성하지 않음 (React Strict Mode 대응)
+        if (instanceRef.current) {
+          return;
+        }
+
+        // 컨테이너에 이미 canvas가 있으면 제거 (중복 방지)
+        const existingCanvas = container.querySelector('canvas');
+        if (existingCanvas) {
+          existingCanvas.remove();
+        }
+
         // 컨테이너 크기가 0이거나 너무 작으면 다음 프레임에 다시 시도
         const rect = container.getBoundingClientRect();
         if (rect.width <= 0 || rect.height <= 0) {
@@ -116,11 +127,14 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
       requestAnimationFrame(initEffect);
 
       return () => {
+        // cleanup: 모든 리소스 정리
         if (initTimeout) {
           clearTimeout(initTimeout);
+          initTimeout = null;
         }
         if (resizeObserver) {
           resizeObserver.disconnect();
+          resizeObserver = null;
         }
         if (instanceRef.current) {
           instanceRef.current.destroy();
