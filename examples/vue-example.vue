@@ -35,7 +35,7 @@ const onReady = (instance) => {
     <div style="padding: 20px; display: flex; gap: 10px">
       <button @click="handleMorph">Morph</button>
       <button @click="handleScatter">Scatter</button>
-      <button @click="handleChangeText">텍스트 변경</button>
+      <button @click="handleChangeText">Change Text</button>
     </div>
   </div>
 </template>

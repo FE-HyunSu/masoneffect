@@ -48,7 +48,7 @@ function App() {
         <button onClick={handleMorph}>Morph</button>
         <button onClick={handleScatter}>Scatter</button>
         <button onClick={handleChangeText}>Change Text</button>
-        <button onClick={handleChangeWithOptions}>Change Text + Options</button>
+        <button onClick={handleChangeWithOptions}>Change Text</button>
       </div>
     </div>
   );

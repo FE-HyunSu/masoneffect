@@ -1,5 +1,7 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dw/masoneffect)
 
+**Release version 1.0.22**
+
 A library that provides particle morphing effects. It can be used with React, Vue, and vanilla JavaScript.
 
 ## Installation
@@ -25,13 +27,14 @@ const effect = new MasonEffect(container, {
 });
 
 // Change text
-effect.morph('New Text');
+effect.morph({ text: 'New Text' });
 
 // Change text along with other properties
 effect.morph({
   text: 'New Text',
   particleColor: '#ff00ff',
   maxParticles: 3000,
+  pointSize: 1.0,
 });
 
 // Return particles to initial position
@@ -41,35 +44,70 @@ effect.scatter();
 #### Using CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.18/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.22/dist/index.umd.min.js"></script>
 <script>
   const container = document.getElementById('my-container');
   const effect = new MasonEffect(container, {
     text: 'Hello World',
     particleColor: '#00ff88',
     maxParticles: 2000,
+    onReady: (instance) => {
+      console.log('MasonEffect ready!', instance);
+    }
   });
 
   // Change text
-  effect.morph({ text: 'New Text' });
+  effect.morph({ text: 'Morphed!' });
 
   // Return particles to initial position
   effect.scatter();
+
+  // Change text with random selection
+  const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles'];
+  const randomText = texts[Math.floor(Math.random() * texts.length)];
+  effect.morph({ text: randomText });
 </script>
 ```
 
 ### React
 
-```jsx
+```tsx
 import React, { useRef } from 'react';
 import MasonEffect from 'masoneffect/react';
+import type { MasonEffectRef } from 'masoneffect/react';
 
 function App() {
-  const effectRef = useRef(null);
+  const effectRef = useRef<MasonEffectRef>(null);
+
+  const handleMorph = () => {
+    // Change text
+    effectRef.current?.morph({ text: 'Morphed!' });
+  };
+
+  const handleScatter = () => {
+    // Return particles to initial position
+    effectRef.current?.scatter();
+  };
+
+  const handleChangeText = () => {
+    const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles'];
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+    effectRef.current?.morph({ text: randomText });
+  };
+
+  const handleChangeWithOptions = () => {
+    // Change text along with other properties
+    effectRef.current?.morph({
+      text: 'New Text',
+      particleColor: '#ff00ff',
+      maxParticles: 3000,
+      pointSize: 1.0,
+    });
+  };
 
   return (
-    <div style={{ width: '100%', height: '70vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: 1, position: 'relative' }}>
+    <div style={{ width: '100%', height: '70vh', background: '#000', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, position: 'relative', minHeight: 400 }}>
         <MasonEffect
           ref={effectRef}
           text="Hello React"
@@ -81,23 +119,16 @@ function App() {
         />
       </div>
       <div style={{ padding: '20px', display: 'flex', gap: '10px' }}>
-        <button onClick={() => effectRef.current?.morph('New Text')}>
-          Morph
-        </button>
-        <button onClick={() => effectRef.current?.morph({
-          text: 'Hello',
-          particleColor: '#ff00ff',
-          maxParticles: 3000
-        })}>
-          Morph with Options
-        </button>
-        <button onClick={() => effectRef.current?.scatter()}>
-          Scatter
-        </button>
+        <button onClick={handleMorph}>Morph</button>
+        <button onClick={handleScatter}>Scatter</button>
+        <button onClick={handleChangeText}>Change Text</button>
+        <button onClick={handleChangeWithOptions}>Change with Options</button>
       </div>
     </div>
   );
 }
+
+export default App;
 ```
 
 **⚠️ Note**: When using the React component, you must specify an explicit size for the container. For more details, see the [React Troubleshooting Guide](./REACT_TROUBLESHOOTING.md).
@@ -105,21 +136,6 @@ function App() {
 ### Vue 3
 
 ```vue
-<template>
-  <div style="width: 100%; height: 70vh">
-    <MasonEffect
-      ref="effectRef"
-      text="Hello Vue"
-      particle-color="#00ff88"
-      :max-particles="2000"
-      @ready="onReady"
-    />
-    <button @click="handleMorph">Morph</button>
-    <button @click="handleMorphWithOptions">Morph with Options</button>
-    <button @click="handleScatter">Scatter</button>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 import MasonEffect from 'masoneffect/vue';
@@ -127,25 +143,40 @@ import MasonEffect from 'masoneffect/vue';
 const effectRef = ref(null);
 
 const handleMorph = () => {
-  effectRef.value?.morph('New Text');
-};
-
-const handleMorphWithOptions = () => {
-  effectRef.value?.morph({
-    text: 'Hello',
-    particleColor: '#ff00ff',
-    maxParticles: 3000,
-  });
+  effectRef.value?.morph();
 };
 
 const handleScatter = () => {
   effectRef.value?.scatter();
 };
 
+const handleChangeText = () => {
+  const texts = ['Hello', 'World', 'Mason', 'Effect'];
+  const randomText = texts[Math.floor(Math.random() * texts.length)];
+  effectRef.value?.morph(randomText);
+};
+
 const onReady = (instance) => {
   console.log('Ready!', instance);
 };
 </script>
+
+<template>
+  <div style="width: 100%; height: 70vh; background: #000">
+    <MasonEffect
+      ref="effectRef"
+      text="Hello Vue"
+      :particle-color="'#00ff88'"
+      :max-particles="2000"
+      @ready="onReady"
+    />
+    <div style="padding: 20px; display: flex; gap: 10px">
+      <button @click="handleMorph">Morph</button>
+      <button @click="handleScatter">Scatter</button>
+      <button @click="handleChangeText">Change Text</button>
+    </div>
+  </div>
+</template>
 ```
 
 ## API
@@ -176,12 +207,12 @@ const onReady = (instance) => {
 #### `morph(textOrOptions?: string | Partial<MasonEffectOptions>)`
 Morphs particles into text form. This method is debounced to prevent excessive calls (default: 150ms delay).
 
-**Using string:**
+**Using string (legacy support):**
 ```javascript
 effect.morph('New Text');
 ```
 
-**Using object (change text along with other properties):**
+**Using object (recommended - change text along with other properties):**
 ```javascript
 effect.morph({
   text: 'New Text',
@@ -237,11 +268,12 @@ npm run serve
 
 Running the build will generate the following files:
 
-- **Development**: `dist/index.js`, `dist/index.esm.js`, `dist/index.umd.js` (with source maps)
-- **Production**: `dist/index.min.js`, `dist/index.esm.min.js`, `dist/index.umd.min.js` (obfuscated and optimized)
-- **React component**: `dist/react/MasonEffect.min.js` (obfuscated)
+- **Core library**: `dist/index.mjs` (ESM), `dist/index.cjs` (CommonJS), `dist/index.d.ts` (TypeScript types)
+- **React component**: `dist/react/index.mjs`, `dist/react/index.cjs`, `dist/react/index.d.ts`
+- **Vue component**: `dist/vue/index.mjs`, `dist/vue/index.cjs`, `dist/vue/index.d.ts`
+- **UMD build**: `dist/index.umd.min.js` (for CDN usage)
 
-When installed via npm, min files are automatically used. The UMD files (`index.umd.min.js`) can be used directly in browsers via CDN or script tags. For more details, see the [Build Guide](./BUILD.md).
+When installed via npm, the appropriate module format is automatically selected based on your bundler. The UMD files (`index.umd.min.js`) can be used directly in browsers via CDN or script tags.
 
 ## License
 
