@@ -97,7 +97,15 @@ const reactIndexBuild = {
       format: 'cjs',
     },
   ],
-  external: ['react', 'react-dom', './MasonEffect'],
+  external: (id, importer) => {
+    // react, react-dom은 external
+    if (id === 'react' || id === 'react-dom') return true;
+    // src/react/index.ts에서 ./MasonEffect를 import하는 경우 external로 처리
+    if (importer && importer.includes('src/react/index.ts')) {
+      if (id === './MasonEffect' || id.startsWith('./MasonEffect')) return true;
+    }
+    return false;
+  },
   plugins: [
     ...basePlugins,
     typescript({
@@ -107,6 +115,18 @@ const reactIndexBuild = {
       rootDir: 'src',
       declarationMap: false,
     }),
+    // Resolve MasonEffect import to use .mjs extension for ESM
+    {
+      name: 'resolve-mason-effect-extension',
+      renderChunk(code, chunk, options) {
+        // ESM 파일에서 ./MasonEffect 또는 ./MasonEffect.tsx를 ./MasonEffect.mjs로 변경
+        if (chunk.fileName === 'index.mjs') {
+          code = code.replace(/from ['"]\.\/MasonEffect(\.tsx)?['"]/g, "from './MasonEffect.mjs'");
+          return code;
+        }
+        return null;
+      },
+    },
   ],
 };
 
