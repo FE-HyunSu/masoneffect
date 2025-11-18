@@ -47,11 +47,18 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
         const container = containerRef.current;
         if (!container) return;
 
-        // 컨테이너 크기가 0이면 다음 프레임에 다시 시도
+        // 컨테이너 크기가 0이거나 너무 작으면 다음 프레임에 다시 시도
         const rect = container.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) {
+        if (rect.width <= 0 || rect.height <= 0) {
           initTimeout = window.setTimeout(initEffect, 50);
           return;
+        }
+        
+        // 최소 크기 보장 (너무 작으면 기본값 사용)
+        const minSize = 100;
+        if (rect.width < minSize || rect.height < minSize) {
+          container.style.minWidth = minSize + 'px';
+          container.style.minHeight = minSize + 'px';
         }
 
         const {

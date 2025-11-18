@@ -1,20 +1,3 @@
-<template>
-  <div style="width: 100%; height: 70vh; background: #000">
-    <MasonEffect
-      ref="effectRef"
-      text="Hello Vue"
-      :particle-color="'#00ff88'"
-      :max-particles="2000"
-      @ready="onReady"
-    />
-    <div style="padding: 20px; display: flex; gap: 10px">
-      <button @click="handleMorph">Morph</button>
-      <button @click="handleScatter">Scatter</button>
-      <button @click="handleChangeText">텍스트 변경</button>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 import MasonEffect from 'masoneffect/vue';
@@ -40,3 +23,19 @@ const onReady = (instance) => {
 };
 </script>
 
+<template>
+  <div style="width: 100%; height: 70vh; background: #000">
+    <MasonEffect
+      ref="effectRef"
+      text="Hello Vue"
+      :particle-color="'#00ff88'"
+      :max-particles="2000"
+      @ready="onReady"
+    />
+    <div style="padding: 20px; display: flex; gap: 10px">
+      <button @click="handleMorph">Morph</button>
+      <button @click="handleScatter">Scatter</button>
+      <button @click="handleChangeText">텍스트 변경</button>
+    </div>
+  </div>
+</template>

@@ -168,6 +168,29 @@ const reactBuildDev = {
   ],
 };
 
+// React index 빌드 (타입 export용)
+const reactIndexBuild = {
+  input: 'src/react/index.ts',
+  output: [
+    {
+      file: 'dist/react/index.js',
+      format: 'esm',
+      sourcemap: false,
+    },
+  ],
+  external: ['react', 'react-dom'],
+  plugins: [
+    ...basePlugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: true,
+      declarationDir: 'dist/react',
+      rootDir: 'src',
+      declarationMap: false,
+    }),
+  ],
+};
+
 // React 컴포넌트 빌드 (프로덕션용 - min + 난독화)
 const reactBuildProd = {
   input: 'src/react/MasonEffect.tsx',
@@ -205,5 +228,6 @@ export default [
   umdBuildProd,
   reactBuildDev,
   reactBuildProd,
+  reactIndexBuild,
 ];
 

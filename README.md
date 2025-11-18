@@ -41,7 +41,7 @@ effect.scatter();
 #### Using CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.15/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@0.1.18/dist/index.umd.min.js"></script>
 <script>
   const container = document.getElementById('my-container');
   const effect = new MasonEffect(container, {

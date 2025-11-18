@@ -14,7 +14,7 @@
     "./react": {
       "import": "./dist/react/MasonEffect.min.js",
       "require": "./dist/react/MasonEffect.min.cjs",
-      "types": "./dist/react/MasonEffect.d.ts"
+      "types": "./dist/react/index.d.ts"
     },
     "./vue": {
       "import": "./src/vue/MasonEffect.vue"
@@ -25,7 +25,7 @@
     "src"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
+    "build": "rollup -c rollup.config.mjs && node scripts/generate-react-types.js",
     "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",

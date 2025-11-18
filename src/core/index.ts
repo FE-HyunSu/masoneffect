@@ -201,21 +201,44 @@ export class MasonEffect {
     const width = this.config.width || this.container.clientWidth || window.innerWidth;
     const height = this.config.height || this.container.clientHeight || window.innerHeight * 0.7;
     
+    // 최소 크기 보장
+    if (width <= 0 || height <= 0) {
+      return;
+    }
+    
     this.W = Math.floor(width * this.DPR);
     this.H = Math.floor(height * this.DPR);
+    
+    // 캔버스 크기 제한 (메모리 오류 방지)
+    // getImageData는 최대 약 268MB (4096x4096x4)까지 지원
+    const MAX_CANVAS_SIZE = 4096;
+    if (this.W > MAX_CANVAS_SIZE || this.H > MAX_CANVAS_SIZE) {
+      const scale = Math.min(MAX_CANVAS_SIZE / this.W, MAX_CANVAS_SIZE / this.H);
+      this.W = Math.floor(this.W * scale);
+      this.H = Math.floor(this.H * scale);
+      this.DPR = this.DPR * scale;
+    }
     
     this.canvas.width = this.W;
     this.canvas.height = this.H;
     this.canvas.style.width = width + 'px';
     this.canvas.style.height = height + 'px';
 
-    this.buildTargets();
-    if (!this.particles.length) {
-      this.initParticles();
+    // 크기가 유효할 때만 buildTargets 실행
+    if (this.W > 0 && this.H > 0) {
+      this.buildTargets();
+      if (!this.particles.length) {
+        this.initParticles();
+      }
     }
   }
 
   buildTargets(): void {
+    // 크기 검증
+    if (this.W <= 0 || this.H <= 0) {
+      return;
+    }
+    
     const text = this.config.text;
     this.offCanvas.width = this.W;
     this.offCanvas.height = this.H;
