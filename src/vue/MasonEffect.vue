@@ -4,7 +4,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
-import { MasonEffect, type MasonEffectOptions } from '../core/index';
+import { MasonEffect } from '../core/index';
+import type { MasonEffectOptions } from '../core/index';
 
 interface Props extends Partial<MasonEffectOptions> {
   className?: string;
