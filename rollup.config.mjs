@@ -92,6 +92,10 @@ const reactIndexBuild = {
       file: 'dist/react/index.mjs',
       format: 'es',
     },
+    {
+      file: 'dist/react/index.cjs',
+      format: 'cjs',
+    },
   ],
   external: ['react', 'react-dom', './MasonEffect'],
   plugins: [
