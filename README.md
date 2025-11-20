@@ -1,4 +1,4 @@
-# MasonEffect ![npm](https://img.shields.io/npm/dw/masoneffect)
+# MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
 **Release version 1.0.23**
 
