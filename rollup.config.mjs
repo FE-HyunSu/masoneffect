@@ -58,6 +58,30 @@ const coreBuild = {
   ],
 };
 
+// UMD build (for CDN usage)
+const umdBuild = {
+  input: 'src/index.umd.ts',
+  output: [
+    {
+      file: 'dist/index.umd.min.js',
+      format: 'umd',
+      name: 'MasonEffect',
+      exports: 'default',
+    },
+  ],
+  plugins: [
+    ...basePlugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: false,
+      declarationMap: false,
+      sourceMap: false,
+      rootDir: 'src',
+    }),
+    terser(terserOptions),
+  ],
+};
+
 // React component build (ESM + CJS)
 const reactBuild = {
   input: 'src/react/MasonEffect.tsx',
@@ -135,6 +159,7 @@ const reactIndexBuild = {
 
 export default [
   coreBuild,
+  umdBuild,
   reactBuild,
   reactIndexBuild,
 ];
