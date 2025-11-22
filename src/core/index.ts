@@ -233,6 +233,85 @@ export class MasonEffect {
     }
   }
 
+  /**
+   * 텍스트가 영역 안에 들어가는지 확인하는 헬퍼 함수 (줄바꿈 지원)
+   * @param fontSize 확인할 폰트 크기
+   * @param text 텍스트 (\n으로 줄바꿈 구분)
+   * @param maxWidth 최대 너비
+   * @param maxHeight 최대 높이
+   * @returns { width: number, height: number, fits: boolean }
+   */
+  private measureTextFit(fontSize: number, text: string, maxWidth: number, maxHeight: number): { width: number; height: number; fits: boolean } {
+    this.offCtx.font = `400 ${fontSize}px ${this.config.fontFamily}`;
+    
+    // 줄바꿈으로 텍스트 분리
+    const lines = text.split('\n');
+    const lineHeight = fontSize;
+    const lineSpacing = fontSize * 0.2; // 줄 간격
+    const spacing = fontSize * 0.05; // 글자 간격
+    
+    let maxLineWidth = 0;
+    
+    // 각 줄의 너비 계산
+    for (const line of lines) {
+      if (line.length === 0) continue; // 빈 줄 스킵
+      
+      const textWidth = this.offCtx.measureText(line).width;
+      const totalWidth = textWidth + spacing * (line.length > 0 ? line.length - 1 : 0);
+      maxLineWidth = Math.max(maxLineWidth, totalWidth);
+    }
+    
+    // 전체 높이 계산 (줄 높이 + 줄 간격)
+    const totalHeight = lines.length > 0 
+      ? (lineHeight * lines.length) + (lineSpacing * (lines.length - 1))
+      : lineHeight;
+    
+    return {
+      width: maxLineWidth,
+      height: totalHeight,
+      fits: maxLineWidth <= maxWidth && totalHeight <= maxHeight
+    };
+  }
+
+  /**
+   * 이진 검색을 사용하여 적절한 폰트 크기를 찾는 최적화된 함수
+   * 반복 횟수를 O(log n)으로 줄여 성능 개선 (최대 15회 반복, 기존 최대 100회에서 대폭 감소)
+   */
+  private findOptimalFontSize(text: string, maxWidth: number, maxHeight: number, initialFontSize: number): number {
+    const minFontSize = 12;
+    
+    // 초기값이 이미 맞는지 확인 (최적화: 불필요한 계산 방지)
+    const initialMeasure = this.measureTextFit(initialFontSize, text, maxWidth, maxHeight);
+    if (initialMeasure.fits) {
+      return initialFontSize;
+    }
+    
+    // 초기값이 너무 작거나 같은 경우
+    if (initialFontSize <= minFontSize) {
+      return minFontSize;
+    }
+    
+    // 이진 검색으로 최적 폰트 크기 찾기
+    let low = minFontSize;
+    let high = initialFontSize;
+    let bestSize = minFontSize;
+    
+    // 최대 15회 반복으로 충분 (log2(3000) ≈ 12)
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const measure = this.measureTextFit(mid, text, maxWidth, maxHeight);
+      
+      if (measure.fits) {
+        bestSize = mid; // fit하는 크기 기록
+        low = mid + 1; // 더 큰 크기도 시도
+      } else {
+        high = mid - 1; // 더 작은 크기로 시도
+      }
+    }
+    
+    return bestSize;
+  }
+
   buildTargets(): void {
     // 크기 검증
     if (this.W <= 0 || this.H <= 0) {
@@ -244,22 +323,58 @@ export class MasonEffect {
     this.offCanvas.height = this.H;
     this.offCtx.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
 
+    // 초기 폰트 크기 계산 (개선된 추정)
     const base = Math.min(this.W, this.H);
-    const fontSize = this.config.fontSize || Math.max(80, Math.floor(base * 0.18));
+    const initialFontSize = this.config.fontSize || Math.max(80, Math.floor(base * 0.18));
+    
+    // 텍스트가 영역을 벗어나지 않도록 폰트 크기 자동 조정
+    const padding = 40; // 여유 공간 (픽셀)
+    const maxWidth = this.W - padding * 2;
+    const maxHeight = this.H - padding * 2;
+    
+    // 이진 검색으로 최적 폰트 크기 찾기 (성능 최적화)
+    const fontSize = this.findOptimalFontSize(text, maxWidth, maxHeight, initialFontSize);
+    
+    // 최종 렌더링
     this.offCtx.fillStyle = '#ffffff';
     this.offCtx.textAlign = 'center';
     this.offCtx.textBaseline = 'middle';
     this.offCtx.font = `400 ${fontSize}px ${this.config.fontFamily}`;
 
-    // 글자 간격 계산 및 그리기
-    const chars = text.split('');
-    const spacing = fontSize * 0.05;
-    const totalWidth = this.offCtx.measureText(text).width + spacing * (chars.length - 1);
-    let x = this.W / 2 - totalWidth / 2;
+    // 줄바꿈으로 텍스트 분리
+    const lines = text.split('\n');
+    const lineHeight = fontSize;
+    const lineSpacing = fontSize * 0.2; // 줄 간격
+    const spacing = fontSize * 0.05; // 글자 간격
     
-    for (const ch of chars) {
-      this.offCtx.fillText(ch, x + this.offCtx.measureText(ch).width / 2, this.H / 2);
-      x += this.offCtx.measureText(ch).width + spacing;
+    // 전체 텍스트 높이 계산 (세로 중앙 정렬용)
+    const totalTextHeight = lines.length > 0
+      ? (lineHeight * lines.length) + (lineSpacing * (lines.length - 1))
+      : lineHeight;
+    
+    // 첫 번째 줄의 시작 y 위치 (세로 중앙 정렬)
+    let startY = this.H / 2 - totalTextHeight / 2 + lineHeight / 2;
+    
+    // 각 줄 렌더링
+    for (const line of lines) {
+      if (line.length === 0) {
+        // 빈 줄은 줄 간격만큼 아래로 이동
+        startY += lineHeight + lineSpacing;
+        continue;
+      }
+      
+      // 글자 간격 계산 및 그리기
+      const chars = line.split('');
+      const totalWidth = this.offCtx.measureText(line).width + spacing * (chars.length - 1);
+      let x = this.W / 2 - totalWidth / 2;
+      
+      for (const ch of chars) {
+        this.offCtx.fillText(ch, x + this.offCtx.measureText(ch).width / 2, startY);
+        x += this.offCtx.measureText(ch).width + spacing;
+      }
+      
+      // 다음 줄로 이동
+      startY += lineHeight + lineSpacing;
     }
 
     // 픽셀 샘플링
