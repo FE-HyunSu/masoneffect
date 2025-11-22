@@ -247,7 +247,7 @@ export class MasonEffect {
     // 줄바꿈으로 텍스트 분리
     const lines = text.split('\n');
     const lineHeight = fontSize;
-    const lineSpacing = fontSize * 0.2; // 줄 간격
+    const lineSpacing = fontSize * 0.1; // 줄 간격
     const spacing = fontSize * 0.05; // 글자 간격
     
     let maxLineWidth = 0;
@@ -344,7 +344,7 @@ export class MasonEffect {
     // 줄바꿈으로 텍스트 분리
     const lines = text.split('\n');
     const lineHeight = fontSize;
-    const lineSpacing = fontSize * 0.2; // 줄 간격
+    const lineSpacing = fontSize * 0.1; // 줄 간격
     const spacing = fontSize * 0.05; // 글자 간격
     
     // 전체 텍스트 높이 계산 (세로 중앙 정렬용)

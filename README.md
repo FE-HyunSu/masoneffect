@@ -1,6 +1,6 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
-**Release version 1.0.25**
+**Release version 1.0.27**
 
 A library that provides particle morphing effects. It can be used with React, Vue, and vanilla JavaScript.
 
@@ -29,6 +29,9 @@ const effect = new MasonEffect(container, {
 // Change text
 effect.morph({ text: 'New Text' });
 
+// Multi-line text support (use \n for line breaks)
+effect.morph({ text: 'Line 1\nLine 2\nLine 3' });
+
 // Change text along with other properties
 effect.morph({
   text: 'New Text',
@@ -44,7 +47,7 @@ effect.scatter();
 #### Using CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.25/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.27/dist/index.umd.min.js"></script>
 <script>
   const container = document.getElementById('my-container');
   const effect = new MasonEffect(container, {
@@ -58,6 +61,9 @@ effect.scatter();
 
   // Change text
   effect.morph({ text: 'Morphed!' });
+
+  // Multi-line text support
+  effect.morph({ text: 'Line 1\nLine 2\nLine 3' });
 
   // Return particles to initial position
   effect.scatter();
@@ -90,7 +96,7 @@ function App() {
   };
 
   const handleChangeText = () => {
-    const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles'];
+    const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles', 'Line 1\nLine 2'];
     const randomText = texts[Math.floor(Math.random() * texts.length)];
     effectRef.current?.morph({ text: randomText });
   };
@@ -117,6 +123,8 @@ function App() {
             console.log('Ready!', instance);
           }}
         />
+        {/* Multi-line text example */}
+        {/* <MasonEffect text="Line 1\nLine 2\nLine 3" /> */}
       </div>
       <div style={{ padding: '20px', display: 'flex', gap: '10px' }}>
         <button onClick={handleMorph}>Morph</button>
@@ -151,9 +159,9 @@ const handleScatter = () => {
 };
 
 const handleChangeText = () => {
-  const texts = ['Hello', 'World', 'Mason', 'Effect'];
+  const texts = ['Hello', 'World', 'Mason', 'Effect', 'Line 1\nLine 2'];
   const randomText = texts[Math.floor(Math.random() * texts.length)];
-  effectRef.value?.morph(randomText);
+  effectRef.value?.morph({ text: randomText });
 };
 
 const onReady = (instance) => {
@@ -170,6 +178,8 @@ const onReady = (instance) => {
       :max-particles="2000"
       @ready="onReady"
     />
+    <!-- Multi-line text example -->
+    <!-- <MasonEffect text="Line 1\nLine 2\nLine 3" /> -->
     <div style="padding: 20px; display: flex; gap: 10px">
       <button @click="handleMorph">Morph</button>
       <button @click="handleScatter">Scatter</button>
@@ -185,7 +195,7 @@ const onReady = (instance) => {
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `text` | `string` | `'mason effect'` | Text to display |
+| `text` | `string` | `'mason effect'` | Text to display (use `\n` for line breaks) |
 | `densityStep` | `number` | `2` | Particle sampling density (smaller = denser) |
 | `maxParticles` | `number` | `3200` | Maximum number of particles |
 | `pointSize` | `number` | `0.5` | Particle point size |
@@ -194,7 +204,7 @@ const onReady = (instance) => {
 | `repelStrength` | `number` | `1` | Mouse repel strength |
 | `particleColor` | `string` | `'#fff'` | Particle color |
 | `fontFamily` | `string` | `'Inter, system-ui, Arial'` | Font family |
-| `fontSize` | `number \| null` | `null` | Font size (auto if null) |
+| `fontSize` | `number \| null` | `null` | Font size (auto-adjusts to fit container if null, responsive to screen size) |
 | `width` | `number \| null` | `null` | Canvas width (container size if null) |
 | `height` | `number \| null` | `null` | Canvas height (container size if null) |
 | `devicePixelRatio` | `number \| null` | `null` | Device pixel ratio (auto if null) |
@@ -247,6 +257,8 @@ Destroys the instance and cleans up resources.
 - 👁️ **IntersectionObserver**: Automatically pauses animation when not visible (saves resources)
 - ⏱️ **Debouncing**: Prevents excessive calls on resize, morph, and updateConfig methods
 - 🎛️ **Configurable debounce delay**: Adjust or disable debouncing via `debounceDelay` option
+- 📝 **Multi-line text support**: Use `\n` to create line breaks in text
+- 🔤 **Auto font size adjustment**: Automatically adjusts font size to fit within the container (responsive to screen size)
 
 ## Development
 
