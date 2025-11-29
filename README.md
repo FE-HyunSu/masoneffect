@@ -1,8 +1,8 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
-**Release version 1.0.28**
+**Release version 1.0.29**
 
-A library that provides particle morphing effects. It can be used with React, Vue, and vanilla JavaScript.
+A library that provides particle morphing effects. It can be used with React, Vue, Svelte, and vanilla JavaScript.
 
 ## Installation
 
@@ -47,7 +47,7 @@ effect.scatter();
 #### Using CDN (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.28/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.29/dist/index.umd.min.js"></script>
 <script>
   const container = document.getElementById('my-container');
   const effect = new MasonEffect(container, {
