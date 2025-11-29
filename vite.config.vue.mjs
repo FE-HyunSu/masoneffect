@@ -24,12 +24,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
+      '@': resolve(import.meta.dirname, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/vue/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/vue/index.ts'),
       name: 'MasonEffectVue',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,

@@ -20,13 +20,20 @@
       "import": "./dist/vue/index.mjs",
       "require": "./dist/vue/index.cjs",
       "types": "./dist/vue/index.d.ts"
+    },
+    "./svelte": {
+      "import": "./dist/svelte/index.mjs",
+      "require": "./dist/svelte/index.cjs",
+      "types": "./dist/svelte/index.d.ts"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs && vite build && node scripts/generate-react-types.js",
+    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:svelte && node scripts/generate-react-types.js",
+    "build:vue": "vite build --config vite.config.vue.mjs",
+    "build:svelte": "vite build --config vite.config.svelte.mjs",
     "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",
@@ -57,12 +64,15 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-vue": "^5.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "rollup": "^4.9.0",
+    "svelte": "^4.0.0",
+    "svelte-preprocess": "^6.0.3",
     "tslib": "^2.8.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
@@ -70,6 +80,7 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0 || >=19.0.0-0",
+    "svelte": "^3.0.0 || ^4.0.0 || ^5.0.0",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
@@ -77,6 +88,9 @@
       "optional": true
     },
     "vue": {
+      "optional": true
+    },
+    "svelte": {
       "optional": true
     }
   }

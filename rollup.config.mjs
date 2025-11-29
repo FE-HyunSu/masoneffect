@@ -53,6 +53,7 @@ const coreBuild = {
       declaration: true,
       declarationDir: 'dist',
       rootDir: 'src',
+      exclude: ['src/vue/**/*', 'src/svelte/**/*'],
     }),
     terser(terserOptions),
   ],
@@ -77,6 +78,7 @@ const umdBuild = {
       declarationMap: false,
       sourceMap: false,
       rootDir: 'src',
+      exclude: ['src/vue/**/*', 'src/svelte/**/*'],
     }),
     terser(terserOptions),
   ],
@@ -103,6 +105,7 @@ const reactBuild = {
       declaration: true,
       declarationDir: 'dist/react',
       rootDir: 'src',
+      exclude: ['src/vue/**/*', 'src/svelte/**/*'],
     }),
     terser(terserOptions),
   ],
@@ -138,6 +141,7 @@ const reactIndexBuild = {
       declarationDir: 'dist/react',
       rootDir: 'src',
       declarationMap: false,
+      exclude: ['src/vue/**/*', 'src/svelte/**/*'],
     }),
     // Resolve MasonEffect import to use .mjs extension for ESM
     {

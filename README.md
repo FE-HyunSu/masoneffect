@@ -189,6 +189,52 @@ const onReady = (instance) => {
 </template>
 ```
 
+### Svelte
+
+```svelte
+<script>
+  import MasonEffect from 'masoneffect/svelte';
+  import { createEventDispatcher } from 'svelte';
+
+  let effectRef;
+
+  const handleMorph = () => {
+    effectRef?.morph({ text: 'Morphed!' });
+  };
+
+  const handleScatter = () => {
+    effectRef?.scatter();
+  };
+
+  const handleChangeText = () => {
+    const texts = ['Hello', 'World', 'Mason', 'Effect', 'Line 1\nLine 2'];
+    const randomText = texts[Math.floor(Math.random() * texts.length)];
+    effectRef?.morph({ text: randomText });
+  };
+
+  const onReady = (instance) => {
+    console.log('Ready!', instance);
+  };
+</script>
+
+<div style="width: 100%; height: 70vh; background: #000">
+  <MasonEffect
+    bind:this={effectRef}
+    text="Hello Svelte"
+    particleColor="#00ff88"
+    maxParticles={2000}
+    on:ready={onReady}
+  />
+  <div style="padding: 20px; display: flex; gap: 10px">
+    <button on:click={handleMorph}>Morph</button>
+    <button on:click={handleScatter}>Scatter</button>
+    <button on:click={handleChangeText}>Change Text</button>
+  </div>
+</div>
+```
+
+**Note**: In Svelte, you can access component methods using `bind:this`. The component exposes `morph()`, `scatter()`, `updateConfig()`, and `destroy()` methods.
+
 ## API
 
 ### Options
@@ -250,7 +296,7 @@ Destroys the instance and cleans up resources.
 - 🖱️ Mouse interaction support (repel/attract)
 - 📱 Responsive design
 - ⚡ High-performance Canvas rendering
-- 🔧 Supports React, Vue, and vanilla JS (including CDN)
+- 🔧 Supports React, Vue, Svelte, and vanilla JS (including CDN)
 - 🎯 Includes TypeScript type definitions
 - 💾 Automatic obfuscation and optimization in production builds
 - 🔄 Scatter effect that returns to initial position
@@ -283,6 +329,7 @@ Running the build will generate the following files:
 - **Core library**: `dist/index.mjs` (ESM), `dist/index.cjs` (CommonJS), `dist/index.d.ts` (TypeScript types)
 - **React component**: `dist/react/index.mjs`, `dist/react/index.cjs`, `dist/react/index.d.ts`
 - **Vue component**: `dist/vue/index.mjs`, `dist/vue/index.cjs`, `dist/vue/index.d.ts`
+- **Svelte component**: `dist/svelte/index.mjs`, `dist/svelte/index.cjs`, `dist/svelte/index.d.ts`
 - **UMD build**: `dist/index.umd.min.js` (for CDN usage)
 
 When installed via npm, the appropriate module format is automatically selected based on your bundler. The UMD files (`index.umd.min.js`) can be used directly in browsers via CDN or script tags.
