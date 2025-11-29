@@ -192,17 +192,19 @@ const onReady = (instance) => {
 ### Svelte
 
 ```svelte
-<script>
+<script lang="ts">
   import MasonEffect from 'masoneffect/svelte';
-  import { createEventDispatcher } from 'svelte';
+  import type { MasonEffect as MasonEffectType } from 'masoneffect';
 
-  let effectRef;
+  let effectRef: MasonEffect | null = null;
 
   const handleMorph = () => {
+    // Change text
     effectRef?.morph({ text: 'Morphed!' });
   };
 
   const handleScatter = () => {
+    // Return particles to initial position
     effectRef?.scatter();
   };
 
@@ -212,28 +214,41 @@ const onReady = (instance) => {
     effectRef?.morph({ text: randomText });
   };
 
-  const onReady = (instance) => {
+  const handleChangeWithOptions = () => {
+    // Change text along with other properties
+    effectRef?.morph({
+      text: 'New Text',
+      particleColor: '#ff00ff',
+      maxParticles: 3000,
+      pointSize: 1.0,
+    });
+  };
+
+  const onReady = (instance: MasonEffectType) => {
     console.log('Ready!', instance);
   };
 </script>
 
-<div style="width: 100%; height: 70vh; background: #000">
-  <MasonEffect
-    bind:this={effectRef}
-    text="Hello Svelte"
-    particleColor="#00ff88"
-    maxParticles={2000}
-    on:ready={onReady}
-  />
+<div style="width: 100%; height: 70vh; background: #000; display: flex; flex-direction: column">
+  <div style="flex: 1; position: relative; min-height: 400px">
+    <MasonEffect
+      bind:this={effectRef}
+      text="Hello Svelte"
+      particleColor="#00ff88"
+      maxParticles={2000}
+      on:ready={onReady}
+    />
+  </div>
   <div style="padding: 20px; display: flex; gap: 10px">
     <button on:click={handleMorph}>Morph</button>
     <button on:click={handleScatter}>Scatter</button>
     <button on:click={handleChangeText}>Change Text</button>
+    <button on:click={handleChangeWithOptions}>Change with Options</button>
   </div>
 </div>
 ```
 
-**Note**: In Svelte, you can access component methods using `bind:this`. The component exposes `morph()`, `scatter()`, `updateConfig()`, and `destroy()` methods.
+**Note**: In Svelte, you can access component methods using `bind:this`. The component exposes `morph()`, `scatter()`, `updateConfig()`, and `destroy()` methods. Make sure to specify an explicit size for the container.
 
 ## API
 
