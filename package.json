@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "A library that provides particle morphing effects. It can be used with React, Vue, Svelte, and vanilla JavaScript.",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
