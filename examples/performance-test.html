@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MasonEffect Performance Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #3a3a3a;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    .stat-value.warning {
+      color: #FF9800;
+    }
+    .stat-value.error {
+      color: #F44336;
+    }
+    .canvas-container {
+      width: 100%;
+      height: 600px;
+      background: #000;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    .chart {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      height: 200px;
+    }
+    .fps-chart {
+      display: flex;
+      align-items: flex-end;
+      height: 150px;
+      gap: 2px;
+    }
+    .fps-bar {
+      flex: 1;
+      background: #4CAF50;
+      min-height: 1px;
+      transition: height 0.1s;
+    }
+    .fps-bar.warning {
+      background: #FF9800;
+    }
+    .fps-bar.error {
+      background: #F44336;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MasonEffect Performance Monitor</h1>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">FPS (Frames Per Second)</div>
+        <div class="stat-value" id="fps">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Frame Time (ms)</div>
+        <div class="stat-value" id="frameTime">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">getImageData Time (ms)</div>
+        <div class="stat-value" id="getImageDataTime">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Memory Usage (MB)</div>
+        <div class="stat-value" id="memory">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Particles Count</div>
+        <div class="stat-value" id="particles">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Canvas Size</div>
+        <div class="stat-value" id="canvasSize">--</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn">Start Animation</button>
+      <button id="stopBtn" disabled>Stop Animation</button>
+      <button id="morphBtn">Morph Text</button>
+      <button id="resetBtn">Reset Stats</button>
+    </div>
+
+    <div class="canvas-container" id="canvasContainer"></div>
+
+    <div class="chart">
+      <h3>FPS History (Last 60 frames)</h3>
+      <div class="fps-chart" id="fpsChart"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.28/dist/index.umd.min.js"></script>
+  <script>
+    // Performance monitoring
+    let fps = 0;
+    let frameTime = 0;
+    let getImageDataTime = 0;
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let fpsHistory = [];
+    let instance = null;
+    let isRunning = false;
+
+    // FPS 계산
+    function updateFPS() {
+      const now = performance.now();
+      const delta = now - lastTime;
+      lastTime = now;
+      
+      frameTime = delta;
+      fps = Math.round(1000 / delta);
+      
+      // FPS 히스토리 업데이트 (최대 60프레임)
+      fpsHistory.push(fps);
+      if (fpsHistory.length > 60) {
+        fpsHistory.shift();
+      }
+      
+      // UI 업데이트
+      updateStats();
+      updateFPSChart();
+      
+      if (isRunning) {
+        requestAnimationFrame(updateFPS);
+      }
+    }
+
+    // 통계 업데이트
+    function updateStats() {
+      const fpsEl = document.getElementById('fps');
+      const frameTimeEl = document.getElementById('frameTime');
+      const getImageDataTimeEl = document.getElementById('getImageDataTime');
+      const memoryEl = document.getElementById('memory');
+      const particlesEl = document.getElementById('particles');
+      const canvasSizeEl = document.getElementById('canvasSize');
+
+      // FPS 표시
+      fpsEl.textContent = fps;
+      fpsEl.className = 'stat-value';
+      if (fps < 30) {
+        fpsEl.classList.add('error');
+      } else if (fps < 50) {
+        fpsEl.classList.add('warning');
+      }
+
+      // Frame Time 표시
+      frameTimeEl.textContent = frameTime.toFixed(2);
+      frameTimeEl.className = 'stat-value';
+      if (frameTime > 33.33) { // 30fps 기준
+        frameTimeEl.classList.add('error');
+      } else if (frameTime > 20) { // 50fps 기준
+        frameTimeEl.classList.add('warning');
+      }
+
+      // getImageData 시간 표시
+      getImageDataTimeEl.textContent = getImageDataTime.toFixed(2);
+      getImageDataTimeEl.className = 'stat-value';
+      if (getImageDataTime > 16.67) { // 60fps 기준
+        getImageDataTimeEl.classList.add('error');
+      } else if (getImageDataTime > 10) {
+        getImageDataTimeEl.classList.add('warning');
+      }
+
+      // Memory 표시 (Chrome만 지원)
+      if (performance.memory) {
+        const memoryMB = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2);
+        memoryEl.textContent = memoryMB;
+      } else {
+        memoryEl.textContent = 'N/A';
+      }
+
+      // Particles 표시
+      if (instance && instance.particles) {
+        particlesEl.textContent = instance.particles.length;
+      }
+
+      // Canvas Size 표시
+      if (instance && instance.canvas) {
+        canvasSizeEl.textContent = `${instance.canvas.width}×${instance.canvas.height}`;
+      }
+    }
+
+    // FPS 차트 업데이트
+    function updateFPSChart() {
+      const chart = document.getElementById('fpsChart');
+      chart.innerHTML = '';
+      
+      const maxFPS = 60;
+      fpsHistory.forEach(fpsValue => {
+        const bar = document.createElement('div');
+        bar.className = 'fps-bar';
+        const height = (fpsValue / maxFPS) * 100;
+        bar.style.height = `${height}%`;
+        
+        if (fpsValue < 30) {
+          bar.classList.add('error');
+        } else if (fpsValue < 50) {
+          bar.classList.add('warning');
+        }
+        
+        chart.appendChild(bar);
+      });
+    }
+
+    // getImageData 시간 측정을 위한 패치
+    function patchGetImageData() {
+      if (!instance || !instance.offCtx) return;
+      
+      const originalGetImageData = instance.offCtx.getImageData.bind(instance.offCtx);
+      instance.offCtx.getImageData = function(...args) {
+        const start = performance.now();
+        const result = originalGetImageData(...args);
+        const end = performance.now();
+        getImageDataTime = end - start;
+        return result;
+      };
+    }
+
+    // 초기화
+    const container = document.getElementById('canvasContainer');
+    instance = new MasonEffect(container, {
+      text: 'Performance Test',
+      maxParticles: 3200,
+      densityStep: 2,
+      onReady: () => {
+        patchGetImageData();
+        console.log('MasonEffect initialized');
+      }
+    });
+
+    // 버튼 이벤트
+    document.getElementById('startBtn').addEventListener('click', () => {
+      isRunning = true;
+      lastTime = performance.now();
+      updateFPS();
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      isRunning = false;
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+    });
+
+    document.getElementById('morphBtn').addEventListener('click', () => {
+      const texts = [
+        'Performance Test',
+        '60 FPS Target',
+        'Smooth Animation',
+        'Optimized Rendering',
+        'willReadFrequently'
+      ];
+      const randomText = texts[Math.floor(Math.random() * texts.length)];
+      instance.morph({ text: randomText });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      fpsHistory = [];
+      getImageDataTime = 0;
+      updateFPSChart();
+      updateStats();
+    });
+
+    // 초기 통계 표시
+    updateStats();
+  </script>
+</body>
+</html>
+

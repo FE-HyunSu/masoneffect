@@ -106,7 +106,7 @@ export class MasonEffect {
 
     // 캔버스 생성
     this.canvas = document.createElement('canvas');
-    const ctx = this.canvas.getContext('2d');
+    const ctx = this.canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) {
       throw new Error('Canvas context not available');
     }
@@ -116,7 +116,7 @@ export class MasonEffect {
 
     // 오프스크린 캔버스 (텍스트 렌더링용)
     this.offCanvas = document.createElement('canvas');
-    const offCtx = this.offCanvas.getContext('2d');
+    const offCtx = this.offCanvas.getContext('2d', { willReadFrequently: true });
     if (!offCtx) {
       throw new Error('Offscreen canvas context not available');
     }
