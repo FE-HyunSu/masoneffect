@@ -1,7 +1,7 @@
 {
   "name": "masoneffect",
-  "version": "1.0.30",
-  "description": "A library that provides particle morphing effects. It can be used with React, Vue, Svelte, and vanilla JavaScript.",
+  "version": "2.0.1",
+  "description": "A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with Tree-shaking support.",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,29 +11,73 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
+    "./textToParticle": {
+      "import": "./dist/textToParticle/index.mjs",
+      "require": "./dist/textToParticle/index.cjs",
+      "types": "./dist/textToParticle/index.d.ts"
+    },
+    "./count": {
+      "import": "./dist/count/index.mjs",
+      "require": "./dist/count/index.cjs",
+      "types": "./dist/count/index.d.ts"
+    },
     "./react": {
       "import": "./dist/react/index.mjs",
       "require": "./dist/react/index.cjs",
       "types": "./dist/react/index.d.ts"
+    },
+    "./react/textToParticle": {
+      "import": "./dist/react/textToParticle/index.mjs",
+      "require": "./dist/react/textToParticle/index.cjs",
+      "types": "./dist/react/textToParticle/index.d.ts"
+    },
+    "./react/count": {
+      "import": "./dist/react/count/index.mjs",
+      "require": "./dist/react/count/index.cjs",
+      "types": "./dist/react/count/index.d.ts"
     },
     "./vue": {
       "import": "./dist/vue/index.mjs",
       "require": "./dist/vue/index.cjs",
       "types": "./dist/vue/index.d.ts"
     },
+    "./vue/textToParticle": {
+      "import": "./dist/vue/textToParticle/index.mjs",
+      "require": "./dist/vue/textToParticle/index.cjs",
+      "types": "./dist/vue/textToParticle/index.d.ts"
+    },
+    "./vue/count": {
+      "import": "./dist/vue/count/index.mjs",
+      "require": "./dist/vue/count/index.cjs",
+      "types": "./dist/vue/count/index.d.ts"
+    },
     "./svelte": {
       "import": "./dist/svelte/index.mjs",
       "require": "./dist/svelte/index.cjs",
       "types": "./dist/svelte/index.d.ts"
+    },
+    "./svelte/textToParticle": {
+      "import": "./dist/svelte/textToParticle/index.mjs",
+      "require": "./dist/svelte/textToParticle/index.cjs",
+      "types": "./dist/svelte/textToParticle/index.d.ts"
+    },
+    "./svelte/count": {
+      "import": "./dist/svelte/count/index.mjs",
+      "require": "./dist/svelte/count/index.cjs",
+      "types": "./dist/svelte/count/index.d.ts"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:svelte && node scripts/generate-react-types.js",
+    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:vue:textToParticle && npm run build:vue:count && npm run build:svelte && npm run build:svelte:textToParticle && npm run build:svelte:count && node scripts/generate-react-types.js",
     "build:vue": "vite build --config vite.config.vue.mjs",
+    "build:vue:textToParticle": "vite build --config vite.config.vue.textToParticle.mjs",
+    "build:vue:count": "vite build --config vite.config.vue.count.mjs",
     "build:svelte": "vite build --config vite.config.svelte.mjs",
+    "build:svelte:textToParticle": "vite build --config vite.config.svelte.textToParticle.mjs",
+    "build:svelte:count": "vite build --config vite.config.svelte.count.mjs",
     "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",
@@ -41,13 +85,18 @@
     "prepublishOnly": "npm run build && npm run precheck"
   },
   "keywords": [
+    "animation",
+    "effects",
     "particles",
     "morphing",
+    "count",
     "canvas",
-    "animation",
     "react",
     "vue",
-    "vanilla-js"
+    "svelte",
+    "vanilla-js",
+    "tree-shaking",
+    "typescript"
   ],
   "author": "mason.dev fe.hyunsu@gmail.com",
   "license": "MIT",

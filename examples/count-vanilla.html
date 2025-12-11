@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MasonEffect Count - Vanilla JS Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 60px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .demo-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    
+    .demo-section h2 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+    
+    .count-display {
+      font-size: 4rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 40px 0;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    button {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    
+    .scroll-hint {
+      text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 MasonEffect Count</h1>
+    
+    <div class="demo-section">
+      <h2>기본 카운팅</h2>
+      <div id="count-1" class="count-display">0</div>
+      <div class="controls">
+        <button onclick="resetCount1()">Reset</button>
+        <button onclick="restartCount1()">Restart</button>
+      </div>
+      <div class="info">
+        <strong>설정:</strong> 0부터 1000까지 2초 동안 카운팅
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>빠른 카운팅</h2>
+      <div id="count-2" class="count-display">0</div>
+      <div class="controls">
+        <button onclick="resetCount2()">Reset</button>
+        <button onclick="restartCount2()">Restart</button>
+      </div>
+      <div class="info">
+        <strong>설정:</strong> 0부터 5000까지 1초 동안 카운팅 (빠른 애니메이션)
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>천 단위 구분자</h2>
+      <div id="count-3" class="count-display">0</div>
+      <div class="controls">
+        <button onclick="resetCount3()">Reset</button>
+        <button onclick="restartCount3()">Restart</button>
+      </div>
+      <div class="info">
+        <strong>설정:</strong> 0부터 1,000,000까지 3초 동안 카운팅
+      </div>
+    </div>
+    
+    <div class="scroll-hint">
+      <p>⬇️ 아래로 스크롤하면 자동으로 카운팅이 시작됩니다! ⬇️</p>
+    </div>
+    
+    <!-- 스크롤 시 자동 시작 예제 -->
+    <div class="demo-section" style="margin-top: 100vh;">
+      <h2>스크롤 시 자동 시작</h2>
+      <div id="count-4" class="count-display">0</div>
+      <div class="info">
+        <strong>설정:</strong> 화면에 보일 때 자동으로 시작 (IntersectionObserver 사용)
+        <br>0부터 999까지 2.5초 동안 카운팅
+      </div>
+    </div>
+    
+    <div class="demo-section">
+      <h2>다양한 Easing 효과</h2>
+      <div id="count-5" class="count-display">0</div>
+      <div class="controls">
+        <button onclick="changeEasing('linear')">Linear</button>
+        <button onclick="changeEasing('easeOutQuad')">Ease Out Quad</button>
+        <button onclick="changeEasing('easeOutCubic')">Ease Out Cubic</button>
+        <button onclick="changeEasing('easeInOutQuad')">Ease In Out Quad</button>
+      </div>
+      <div class="info">
+        <strong>현재 Easing:</strong> <span id="current-easing">linear</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // 모듈 방식으로 import (개발 환경)
+    import { Count, easingFunctions } from '../dist/count/index.mjs';
+    
+    let count1, count2, count3, count4, count5;
+    let currentEasing = easingFunctions.linear;
+    
+    // 기본 카운팅
+    count1 = new Count(document.getElementById('count-1'), {
+      targetValue: 1000,
+      duration: 2000,
+      startValue: 0,
+      enabled: true,
+      easing: easingFunctions.linear,
+      onUpdate: (value) => {
+        document.getElementById('count-1').textContent = value.toLocaleString();
+      },
+      onComplete: () => {
+        console.log('Count 1 completed!');
+      }
+    });
+    
+    // 빠른 카운팅
+    count2 = new Count(document.getElementById('count-2'), {
+      targetValue: 5000,
+      duration: 1000,
+      startValue: 0,
+      enabled: true,
+      easing: easingFunctions.easeOutQuad,
+      onUpdate: (value) => {
+        document.getElementById('count-2').textContent = value.toLocaleString();
+      }
+    });
+    
+    // 천 단위 구분자
+    count3 = new Count(document.getElementById('count-3'), {
+      targetValue: 1000000,
+      duration: 3000,
+      startValue: 0,
+      enabled: true,
+      easing: easingFunctions.easeOutCubic,
+      onUpdate: (value) => {
+        document.getElementById('count-3').textContent = value.toLocaleString();
+      }
+    });
+    
+    // 스크롤 시 자동 시작
+    count4 = new Count(document.getElementById('count-4'), {
+      targetValue: 999,
+      duration: 2500,
+      startValue: 0,
+      enabled: true,
+      easing: easingFunctions.easeOutQuad,
+      threshold: 0.2,
+      rootMargin: '0px 0px -100px 0px',
+      triggerOnce: true,
+      onUpdate: (value) => {
+        document.getElementById('count-4').textContent = value.toLocaleString();
+      }
+    });
+    
+    // 다양한 Easing 효과
+    count5 = new Count(document.getElementById('count-5'), {
+      targetValue: 1000,
+      duration: 2000,
+      startValue: 0,
+      enabled: true,
+      easing: currentEasing,
+      onUpdate: (value) => {
+        document.getElementById('count-5').textContent = value.toLocaleString();
+      }
+    });
+    
+    // 전역 함수들
+    window.resetCount1 = () => {
+      count1.reset();
+    };
+    
+    window.restartCount1 = () => {
+      count1.reset();
+      count1.start();
+    };
+    
+    window.resetCount2 = () => {
+      count2.reset();
+    };
+    
+    window.restartCount2 = () => {
+      count2.reset();
+      count2.start();
+    };
+    
+    window.resetCount3 = () => {
+      count3.reset();
+    };
+    
+    window.restartCount3 = () => {
+      count3.reset();
+      count3.start();
+    };
+    
+    window.changeEasing = (easingName) => {
+      const easingMap = {
+        linear: easingFunctions.linear,
+        easeOutQuad: easingFunctions.easeOutQuad,
+        easeOutCubic: easingFunctions.easeOutCubic,
+        easeInOutQuad: easingFunctions.easeInOutQuad,
+      };
+      
+      currentEasing = easingMap[easingName] || easingFunctions.linear;
+      document.getElementById('current-easing').textContent = easingName;
+      
+      count5.updateConfig({
+        easing: currentEasing
+      });
+      count5.reset();
+      count5.start();
+    };
+  </script>
+</body>
+</html>
+

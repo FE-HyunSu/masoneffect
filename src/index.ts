@@ -1,14 +1,21 @@
 /**
  * MasonEffect - 메인 엔트리 포인트
+ * 
+ * 주의: tree-shaking을 위해 각 이펙트를 직접 import하는 것을 권장합니다:
+ * - import { TextToParticle } from 'masoneffect/textToParticle'
+ * - import { Count } from 'masoneffect/count'
+ * 
+ * 이 파일은 하위 호환성을 위해 제공됩니다.
  */
 
-import MasonEffect from './core/index.js';
+// TextToParticle 효과
+export { TextToParticle, MasonEffect } from './core/index.js';
+export type { TextToParticleOptions, MasonEffectOptions, Particle } from './core/index.js';
 
-// Named export (ES modules, CommonJS용)
-export { MasonEffect };
-export type { MasonEffectOptions, Particle } from './core/index.js';
+// Count 효과
+export { Count } from './core/index.js';
+export type { CountOptions } from './core/index.js';
+export { easingFunctions } from './core/index.js';
 
-// Default export (UMD 빌드에서 전역 변수로 직접 노출됨)
-// CDN 사용 시: new MasonEffect()로 직접 사용 가능
-export default MasonEffect;
-
+// 하위 호환성을 위한 기본 export
+export { default } from './core/index.js';

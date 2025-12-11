@@ -7,4 +7,3 @@ import MasonEffect from './core/index.js';
 
 // Default export만 사용 (UMD 빌드에서 전역 변수로 직접 노출됨)
 export default MasonEffect;
-

@@ -1,26 +1,65 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
-**Release version 1.0.30**
+**Release version 2.0.1**
 
-A library that provides particle morphing effects. It can be used with React, Vue, Svelte, and vanilla JavaScript.
+A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with **Tree-shaking** support.
 
-## Installation
+## ✨ Features
+
+- 🎯 **Tree-shaking Support**: Import only the effects you need
+- 🎨 **Multiple Effects**: Various animation effects in one package
+- 🔧 **Framework Agnostic**: Works with React, Vue, Svelte, and vanilla JS
+- 📦 **TypeScript**: Full TypeScript support
+- ⚡ **Optimized**: Automatic code splitting and optimization
+
+## 📦 Installation
 
 ```bash
 npm install masoneffect
 ```
 
-## Usage
+## 🎯 Available Effects
 
-### Vanilla JavaScript
+### 1. TextToParticle
+Converts text into animated particles with morphing effects.
 
-#### Using npm (ES modules)
+### 2. Count
+Animated number counting with intersection observer support.
+
+---
+
+## 🚀 Quick Start
+
+### Tree-shaking (Recommended)
+
+Import only the effects you need:
+
+```typescript
+// ✅ Recommended: Import only what you need
+import { TextToParticle } from 'masoneffect/textToParticle';
+import { Count } from 'masoneffect/count';
+```
+
+### Legacy Import (Backward Compatible)
+
+```typescript
+// ⚠️ Not recommended: Imports all effects
+import { TextToParticle, Count } from 'masoneffect';
+```
+
+---
+
+## 📖 Usage
+
+### TextToParticle Effect
+
+#### Vanilla JavaScript
 
 ```javascript
-import { MasonEffect } from 'masoneffect';
+import { TextToParticle } from 'masoneffect/textToParticle';
 
 const container = document.getElementById('my-container');
-const effect = new MasonEffect(container, {
+const effect = new TextToParticle(container, {
   text: 'Hello World',
   particleColor: '#00ff88',
   maxParticles: 2000,
@@ -29,230 +68,194 @@ const effect = new MasonEffect(container, {
 // Change text
 effect.morph({ text: 'New Text' });
 
-// Multi-line text support (use \n for line breaks)
+// Multi-line text support
 effect.morph({ text: 'Line 1\nLine 2\nLine 3' });
-
-// Change text along with other properties
-effect.morph({
-  text: 'New Text',
-  particleColor: '#ff00ff',
-  maxParticles: 3000,
-  pointSize: 1.0,
-});
 
 // Return particles to initial position
 effect.scatter();
 ```
 
-#### Using CDN (UMD)
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@1.0.30/dist/index.umd.min.js"></script>
-<script>
-  const container = document.getElementById('my-container');
-  const effect = new MasonEffect(container, {
-    text: 'Hello World',
-    particleColor: '#00ff88',
-    maxParticles: 2000,
-    onReady: (instance) => {
-      console.log('MasonEffect ready!', instance);
-    }
-  });
-
-  // Change text
-  effect.morph({ text: 'Morphed!' });
-
-  // Multi-line text support
-  effect.morph({ text: 'Line 1\nLine 2\nLine 3' });
-
-  // Return particles to initial position
-  effect.scatter();
-
-  // Change text with random selection
-  const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles'];
-  const randomText = texts[Math.floor(Math.random() * texts.length)];
-  effect.morph({ text: randomText });
-</script>
-```
-
-### React
+#### React
 
 ```tsx
 import React, { useRef } from 'react';
-import MasonEffect from 'masoneffect/react';
-import type { MasonEffectRef } from 'masoneffect/react';
+import TextToParticle from 'masoneffect/react/textToParticle';
+import type { TextToParticleRef } from 'masoneffect/react/textToParticle';
 
 function App() {
-  const effectRef = useRef<MasonEffectRef>(null);
-
-  const handleMorph = () => {
-    // Change text
-    effectRef.current?.morph({ text: 'Morphed!' });
-  };
-
-  const handleScatter = () => {
-    // Return particles to initial position
-    effectRef.current?.scatter();
-  };
-
-  const handleChangeText = () => {
-    const texts = ['Hello', 'World', 'Mason', 'Effect', 'Particles', 'Line 1\nLine 2'];
-    const randomText = texts[Math.floor(Math.random() * texts.length)];
-    effectRef.current?.morph({ text: randomText });
-  };
-
-  const handleChangeWithOptions = () => {
-    // Change text along with other properties
-    effectRef.current?.morph({
-      text: 'New Text',
-      particleColor: '#ff00ff',
-      maxParticles: 3000,
-      pointSize: 1.0,
-    });
-  };
+  const effectRef = useRef<TextToParticleRef>(null);
 
   return (
-    <div style={{ width: '100%', height: '70vh', background: '#000', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: 1, position: 'relative', minHeight: 400 }}>
-        <MasonEffect
-          ref={effectRef}
-          text="Hello React"
-          particleColor="#00ff88"
-          maxParticles={2000}
-          onReady={(instance) => {
-            console.log('Ready!', instance);
-          }}
-        />
-        {/* Multi-line text example */}
-        {/* <MasonEffect text="Line 1\nLine 2\nLine 3" /> */}
-      </div>
-      <div style={{ padding: '20px', display: 'flex', gap: '10px' }}>
-        <button onClick={handleMorph}>Morph</button>
-        <button onClick={handleScatter}>Scatter</button>
-        <button onClick={handleChangeText}>Change Text</button>
-        <button onClick={handleChangeWithOptions}>Change with Options</button>
-      </div>
+    <div style={{ width: '100%', height: '70vh', background: '#000' }}>
+      <TextToParticle
+        ref={effectRef}
+        text="Hello React"
+        particleColor="#00ff88"
+        maxParticles={2000}
+        onReady={(instance) => {
+          console.log('Ready!', instance);
+        }}
+      />
+      <button onClick={() => effectRef.current?.morph({ text: 'Morphed!' })}>
+        Morph
+      </button>
     </div>
   );
 }
-
-export default App;
 ```
 
-**⚠️ Note**: When using the React component, you must specify an explicit size for the container. For more details, see the [React Troubleshooting Guide](./REACT_TROUBLESHOOTING.md).
-
-### Vue 3
+#### Vue 3
 
 ```vue
 <script setup>
-import { ref } from 'vue';
-import MasonEffect from 'masoneffect/vue';
+import TextToParticle from 'masoneffect/vue/textToParticle';
 
 const effectRef = ref(null);
-
-const handleMorph = () => {
-  effectRef.value?.morph();
-};
-
-const handleScatter = () => {
-  effectRef.value?.scatter();
-};
-
-const handleChangeText = () => {
-  const texts = ['Hello', 'World', 'Mason', 'Effect', 'Line 1\nLine 2'];
-  const randomText = texts[Math.floor(Math.random() * texts.length)];
-  effectRef.value?.morph({ text: randomText });
-};
-
-const onReady = (instance) => {
-  console.log('Ready!', instance);
-};
 </script>
 
 <template>
   <div style="width: 100%; height: 70vh; background: #000">
-    <MasonEffect
+    <TextToParticle
       ref="effectRef"
       text="Hello Vue"
-      :particle-color="'#00ff88'"
+      particle-color="#00ff88"
       :max-particles="2000"
-      @ready="onReady"
     />
-    <!-- Multi-line text example -->
-    <!-- <MasonEffect text="Line 1\nLine 2\nLine 3" /> -->
-    <div style="padding: 20px; display: flex; gap: 10px">
-      <button @click="handleMorph">Morph</button>
-      <button @click="handleScatter">Scatter</button>
-      <button @click="handleChangeText">Change Text</button>
-    </div>
+    <button @click="effectRef?.morph({ text: 'Morphed!' })">Morph</button>
   </div>
 </template>
 ```
 
-### Svelte
+#### Svelte
 
 ```svelte
 <script lang="ts">
-  import MasonEffect from 'masoneffect/svelte';
-  import type { MasonEffect as MasonEffectType } from 'masoneffect';
+  import TextToParticle from 'masoneffect/svelte/textToParticle';
 
-  let effectRef: MasonEffect | null = null;
-
-  const handleMorph = () => {
-    // Change text
-    effectRef?.morph({ text: 'Morphed!' });
-  };
-
-  const handleScatter = () => {
-    // Return particles to initial position
-    effectRef?.scatter();
-  };
-
-  const handleChangeText = () => {
-    const texts = ['Hello', 'World', 'Mason', 'Effect', 'Line 1\nLine 2'];
-    const randomText = texts[Math.floor(Math.random() * texts.length)];
-    effectRef?.morph({ text: randomText });
-  };
-
-  const handleChangeWithOptions = () => {
-    // Change text along with other properties
-    effectRef?.morph({
-      text: 'New Text',
-      particleColor: '#ff00ff',
-      maxParticles: 3000,
-      pointSize: 1.0,
-    });
-  };
-
-  const onReady = (instance: MasonEffectType) => {
-    console.log('Ready!', instance);
-  };
+  let effectRef: TextToParticle | null = null;
 </script>
 
-<div style="width: 100%; height: 70vh; background: #000; display: flex; flex-direction: column">
-  <div style="flex: 1; position: relative; min-height: 400px">
-    <MasonEffect
-      bind:this={effectRef}
-      text="Hello Svelte"
-      particleColor="#00ff88"
-      maxParticles={2000}
-      on:ready={onReady}
-    />
-  </div>
-  <div style="padding: 20px; display: flex; gap: 10px">
-    <button on:click={handleMorph}>Morph</button>
-    <button on:click={handleScatter}>Scatter</button>
-    <button on:click={handleChangeText}>Change Text</button>
-    <button on:click={handleChangeWithOptions}>Change with Options</button>
-  </div>
+<div style="width: 100%; height: 70vh; background: #000">
+  <TextToParticle
+    bind:this={effectRef}
+    text="Hello Svelte"
+    particleColor="#00ff88"
+    maxParticles={2000}
+  />
+  <button on:click={() => effectRef?.morph({ text: 'Morphed!' })}>
+    Morph
+  </button>
 </div>
 ```
 
-**Note**: In Svelte, you can access component methods using `bind:this`. The component exposes `morph()`, `scatter()`, `updateConfig()`, and `destroy()` methods. Make sure to specify an explicit size for the container.
+---
 
-## API
+### Count Effect
 
-### Options
+#### Vanilla JavaScript
+
+```javascript
+import { Count, easingFunctions } from 'masoneffect/count';
+
+const container = document.getElementById('count-container');
+const count = new Count(container, {
+  targetValue: 1000,
+  duration: 2000,
+  startValue: 0,
+  easing: easingFunctions.easeOutCubic,
+  onUpdate: (value) => {
+    console.log(value);
+  },
+  onComplete: () => {
+    console.log('Complete!');
+  }
+});
+
+// Start animation
+count.start();
+
+// Reset
+count.reset();
+```
+
+#### React
+
+```tsx
+import React, { useRef } from 'react';
+import Count from 'masoneffect/react/count';
+import { easingFunctions } from 'masoneffect/react/count';
+import type { CountRef } from 'masoneffect/react/count';
+
+function App() {
+  const countRef = useRef<CountRef>(null);
+
+  return (
+    <div>
+      <Count
+        ref={countRef}
+        targetValue={1000}
+        duration={2000}
+        easing={easingFunctions.easeOutCubic}
+        onUpdate={(value) => console.log(value)}
+        onComplete={() => console.log('Complete!')}
+        style={{ fontSize: '3rem', fontWeight: 'bold' }}
+      />
+      <button onClick={() => countRef.current?.reset()}>Reset</button>
+      <button onClick={() => countRef.current?.start()}>Start</button>
+    </div>
+  );
+}
+```
+
+#### Vue 3
+
+```vue
+<script setup>
+import Count from 'masoneffect/vue/count';
+import { easingFunctions } from 'masoneffect/vue/count';
+</script>
+
+<template>
+  <div>
+    <Count
+      :target-value="1000"
+      :duration="2000"
+      :easing="easingFunctions.easeOutCubic"
+      @update="(value) => console.log(value)"
+      @complete="() => console.log('Complete!')"
+      style="font-size: 3rem; font-weight: bold"
+    />
+  </div>
+</template>
+```
+
+#### Svelte
+
+```svelte
+<script lang="ts">
+  import Count from 'masoneffect/svelte/count';
+  import { easingFunctions } from 'masoneffect/svelte/count';
+</script>
+
+<div>
+  <Count
+    targetValue={1000}
+    duration={2000}
+    easing={easingFunctions.easeOutCubic}
+    on:update={(e) => console.log(e.detail)}
+    on:complete={() => console.log('Complete!')}
+    style="font-size: 3rem; font-weight: bold"
+  />
+</div>
+```
+
+---
+
+## 📚 API Reference
+
+### TextToParticle
+
+#### Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -265,63 +268,133 @@ const onReady = (instance) => {
 | `repelStrength` | `number` | `1` | Mouse repel strength |
 | `particleColor` | `string` | `'#fff'` | Particle color |
 | `fontFamily` | `string` | `'Inter, system-ui, Arial'` | Font family |
-| `fontSize` | `number \| null` | `null` | Font size (auto-adjusts to fit container if null, responsive to screen size) |
+| `fontSize` | `number \| null` | `null` | Font size (auto-adjusts if null) |
 | `width` | `number \| null` | `null` | Canvas width (container size if null) |
 | `height` | `number \| null` | `null` | Canvas height (container size if null) |
 | `devicePixelRatio` | `number \| null` | `null` | Device pixel ratio (auto if null) |
-| `debounceDelay` | `number` | `150` | Debounce delay in milliseconds for resize, morph, and updateConfig (set to 0 to disable) |
+| `debounceDelay` | `number` | `150` | Debounce delay in milliseconds |
 | `onReady` | `function` | `null` | Initialization complete callback |
 | `onUpdate` | `function` | `null` | Update callback |
 
-### Methods
+#### Methods
 
-#### `morph(textOrOptions?: string | Partial<MasonEffectOptions>)`
-Morphs particles into text form. This method is debounced to prevent excessive calls (default: 150ms delay).
+- `morph(textOrOptions?: string | Partial<TextToParticleOptions>)` - Morph particles into text
+- `scatter()` - Return particles to initial position
+- `updateConfig(config: Partial<TextToParticleOptions>)` - Update configuration
+- `destroy()` - Destroy instance and cleanup
 
-**Using string (legacy support):**
-```javascript
-effect.morph('New Text');
+---
+
+### Count
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `targetValue` | `number` | **required** | Target number to count to |
+| `duration` | `number` | `2000` | Animation duration in milliseconds |
+| `startValue` | `number` | `0` | Starting number |
+| `enabled` | `boolean` | `true` | Enable/disable animation |
+| `easing` | `function` | `linear` | Easing function |
+| `threshold` | `number` | `0.2` | IntersectionObserver threshold |
+| `rootMargin` | `string` | `'0px 0px -100px 0px'` | IntersectionObserver rootMargin |
+| `triggerOnce` | `boolean` | `false` | Trigger animation only once |
+| `onUpdate` | `function` | `null` | Update callback (receives current value) |
+| `onComplete` | `function` | `null` | Animation complete callback |
+
+#### Methods
+
+- `start()` - Start animation
+- `stop()` - Stop animation
+- `reset()` - Reset to start value
+- `getValue()` - Get current value
+- `updateConfig(config: Partial<CountOptions>)` - Update configuration
+- `destroy()` - Destroy instance and cleanup
+
+#### Easing Functions
+
+```typescript
+import { easingFunctions } from 'masoneffect/count';
+
+// Available easing functions:
+easingFunctions.linear
+easingFunctions.easeInQuad
+easingFunctions.easeOutQuad
+easingFunctions.easeInOutQuad
+easingFunctions.easeOutCubic
 ```
 
-**Using object (recommended - change text along with other properties):**
-```javascript
-effect.morph({
-  text: 'New Text',
-  particleColor: '#ff00ff',
-  maxParticles: 3000,
-  pointSize: 1.0,
-  ease: 0.08,
-});
+---
+
+## 🌳 Tree-shaking
+
+MasonEffect supports Tree-shaking, allowing you to import only the effects you need:
+
+```typescript
+// ✅ Recommended: Only imports Count (smaller bundle)
+import { Count } from 'masoneffect/count';
+
+// ❌ Not recommended: Imports all effects (larger bundle)
+import { Count } from 'masoneffect';
 ```
 
-**Note**: Multiple rapid calls will be debounced, and only the last call will be executed after the delay period.
+### Framework-specific imports
 
-#### `scatter()`
-Returns particles to their initial position. Each particle returns to the position where it was first created.
+```typescript
+// React
+import Count from 'masoneffect/react/count';
+import TextToParticle from 'masoneffect/react/textToParticle';
 
-#### `updateConfig(config: Partial<MasonEffectOptions>)`
-Updates the configuration. This method is debounced to prevent excessive calls (default: 150ms delay).
+// Vue
+import Count from 'masoneffect/vue/count';
+import TextToParticle from 'masoneffect/vue/textToParticle';
 
-#### `destroy()`
-Destroys the instance and cleans up resources.
+// Svelte
+import Count from 'masoneffect/svelte/count';
+import TextToParticle from 'masoneffect/svelte/textToParticle';
+```
 
-## Features
+---
 
+## 🔄 Backward Compatibility
+
+For backward compatibility, the old API still works:
+
+```typescript
+// Old API (still works)
+import { MasonEffect } from 'masoneffect';
+import MasonEffect from 'masoneffect/react';
+
+// MasonEffect is an alias for TextToParticle
+const effect = new MasonEffect(container, { text: 'Hello' });
+```
+
+However, we recommend using the new Tree-shaking-friendly imports for better performance.
+
+---
+
+## 🎨 Features
+
+### TextToParticle
 - 🎨 Morphing effect that converts text into particles
 - 🖱️ Mouse interaction support (repel/attract)
 - 📱 Responsive design
 - ⚡ High-performance Canvas rendering
-- 🔧 Supports React, Vue, Svelte, and vanilla JS (including CDN)
-- 🎯 Includes TypeScript type definitions
-- 💾 Automatic obfuscation and optimization in production builds
-- 🔄 Scatter effect that returns to initial position
-- 👁️ **IntersectionObserver**: Automatically pauses animation when not visible (saves resources)
-- ⏱️ **Debouncing**: Prevents excessive calls on resize, morph, and updateConfig methods
-- 🎛️ **Configurable debounce delay**: Adjust or disable debouncing via `debounceDelay` option
-- 📝 **Multi-line text support**: Use `\n` to create line breaks in text
-- 🔤 **Auto font size adjustment**: Automatically adjusts font size to fit within the container (responsive to screen size)
+- 👁️ IntersectionObserver: Automatically pauses when not visible
+- ⏱️ Debouncing: Prevents excessive calls
+- 📝 Multi-line text support
+- 🔤 Auto font size adjustment
 
-## Development
+### Count
+- 🔢 Animated number counting
+- 👁️ IntersectionObserver: Starts when element is visible
+- 🎯 Multiple easing functions
+- ⚡ Smooth animations with requestAnimationFrame
+- 🔄 Reset and restart support
+
+---
+
+## 🛠️ Development
 
 ```bash
 # Install dependencies
@@ -330,25 +403,41 @@ npm install
 # Development mode (watch)
 npm run dev
 
-# Build (generate production min files)
+# Build (generate production files)
 npm run build
 
 # Example test server
 npm run serve
 ```
 
-## Build Output
+---
 
-Running the build will generate the following files:
+## 📦 CDN Usage (UMD)
 
-- **Core library**: `dist/index.mjs` (ESM), `dist/index.cjs` (CommonJS), `dist/index.d.ts` (TypeScript types)
-- **React component**: `dist/react/index.mjs`, `dist/react/index.cjs`, `dist/react/index.d.ts`
-- **Vue component**: `dist/vue/index.mjs`, `dist/vue/index.cjs`, `dist/vue/index.d.ts`
-- **Svelte component**: `dist/svelte/index.mjs`, `dist/svelte/index.cjs`, `dist/svelte/index.d.ts`
-- **UMD build**: `dist/index.umd.min.js` (for CDN usage)
+```html
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.1/dist/index.umd.min.js"></script>
+<script>
+  // TextToParticle (MasonEffect alias for backward compatibility)
+  const container = document.getElementById('my-container');
+  const effect = new MasonEffect(container, {
+    text: 'Hello World',
+    particleColor: '#00ff88',
+  });
+</script>
+```
 
-When installed via npm, the appropriate module format is automatically selected based on your bundler. The UMD files (`index.umd.min.js`) can be used directly in browsers via CDN or script tags.
+**Note**: CDN version includes all effects. For Tree-shaking, use npm package.
 
-## License
+---
+
+## 📄 License
 
 MIT
+
+---
+
+## 🔗 Links
+
+- [GitHub Repository](https://github.com/fe-hyunsu/masoneffect)
+- [Homepage](https://masoneffect.com)
+- [Issues](https://github.com/fe-hyunsu/masoneffect/issues)
