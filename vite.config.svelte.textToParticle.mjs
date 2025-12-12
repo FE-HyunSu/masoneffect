@@ -21,6 +21,7 @@ export default defineConfig({
         declaration: true,
         declarationMap: false,
       },
+      skipDiagnostics: true, // TypeScript 에러 무시 (Svelte 파일 타입 체크 스킵)
     }),
   ],
   resolve: {

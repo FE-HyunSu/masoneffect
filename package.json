@@ -108,6 +108,7 @@
   "bugs": {
     "url": "https://github.com/fe-hyunsu/masoneffect/issues"
   },
+  "aiAgentGuide": "./AI_SETUP_GUIDE.md",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",

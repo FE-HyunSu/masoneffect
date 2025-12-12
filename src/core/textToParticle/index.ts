@@ -628,8 +628,5 @@ export class TextToParticle {
   }
 }
 
-// Named export (tree-shaking 지원)
-export { TextToParticle };
-
 // 기본 export
 export default TextToParticle;

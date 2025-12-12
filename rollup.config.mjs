@@ -54,6 +54,9 @@ const coreBuild = {
       declarationDir: 'dist',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     terser(terserOptions),
   ],
@@ -82,6 +85,9 @@ const textToParticleCoreBuild = {
       declarationDir: 'dist/textToParticle',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     terser(terserOptions),
   ],
@@ -110,6 +116,9 @@ const countCoreBuild = {
       declarationDir: 'dist/count',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     terser(terserOptions),
   ],
@@ -135,6 +144,9 @@ const umdBuild = {
       sourceMap: false,
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     terser(terserOptions),
   ],
@@ -164,6 +176,9 @@ const reactTextToParticleBuild = {
       declarationDir: 'dist/react/textToParticle',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     terser(terserOptions),
   ],
@@ -193,6 +208,9 @@ const reactCountBuild = {
       declarationDir: 'dist/react/count',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     terser(terserOptions),
   ],
@@ -230,6 +248,9 @@ const reactIndexBuild = {
       rootDir: 'src',
       declarationMap: false,
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
     }),
     // Resolve imports to use .mjs extension for ESM
     {

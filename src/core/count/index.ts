@@ -251,9 +251,6 @@ export class Count {
   }
 }
 
-// Named export (tree-shaking 지원)
-export { Count };
-
 // 기본 export
 export default Count;
 
