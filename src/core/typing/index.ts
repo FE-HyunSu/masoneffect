@@ -54,26 +54,57 @@ function decomposeHangul(char: string): string[] {
   return result;
 }
 
+// 한글 자음/모음 합성 함수
+function composeHangul(initial: string, medial: string, final?: string): string {
+  const initialChars = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  const medialChars = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+  const finalChars = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+  const initialIndex = initialChars.indexOf(initial);
+  const medialIndex = medialChars.indexOf(medial);
+  const finalIndex = final ? finalChars.indexOf(final) : 0;
+
+  if (initialIndex === -1 || medialIndex === -1) {
+    return initial + (medial || '') + (final || '');
+  }
+
+  const code = 0xAC00 + (initialIndex * 21 * 28) + (medialIndex * 28) + finalIndex;
+  return String.fromCharCode(code);
+}
+
 // 텍스트를 타이핑 단위로 분해 (한글은 자음/모음, 나머지는 글자 단위)
-function decomposeText(text: string): string[] {
+// 각 글자에 대한 단위 정보도 함께 반환
+function decomposeText(text: string): { units: string[]; charUnitRanges: Array<{ start: number; end: number; isHangul: boolean }> } {
   const units: string[] = [];
+  const charUnitRanges: Array<{ start: number; end: number; isHangul: boolean }> = [];
   
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     const code = char.charCodeAt(0);
+    const startIndex = units.length;
     
     // 한글 유니코드 범위
     if (code >= 0xAC00 && code <= 0xD7A3) {
       // 한글은 자음/모음으로 분해
       const decomposed = decomposeHangul(char);
       units.push(...decomposed);
+      charUnitRanges.push({
+        start: startIndex,
+        end: units.length,
+        isHangul: true
+      });
     } else {
       // 한글이 아니면 한 글자씩
       units.push(char);
+      charUnitRanges.push({
+        start: startIndex,
+        end: units.length,
+        isHangul: false
+      });
     }
   }
   
-  return units;
+  return { units, charUnitRanges };
 }
 
 export class Typing {
@@ -83,6 +114,7 @@ export class Typing {
     onComplete: TypingOptions['onComplete'];
   };
   textUnits: string[]; // 타이핑할 단위들 (한글은 자음/모음, 나머지는 글자)
+  charUnitRanges: Array<{ start: number; end: number; isHangul: boolean }>; // 각 글자의 단위 범위
   currentIndex: number;
   displayedText: string; // 현재 표시된 텍스트
   timeoutId: ReturnType<typeof setTimeout> | null;
@@ -120,12 +152,9 @@ export class Typing {
     };
 
     // 텍스트를 타이핑 단위로 분해
-    this.textUnits = decomposeText(this.config.text);
-    
-    // 원본 텍스트 구조 초기화
-    this.originalChars = [];
-    this.charUnitMap = [];
-    this.initializeTextStructure();
+    const decomposed = decomposeText(this.config.text);
+    this.textUnits = decomposed.units;
+    this.charUnitRanges = decomposed.charUnitRanges;
     
     // 상태
     this.currentIndex = 0;
@@ -183,75 +212,53 @@ export class Typing {
   }
 
   // 단위들을 다시 합쳐서 실제 표시할 텍스트 생성
-  // 원본 텍스트를 글자 단위로 분해하고, 각 글자의 타이핑 단위 정보를 저장
-  private originalChars: string[] = []; // 원본 텍스트의 글자 배열
-  private charUnitMap: number[] = []; // 각 글자에 해당하는 단위 개수
-
-  private initializeTextStructure(): void {
-    this.originalChars = [];
-    this.charUnitMap = [];
+  // 한글의 경우 자음/모음이 하나씩 보이도록 합성
+  private buildTextFromUnits(unitCount: number): string {
+    if (unitCount === 0) return '';
     
-    for (let i = 0; i < this.originalText.length; i++) {
-      const char = this.originalText[i];
-      const code = char.charCodeAt(0);
-      
-      this.originalChars.push(char);
-      
-      // 한글인 경우 자음/모음 개수, 아니면 1
-      if (code >= 0xAC00 && code <= 0xD7A3) {
-        const decomposed = decomposeHangul(char);
-        this.charUnitMap.push(decomposed.length);
-      } else {
-        this.charUnitMap.push(1);
-      }
-    }
-  }
-
-  // 단위 인덱스를 원본 텍스트의 글자 인덱스로 변환
-  // unitIndex: 현재까지 입력된 단위 개수 (0부터 시작)
-  // 반환: 표시할 글자 개수 (0부터 시작, exclusive)
-  private getCharIndexFromUnitIndex(unitIndex: number): number {
-    if (unitIndex === 0) return 0;
+    let result = '';
     
-    let charIndex = 0;
-    let currentUnits = 0;
-    
-    for (let i = 0; i < this.charUnitMap.length; i++) {
-      const unitsForChar = this.charUnitMap[i];
-      currentUnits += unitsForChar;
+    // 각 글자별로 처리
+    for (let charIndex = 0; charIndex < this.charUnitRanges.length; charIndex++) {
+      const range = this.charUnitRanges[charIndex];
       
-      // 현재 글자의 모든 단위가 입력되었는지 확인
-      if (unitIndex >= currentUnits) {
-        charIndex = i + 1; // 이 글자는 완전히 입력됨
-      } else {
-        // 현재 글자의 일부만 입력됨
-        // 한글의 경우 초성+중성까지 입력되면 표시, 아니면 표시 안 함
-        // 영문/숫자의 경우 첫 단위만 입력되면 표시
-        const unitsEntered = unitIndex - (currentUnits - unitsForChar);
-        if (unitsEntered > 0) {
-          // 한글의 경우 최소 2개 단위(초성+중성)가 필요, 영문은 1개
-          const isHangul = this.originalChars[i] && 
-            this.originalChars[i].charCodeAt(0) >= 0xAC00 && 
-            this.originalChars[i].charCodeAt(0) <= 0xD7A3;
-          if (isHangul && unitsEntered >= 2) {
-            charIndex = i + 1; // 초성+중성까지 입력되면 표시
-          } else if (!isHangul && unitsEntered >= 1) {
-            charIndex = i + 1; // 영문/숫자는 첫 단위만 입력되면 표시
-          }
-        }
+      // 이 글자의 단위 범위가 현재 unitCount를 넘어섰는지 확인
+      if (range.start >= unitCount) {
+        // 아직 이 글자까지 도달하지 않음
         break;
       }
+      
+      // 이 글자에 해당하는 단위 개수 계산
+      const unitsEntered = Math.min(unitCount - range.start, range.end - range.start);
+      
+      if (unitsEntered <= 0) {
+        // 이 글자의 단위가 하나도 입력되지 않음
+        break;
+      }
+      
+      if (range.isHangul) {
+        // 한글의 경우: 자음/모음을 하나씩 합성
+        const charUnits = this.textUnits.slice(range.start, range.start + unitsEntered);
+        
+        if (charUnits.length === 1) {
+          // 초성만
+          result += charUnits[0];
+        } else if (charUnits.length === 2) {
+          // 초성 + 중성
+          result += composeHangul(charUnits[0], charUnits[1]);
+        } else if (charUnits.length >= 3) {
+          // 초성 + 중성 + 종성
+          result += composeHangul(charUnits[0], charUnits[1], charUnits[2]);
+        }
+      } else {
+        // 한글이 아닌 경우: 단위 그대로 표시 (1개만)
+        if (unitsEntered > 0) {
+          result += this.textUnits[range.start];
+        }
+      }
     }
     
-    return charIndex;
-  }
-
-  // 단위들을 다시 합쳐서 실제 표시할 텍스트 생성
-  private buildTextFromUnits(units: string[]): string {
-    if (units.length === 0) return '';
-    
-    const charIndex = this.getCharIndexFromUnitIndex(units.length);
-    return this.originalText.substring(0, charIndex);
+    return result;
   }
 
   start(): void {
@@ -280,8 +287,7 @@ export class Typing {
     }
 
     // 다음 단위 추가
-    const unitsToShow = this.textUnits.slice(0, this.currentIndex + 1);
-    this.displayedText = this.buildTextFromUnits(unitsToShow);
+    this.displayedText = this.buildTextFromUnits(this.currentIndex + 1);
     
     // 커서 추가
     let displayText = this.displayedText;
@@ -327,8 +333,9 @@ export class Typing {
   setText(newText: string): void {
     this.originalText = newText;
     this.config.text = newText;
-    this.textUnits = decomposeText(newText);
-    this.initializeTextStructure();
+    const decomposed = decomposeText(newText);
+    this.textUnits = decomposed.units;
+    this.charUnitRanges = decomposed.charUnitRanges;
     this.reset();
     
     if (this.config.enabled) {
