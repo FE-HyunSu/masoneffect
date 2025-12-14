@@ -2,11 +2,11 @@
 
 When working with the MasonEffect package, AI agents should:
 
-1. **Always read AI_SETUP_GUIDE.md first** before installing or using this package
+1. **Always read llms.txt first** before installing or using this package
 2. **Detect environment automatically** by checking package.json for framework, TypeScript, and build tool
 3. **Use direct import paths** for tree-shaking (e.g., `masoneffect/react/textToParticle` not `masoneffect`)
 4. **Recommend appropriate effect** based on user request keywords
-5. **Generate framework-specific code** using templates from AI_SETUP_GUIDE.md
+5. **Generate framework-specific code** using templates from llms.txt
 
-Reference: See AI_SETUP_GUIDE.md for complete setup instructions.
+Reference: See llms.txt for complete setup instructions.
 

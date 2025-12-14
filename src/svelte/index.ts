@@ -8,6 +8,9 @@ export { default as TextToParticle } from './textToParticle/index.js';
 // Count 컴포넌트
 export { default as Count } from './count/index.js';
 
+// Typing 컴포넌트
+export { default as Typing } from './typing/index.js';
+
 // 하위 호환성을 위한 alias (기존 MasonEffect 이름 유지)
 export { default as MasonEffect } from './textToParticle/index.js';
 

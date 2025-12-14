@@ -17,5 +17,9 @@ export { Count } from './core/index.js';
 export type { CountOptions } from './core/index.js';
 export { easingFunctions } from './core/index.js';
 
+// Typing 효과
+export { Typing } from './core/index.js';
+export type { TypingOptions } from './core/index.js';
+
 // 하위 호환성을 위한 기본 export
 export { default } from './core/index.js';

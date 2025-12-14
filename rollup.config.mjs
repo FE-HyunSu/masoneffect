@@ -124,6 +124,37 @@ const countCoreBuild = {
   ],
 };
 
+// Typing core build (ESM + CJS) - 독립 빌드
+const typingCoreBuild = {
+  input: 'src/core/typing/index.ts',
+  output: [
+    {
+      file: 'dist/typing/index.mjs',
+      format: 'es',
+      exports: 'named',
+    },
+    {
+      file: 'dist/typing/index.cjs',
+      format: 'cjs',
+      exports: 'named',
+    },
+  ],
+  plugins: [
+    ...basePlugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: true,
+      declarationDir: 'dist/typing',
+      rootDir: 'src',
+      exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
+    }),
+    terser(terserOptions),
+  ],
+};
+
 // UMD build (for CDN usage)
 const umdBuild = {
   input: 'src/index.umd.ts',
@@ -216,6 +247,38 @@ const reactCountBuild = {
   ],
 };
 
+// React Typing component build (ESM + CJS) - 독립 빌드
+const reactTypingBuild = {
+  input: 'src/react/typing/index.ts',
+  output: [
+    {
+      file: 'dist/react/typing/index.mjs',
+      format: 'es',
+      exports: 'named',
+    },
+    {
+      file: 'dist/react/typing/index.cjs',
+      format: 'cjs',
+      exports: 'named',
+    },
+  ],
+  external: ['react', 'react-dom'],
+  plugins: [
+    ...basePlugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      declaration: true,
+      declarationDir: 'dist/react/typing',
+      rootDir: 'src',
+      exclude: ['src/vue/**/*', 'src/svelte/**/*'],
+      compilerOptions: {
+        skipLibCheck: true,
+      },
+    }),
+    terser(terserOptions),
+  ],
+};
+
 // React index build (for type exports)
 const reactIndexBuild = {
   input: 'src/react/index.ts',
@@ -232,10 +295,11 @@ const reactIndexBuild = {
   external: (id, importer) => {
     // react, react-dom은 external
     if (id === 'react' || id === 'react-dom') return true;
-    // src/react/index.ts에서 ./textToParticle, ./count를 import하는 경우 external로 처리
+    // src/react/index.ts에서 ./textToParticle, ./count, ./typing를 import하는 경우 external로 처리
     if (importer && importer.includes('src/react/index.ts')) {
       if (id === './textToParticle' || id.startsWith('./textToParticle')) return true;
       if (id === './count' || id.startsWith('./count')) return true;
+      if (id === './typing' || id.startsWith('./typing')) return true;
     }
     return false;
   },
@@ -256,10 +320,11 @@ const reactIndexBuild = {
     {
       name: 'resolve-import-extension',
       renderChunk(code, chunk, options) {
-        // ESM 파일에서 ./textToParticle, ./count를 .mjs 확장자로 변경
+        // ESM 파일에서 ./textToParticle, ./count, ./typing를 .mjs 확장자로 변경
         if (chunk.fileName === 'index.mjs') {
           code = code.replace(/from ['"]\.\/textToParticle(\/index)?['"]/g, "from './textToParticle/index.mjs'");
           code = code.replace(/from ['"]\.\/count(\/index)?['"]/g, "from './count/index.mjs'");
+          code = code.replace(/from ['"]\.\/typing(\/index)?['"]/g, "from './typing/index.mjs'");
           return code;
         }
         return null;
@@ -275,8 +340,10 @@ export default [
   coreBuild,
   textToParticleCoreBuild,
   countCoreBuild,
+  typingCoreBuild,
   umdBuild,
   reactTextToParticleBuild,
   reactCountBuild,
+  reactTypingBuild,
   reactIndexBuild,
 ];

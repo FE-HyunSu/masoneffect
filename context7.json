@@ -118,6 +118,19 @@
           "Scroll-triggered counters",
           "Performance metrics"
         ]
+      },
+      {
+        "name": "typing",
+        "description": "Typing animation effect with Korean character decomposition",
+        "keywords": ["typing", "type", "typewriter", "terminal", "code", "korean", "한글"],
+        "useCases": [
+          "Code demonstrations",
+          "Terminal simulations",
+          "Typing effects",
+          "Text reveal animations",
+          "Korean text typing with consonant/vowel decomposition"
+        ],
+        "special": "Korean characters are decomposed into consonants and vowels for realistic typing effect"
       }
     ]
   },
@@ -132,28 +145,33 @@
     "dist": "dist/"
   },
   "importantFiles": {
-    "aiGuide": "AI_SETUP_GUIDE.md",
+    "primaryAiGuide": "llms.txt",
     "readme": "README.md",
     "package": "package.json",
     "cursorRules": ".cursorrules",
-    "copilotInstructions": ".github/copilot-instructions.md"
+    "copilotInstructions": ".github/copilot-instructions.md",
+    "context7": "context7.json"
   },
   "importPaths": {
     "react": {
       "textToParticle": "masoneffect/react/textToParticle",
-      "count": "masoneffect/react/count"
+      "count": "masoneffect/react/count",
+      "typing": "masoneffect/react/typing"
     },
     "vue": {
       "textToParticle": "masoneffect/vue/textToParticle",
-      "count": "masoneffect/vue/count"
+      "count": "masoneffect/vue/count",
+      "typing": "masoneffect/vue/typing"
     },
     "svelte": {
       "textToParticle": "masoneffect/svelte/textToParticle",
-      "count": "masoneffect/svelte/count"
+      "count": "masoneffect/svelte/count",
+      "typing": "masoneffect/svelte/typing"
     },
     "vanilla": {
       "textToParticle": "masoneffect/textToParticle",
-      "count": "masoneffect/count"
+      "count": "masoneffect/count",
+      "typing": "masoneffect/typing"
     }
   },
   "build": {
@@ -176,7 +194,7 @@
     "svelte": "^3.0.0 || ^4.0.0 || ^5.0.0"
   },
   "aiAgent": {
-    "guide": "AI_SETUP_GUIDE.md",
+    "primaryGuide": "llms.txt",
     "detection": {
       "framework": "Check package.json dependencies for react/vue/svelte",
       "typescript": "Check for tsconfig.json or typescript in devDependencies",
@@ -184,7 +202,8 @@
     },
     "recommendation": {
       "textToParticle": ["text", "particle", "morph", "title", "banner", "hero"],
-      "count": ["number", "count", "counter", "stat", "statistic"]
+      "count": ["number", "count", "counter", "stat", "statistic"],
+      "typing": ["typing", "type", "typewriter", "terminal", "code", "korean", "한글"]
     },
     "rules": [
       "Always use direct import paths for tree-shaking",

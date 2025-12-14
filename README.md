@@ -4,7 +4,7 @@
 
 A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with **Tree-shaking** support.
 
-> 🤖 **For AI Agents**: If you are an AI agent (Cursor, GitHub Copilot, ChatGPT, etc.) setting up this package, please read **[AI_SETUP_GUIDE.md](./AI_SETUP_GUIDE.md)** first for automatic environment detection and configuration.
+> 🤖 **For AI Agents**: If you are an AI agent (Cursor, GitHub Copilot, ChatGPT, etc.) setting up this package, please read **[llms.txt](./llms.txt)** first for automatic environment detection and configuration.
 
 ## ✨ Features
 
@@ -22,7 +22,7 @@ npm install masoneffect
 
 ### 🤖 AI Agent Guide
 
-**⚠️ IMPORTANT FOR AI AGENTS**: Before using this package, read **[AI_SETUP_GUIDE.md](./AI_SETUP_GUIDE.md)** for:
+**⚠️ IMPORTANT FOR AI AGENTS**: Before using this package, read **[llms.txt](./llms.txt)** (primary AI guide) for:
 - Automatic environment detection (framework, TypeScript, build tool)
 - Framework-specific setup guides
 - Effect recommendation logic based on user requests
