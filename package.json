@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with Tree-shaking support.",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
