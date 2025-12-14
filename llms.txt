@@ -1,0 +1,158 @@
+# MasonEffect - LLM Context Guide
+
+## Project Overview
+
+MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.1.
+
+**Package Name:** masoneffect  
+**Installation:** `npm install masoneffect`  
+**Repository:** https://github.com/fe-hyunsu/masoneffect.git
+
+## Key Features
+
+- Tree-shaking support: Import only the effects you need
+- Multiple effects: Various animation effects in one package
+- Framework agnostic: Works with React, Vue, Svelte, and vanilla JS
+- TypeScript: Full TypeScript support with included types
+- Optimized: Automatic code splitting and optimization
+
+## Available Effects
+
+1. **TextToParticle**: Converts text into animated particles with morphing effects
+   - Use cases: Hero section titles, loading screens, banner text, interactive text effects
+   - Keywords: text, particle, morph, title, banner, hero
+
+2. **Count**: Animated number counting with intersection observer support
+   - Use cases: Statistics display, number counters, animated numbers, scroll-triggered counters
+   - Keywords: number, count, counter, stat, statistic
+
+## Project Structure
+
+```
+masoneffect/
+├── src/
+│   ├── core/              # Vanilla JS core implementations
+│   │   ├── textToParticle/
+│   │   └── count/
+│   ├── react/             # React components
+│   │   ├── textToParticle/
+│   │   └── count/
+│   ├── vue/               # Vue components
+│   │   ├── textToParticle/
+│   │   └── count/
+│   └── svelte/            # Svelte components
+│       ├── textToParticle/
+│       └── count/
+├── dist/                  # Built files (not in repo)
+├── examples/              # Usage examples
+├── scripts/               # Build and utility scripts
+├── AI_SETUP_GUIDE.md      # AI agent setup guide (IMPORTANT)
+├── README.md              # Main documentation
+└── package.json
+```
+
+## Import Paths (Tree-shaking)
+
+**Critical:** Always use direct import paths for tree-shaking:
+
+- React: `masoneffect/react/{effect}`
+- Vue: `masoneffect/vue/{effect}`
+- Svelte: `masoneffect/svelte/{effect}`
+- Vanilla: `masoneffect/{effect}`
+
+**Effects:**
+- TextToParticle: `{framework}/textToParticle`
+- Count: `{framework}/count`
+
+**Example:**
+```typescript
+// ✅ Correct - Tree-shaking works
+import { TextToParticle } from 'masoneffect/react/textToParticle';
+
+// ❌ Wrong - Imports all effects
+import { TextToParticle } from 'masoneffect';
+```
+
+## Important Files for AI Agents
+
+1. **AI_SETUP_GUIDE.md** - MUST READ for AI agents
+   - Automatic environment detection
+   - Framework-specific setup
+   - Effect recommendation logic
+   - Complete code templates
+
+2. **README.md** - Main documentation
+   - Installation instructions
+   - Usage examples for all frameworks
+   - API documentation
+
+3. **package.json** - Contains `aiAgentGuide` field pointing to AI_SETUP_GUIDE.md
+
+4. **.cursorrules** - Cursor-specific instructions
+
+5. **.github/copilot-instructions.md** - GitHub Copilot instructions
+
+## Environment Detection
+
+AI agents should detect:
+- Framework: Check package.json for react/vue/svelte dependencies
+- TypeScript: Check for tsconfig.json or typescript in devDependencies
+- Build tool: Check for vite.config.js, webpack.config.js, or next in dependencies
+
+## Effect Recommendation
+
+Based on user request keywords:
+- Text/Particle/Morph → TextToParticle
+- Number/Count/Stat → Count
+
+## Build System
+
+- Core: Rollup (rollup.config.mjs)
+- Vue/Svelte: Vite (vite.config.*.mjs)
+- Output: ESM (.mjs), CJS (.cjs), TypeScript declarations (.d.ts)
+
+## TypeScript Support
+
+- All import paths include TypeScript types
+- No need for @types/masoneffect
+- Use `import type` for type-only imports
+
+## Framework-Specific Notes
+
+**React:**
+- Use `useRef` for component refs
+- Props are camelCase
+- Import: `masoneffect/react/{effect}`
+
+**Vue:**
+- Use `ref()` for component refs
+- Props are kebab-case in templates
+- Import: `masoneffect/vue/{effect}`
+
+**Svelte:**
+- Use `bind:this={ref}` for ref binding
+- Props are camelCase
+- Import: `masoneffect/svelte/{effect}`
+
+**Vanilla JS:**
+- Use `new` keyword for instantiation
+- Pass DOM element as first argument
+- Call `destroy()` for cleanup
+- Import: `masoneffect/{effect}`
+
+## Quick Start for AI Agents
+
+1. Read AI_SETUP_GUIDE.md first
+2. Detect environment (framework, TypeScript, build tool)
+3. Recommend effect based on user request
+4. Use framework-specific direct import path
+5. Generate complete working example from templates
+
+## Version
+
+Current version: 2.0.1
+
+## License
+
+MIT
+
