@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with Tree-shaking support.",
   "type": "npm-package",
   "packageManager": "npm",
@@ -94,6 +94,12 @@
     "treeShaking": true,
     "typescript": true,
     "frameworks": ["react", "vue", "svelte", "vanilla"],
+    "visibilityManagement": {
+      "intersectionObserver": true,
+      "pageVisibility": true,
+      "gpuOptimization": true,
+      "description": "All effects automatically pause when not visible or when tab is hidden to optimize GPU usage"
+    },
     "effects": [
       {
         "name": "textToParticle",
@@ -137,6 +143,7 @@
   "structure": {
     "source": "src/",
     "core": "src/core/",
+    "utils": "src/core/utils/",
     "react": "src/react/",
     "vue": "src/vue/",
     "svelte": "src/svelte/",
@@ -209,7 +216,8 @@
       "Always use direct import paths for tree-shaking",
       "Use framework-specific import paths",
       "Import TypeScript types if TypeScript project",
-      "Use correct prop naming (camelCase for React/Svelte, kebab-case for Vue)"
+      "Use correct prop naming (camelCase for React/Svelte, kebab-case for Vue)",
+      "All effects automatically pause when not visible (IntersectionObserver) or when tab is hidden (Page Visibility API) for GPU optimization"
     ]
   },
   "installation": {

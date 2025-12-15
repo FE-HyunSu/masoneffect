@@ -1,6 +1,6 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
-**Release version 2.0.4**
+**Release version 2.0.5**
 
 A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with **Tree-shaking** support.
 
@@ -428,7 +428,7 @@ npm run serve
 ## 📦 CDN Usage (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.4/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.5/dist/index.umd.min.js"></script>
 <script>
   // TextToParticle (MasonEffect alias for backward compatibility)
   const container = document.getElementById('my-container');

@@ -6,6 +6,8 @@
  * import { Typing } from 'masoneffect/typing';
  */
 
+import { VisibilityManager } from '../utils/visibilityManager.js';
+
 export interface TypingOptions {
   text: string;
   speed?: number; // 타이핑 속도 (ms per character)
@@ -118,7 +120,7 @@ export class Typing {
   currentIndex: number;
   displayedText: string; // 현재 표시된 텍스트
   timeoutId: ReturnType<typeof setTimeout> | null;
-  intersectionObserver: IntersectionObserver | null;
+  visibilityManager: VisibilityManager | null;
   isRunning: boolean;
   hasTriggered: boolean;
   originalText: string; // 원본 텍스트
@@ -160,7 +162,7 @@ export class Typing {
     this.currentIndex = 0;
     this.displayedText = '';
     this.timeoutId = null;
-    this.intersectionObserver = null;
+    this.visibilityManager = null;
     this.isRunning = false;
     this.hasTriggered = false;
 
@@ -172,43 +174,25 @@ export class Typing {
     // 초기 상태 표시 (빈 텍스트 또는 커서만)
     this.updateDisplay('');
 
-    // IntersectionObserver 설정
-    this.setupIntersectionObserver();
+    // VisibilityManager 설정
+    this.setupVisibilityManager();
   }
 
-  setupIntersectionObserver(): void {
-    // IntersectionObserver가 지원되지 않는 환경에서는 즉시 시작
-    if (typeof window === 'undefined' || typeof window.IntersectionObserver === 'undefined') {
-      if (this.config.enabled) {
-        setTimeout(() => this.start(), this.config.delay);
-      }
-      return;
-    }
-
-    this.intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.target !== this.container) continue;
-
-          if (entry.isIntersecting && !this.hasTriggered) {
-            if (this.config.enabled) {
-              setTimeout(() => this.start(), this.config.delay);
-            }
-            this.hasTriggered = true;
-
-            if (this.config.triggerOnce) {
-              this.intersectionObserver?.disconnect();
-            }
-          }
+  setupVisibilityManager(): void {
+    this.visibilityManager = new VisibilityManager(this.container, {
+      threshold: this.config.threshold,
+      rootMargin: this.config.rootMargin,
+      onVisible: () => {
+        // 요소가 화면에 보일 때 시작
+        if (!this.hasTriggered && this.config.enabled) {
+          this.hasTriggered = true;
+          setTimeout(() => this.start(), this.config.delay);
         }
       },
-      {
-        threshold: this.config.threshold,
-        rootMargin: this.config.rootMargin,
-      }
-    );
-
-    this.intersectionObserver.observe(this.container);
+      onHidden: () => {
+        // 요소가 화면에서 벗어났을 때는 아무 동작 안 함 (타이핑은 일시정지하지 않음)
+      },
+    });
   }
 
   // 단위들을 다시 합쳐서 실제 표시할 텍스트 생성
@@ -345,9 +329,9 @@ export class Typing {
 
   destroy(): void {
     this.stop();
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-      this.intersectionObserver = null;
+    if (this.visibilityManager) {
+      this.visibilityManager.destroy();
+      this.visibilityManager = null;
     }
   }
 }

@@ -6,6 +6,8 @@
  * import { TextToParticle } from 'masoneffect/textToParticle';
  */
 
+import { VisibilityManager } from '../utils/visibilityManager.js';
+
 export interface TextToParticleOptions {
   text?: string;
   densityStep?: number;
@@ -72,8 +74,7 @@ export class TextToParticle {
   mouse: { x: number; y: number; down: boolean };
   animationId: number | null;
   isRunning: boolean;
-  isVisible: boolean;
-  intersectionObserver: IntersectionObserver | null;
+  visibilityManager: VisibilityManager | null;
   debounceDelay: number;
   _debouncedMorph!: (textOrOptions?: string | Partial<TextToParticleOptions> | null) => void;
   _debouncedUpdateConfig!: (newConfig: Partial<TextToParticleOptions>) => void;
@@ -133,8 +134,7 @@ export class TextToParticle {
     this.mouse = { x: 0, y: 0, down: false };
     this.animationId = null;
     this.isRunning = false;
-    this.isVisible = false;
-    this.intersectionObserver = null;
+    this.visibilityManager = null;
 
     // 디바운스 설정 (ms)
     this.debounceDelay = options.debounceDelay ?? 150;
@@ -158,46 +158,23 @@ export class TextToParticle {
   init(): void {
     this.resize();
     this.setupEventListeners();
-    this.setupIntersectionObserver();
+    this.setupVisibilityManager();
 
     if (this.config.onReady) {
       this.config.onReady(this);
     }
   }
 
-  setupIntersectionObserver(): void {
-    // IntersectionObserver가 지원되지 않는 환경에서는 항상 재생
-    if (typeof window === 'undefined' || typeof window.IntersectionObserver === 'undefined') {
-      this.isVisible = true;
-      this.start();
-      return;
-    }
-
-    // 이미 설정되어 있다면 다시 만들지 않음
-    if (this.intersectionObserver) {
-      return;
-    }
-
-    this.intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.target !== this.container) continue;
-
-          if (entry.isIntersecting) {
-            this.isVisible = true;
-            this.start();
-          } else {
-            this.isVisible = false;
-            this.stop();
-          }
-        }
+  setupVisibilityManager(): void {
+    this.visibilityManager = new VisibilityManager(this.container, {
+      threshold: 0.1, // 10% 이상 보일 때 동작
+      onVisible: () => {
+        this.start();
       },
-      {
-        threshold: 0.1, // 10% 이상 보일 때 동작
-      }
-    );
-
-    this.intersectionObserver.observe(this.container);
+      onHidden: () => {
+        this.stop();
+      },
+    });
   }
 
   resize(): void {
@@ -531,7 +508,12 @@ export class TextToParticle {
 
     // 파티클 그리기
     this.ctx.fillStyle = this.config.particleColor;
-    const r = this.config.pointSize * this.DPR;
+    // 캔버스 크기에 비례하여 포인트 크기 조정
+    // 기준 크기: 1920px (CSS 픽셀), 현재 캔버스의 작은 쪽 크기를 기준으로 비율 계산
+    const baseSize = 1920; // 기준 캔버스 크기 (CSS 픽셀)
+    const currentSize = Math.min(this.W, this.H) / this.DPR; // 현재 캔버스 크기 (CSS 픽셀)
+    const sizeRatio = Math.max(0.5, Math.min(2.0, currentSize / baseSize)); // 0.5 ~ 2.0 범위로 제한
+    const r = this.config.pointSize * this.DPR * sizeRatio;
     for (const p of this.particles) {
       this.ctx.beginPath();
       this.ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
@@ -618,9 +600,9 @@ export class TextToParticle {
   destroy(): void {
     this.stop();
     this.removeEventListeners();
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-      this.intersectionObserver = null;
+    if (this.visibilityManager) {
+      this.visibilityManager.destroy();
+      this.visibilityManager = null;
     }
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);

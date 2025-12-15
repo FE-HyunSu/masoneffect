@@ -6,6 +6,8 @@
  * import { Count } from 'masoneffect/count';
  */
 
+import { VisibilityManager } from '../utils/visibilityManager.js';
+
 export interface CountOptions {
   targetValue: number;
   duration?: number;
@@ -37,7 +39,7 @@ export class Count {
   currentValue: number;
   startTime: number | null;
   animationFrameId: number | null;
-  intersectionObserver: IntersectionObserver | null;
+  visibilityManager: VisibilityManager | null;
   isRunning: boolean;
   hasTriggered: boolean;
 
@@ -69,7 +71,7 @@ export class Count {
     this.currentValue = this.config.startValue;
     this.startTime = null;
     this.animationFrameId = null;
-    this.intersectionObserver = null;
+    this.visibilityManager = null;
     this.isRunning = false;
     this.hasTriggered = false;
 
@@ -81,62 +83,28 @@ export class Count {
     // 초기값 표시
     this.updateDisplay(this.config.startValue);
 
-    // IntersectionObserver 설정
-    this.setupIntersectionObserver();
+    // VisibilityManager 설정
+    this.setupVisibilityManager();
   }
 
-  setupIntersectionObserver(): void {
-    // IntersectionObserver가 지원되지 않는 환경에서는 즉시 시작
-    if (typeof window === 'undefined' || typeof window.IntersectionObserver === 'undefined') {
-      if (this.config.enabled) {
-        this.start();
-      }
-      return;
-    }
-
-    this.intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.target !== this.container) continue;
-
-          if (entry.isIntersecting) {
-            // 요소가 화면에 보일 때 시작
-            if (!this.hasTriggered && this.config.enabled) {
-              this.hasTriggered = true;
-              this.start();
-            }
-            
-            if (this.config.triggerOnce) {
-              this.intersectionObserver?.unobserve(this.container);
-            }
-          } else {
-            // 요소가 화면에서 벗어났을 때
-            if (!this.config.triggerOnce) {
-              const rect = entry.boundingClientRect;
-              const viewportHeight = window.innerHeight;
-              const viewportWidth = window.innerWidth;
-              
-              // 요소가 화면에 완전히 벗어났는지 확인
-              const isCompletelyOutOfViewport = 
-                rect.bottom <= 0 ||
-                rect.top >= viewportHeight ||
-                rect.right <= 0 ||
-                rect.left >= viewportWidth;
-              
-              if (isCompletelyOutOfViewport && this.isRunning) {
-                this.reset();
-              }
-            }
-          }
+  setupVisibilityManager(): void {
+    this.visibilityManager = new VisibilityManager(this.container, {
+      threshold: this.config.threshold,
+      rootMargin: this.config.rootMargin,
+      onVisible: () => {
+        // 요소가 화면에 보일 때 시작
+        if (!this.hasTriggered && this.config.enabled) {
+          this.hasTriggered = true;
+          this.start();
         }
       },
-      {
-        threshold: this.config.threshold,
-        rootMargin: this.config.rootMargin,
-      }
-    );
-
-    this.intersectionObserver.observe(this.container);
+      onHidden: () => {
+        // 요소가 화면에서 벗어났을 때
+        if (!this.config.triggerOnce && this.isRunning) {
+          this.reset();
+        }
+      },
+    });
   }
 
   start(): void {
@@ -244,9 +212,9 @@ export class Count {
   // 파괴 및 정리
   destroy(): void {
     this.stop();
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-      this.intersectionObserver = null;
+    if (this.visibilityManager) {
+      this.visibilityManager.destroy();
+      this.visibilityManager = null;
     }
   }
 }
