@@ -26,6 +26,11 @@
       "require": "./dist/typing/index.cjs",
       "types": "./dist/typing/index.d.ts"
     },
+    "./slide": {
+      "import": "./dist/slide/index.mjs",
+      "require": "./dist/slide/index.cjs",
+      "types": "./dist/slide/index.d.ts"
+    },
     "./react": {
       "import": "./dist/react/index.mjs",
       "require": "./dist/react/index.cjs",
@@ -45,6 +50,11 @@
       "import": "./dist/react/typing/index.mjs",
       "require": "./dist/react/typing/index.cjs",
       "types": "./dist/react/typing/index.d.ts"
+    },
+    "./react/slide": {
+      "import": "./dist/react/slide/index.mjs",
+      "require": "./dist/react/slide/index.cjs",
+      "types": "./dist/react/slide/index.d.ts"
     },
     "./vue": {
       "import": "./dist/vue/index.mjs",
@@ -66,6 +76,11 @@
       "require": "./dist/vue/typing/index.cjs",
       "types": "./dist/vue/typing/index.d.ts"
     },
+    "./vue/slide": {
+      "import": "./dist/vue/slide/index.mjs",
+      "require": "./dist/vue/slide/index.cjs",
+      "types": "./dist/vue/slide/index.d.ts"
+    },
     "./svelte": {
       "import": "./dist/svelte/index.mjs",
       "require": "./dist/svelte/index.cjs",
@@ -85,21 +100,28 @@
       "import": "./dist/svelte/typing/index.mjs",
       "require": "./dist/svelte/typing/index.cjs",
       "types": "./dist/svelte/typing/index.d.ts"
+    },
+    "./svelte/slide": {
+      "import": "./dist/svelte/slide/index.mjs",
+      "require": "./dist/svelte/slide/index.cjs",
+      "types": "./dist/svelte/slide/index.d.ts"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:vue:textToParticle && npm run build:vue:count && npm run build:vue:typing && npm run build:svelte && npm run build:svelte:textToParticle && npm run build:svelte:count && npm run build:svelte:typing && node scripts/generate-react-types.js",
+    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:vue:textToParticle && npm run build:vue:count && npm run build:vue:typing && npm run build:vue:slide && npm run build:svelte && npm run build:svelte:textToParticle && npm run build:svelte:count && npm run build:svelte:typing && npm run build:svelte:slide && node scripts/generate-react-types.js",
     "build:vue": "vite build --config vite.config.vue.mjs",
     "build:vue:textToParticle": "vite build --config vite.config.vue.textToParticle.mjs",
     "build:vue:count": "vite build --config vite.config.vue.count.mjs",
     "build:vue:typing": "vite build --config vite.config.vue.typing.mjs",
+    "build:vue:slide": "vite build --config vite.config.vue.slide.mjs",
     "build:svelte": "vite build --config vite.config.svelte.mjs",
     "build:svelte:textToParticle": "vite build --config vite.config.svelte.textToParticle.mjs",
     "build:svelte:count": "vite build --config vite.config.svelte.count.mjs",
     "build:svelte:typing": "vite build --config vite.config.svelte.typing.mjs",
+    "build:svelte:slide": "vite build --config vite.config.svelte.slide.mjs",
     "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",
@@ -112,6 +134,7 @@
     "particles",
     "morphing",
     "count",
+    "slide",
     "canvas",
     "react",
     "vue",

@@ -35,6 +35,11 @@ MasonEffect is a collection of animation effects library that supports React, Vu
    - Keywords: typing, type, typewriter, terminal, code, korean, 한글
    - Special: Korean characters are decomposed into consonants and vowels for realistic typing effect
 
+4. **Slide**: Slide-in animation effect with direction control
+   - Use cases: Content reveal animations, scroll-triggered animations, entrance effects
+   - Keywords: slide, slide-in, reveal, entrance, animation, scroll
+   - Special: Supports multiple directions (top, right, bottom, left) and flexible distance units
+
 ## Project Structure
 
 ```
@@ -79,6 +84,7 @@ masoneffect/
 - TextToParticle: `{framework}/textToParticle`
 - Count: `{framework}/count`
 - Typing: `{framework}/typing`
+- Slide: `{framework}/slide`
 
 **Example:**
 ```typescript
@@ -126,6 +132,7 @@ Based on user request keywords:
 - Text/Particle/Morph → TextToParticle
 - Number/Count/Stat → Count
 - Typing/Typewriter/Terminal/Code/Korean → Typing
+- Slide/Reveal/Entrance/Scroll → Slide
 
 ## Build System
 
@@ -336,6 +343,64 @@ const typing = new Typing(container, {
   speed: 50,
   showCursor: true,
   cursorChar: '|'
+});
+```
+
+### React + TypeScript + Slide
+```tsx
+import React, { useRef } from 'react';
+import { Slide } from 'masoneffect/react/slide';
+import { easingFunctions } from 'masoneffect/react/slide';
+import type { SlideRef } from 'masoneffect/react/slide';
+function App() {
+  const ref = useRef<SlideRef>(null);
+  return (
+    <Slide ref={ref} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
+      <div>Content that slides in</div>
+    </Slide>
+  );
+}
+```
+
+### Vue 3 + Composition API + Slide
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import { Slide } from 'masoneffect/vue/slide';
+import { easingFunctions } from 'masoneffect/vue/slide';
+const slideRef = ref(null);
+</script>
+<template>
+  <Slide direction="bottom" distance="50px" :duration="800" :easing="easingFunctions.easeOutCubic">
+    <div>Content that slides in</div>
+  </Slide>
+</template>
+```
+
+### Svelte + TypeScript + Slide
+```svelte
+<script lang="ts">
+import { Slide } from 'masoneffect/svelte/slide';
+import { easingFunctions } from 'masoneffect/svelte/slide';
+let slideRef: any = null;
+</script>
+<Slide bind:this={slideRef} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
+  <div>Content that slides in</div>
+</Slide>
+```
+
+### Vanilla JS + Slide
+```javascript
+import { Slide } from 'masoneffect/slide';
+import { easingFunctions } from 'masoneffect/slide';
+const container = document.querySelector('#slide-container');
+const slide = new Slide(container, {
+  direction: 'bottom',
+  distance: '50px',
+  duration: 800,
+  easing: easingFunctions.easeOutCubic,
+  threshold: 0.1,
+  triggerOnce: false
 });
 ```
 

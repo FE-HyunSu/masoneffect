@@ -39,6 +39,12 @@ Converts text into animated particles with morphing effects.
 ### 2. Count
 Animated number counting with intersection observer support.
 
+### 3. Typing
+Typing animation effect with Korean character decomposition.
+
+### 4. Slide
+Slide-in animation effect with IntersectionObserver and Page Visibility API support.
+
 ---
 
 ## 🚀 Quick Start
@@ -262,6 +268,113 @@ import { easingFunctions } from 'masoneffect/vue/count';
 </div>
 ```
 
+### Slide Effect
+
+#### Vanilla JavaScript
+
+```javascript
+import { Slide } from 'masoneffect/slide';
+import { easingFunctions } from 'masoneffect/slide';
+
+const container = document.querySelector('#slide-container');
+const slide = new Slide(container, {
+  direction: 'bottom',
+  distance: '50px',
+  duration: 800,
+  easing: easingFunctions.easeOutCubic,
+  threshold: 0.1,
+  rootMargin: '0px',
+  triggerOnce: false,
+  onStart: () => console.log('Animation started'),
+  onComplete: () => console.log('Animation completed'),
+});
+
+// Methods
+slide.start();
+slide.stop();
+slide.reset();
+slide.updateConfig({ distance: '100px' });
+slide.destroy();
+```
+
+#### React
+
+```tsx
+import React, { useRef } from 'react';
+import { Slide } from 'masoneffect/react/slide';
+import { easingFunctions } from 'masoneffect/react/slide';
+import type { SlideRef } from 'masoneffect/react/slide';
+
+function App() {
+  const slideRef = useRef<SlideRef>(null);
+
+  return (
+    <div>
+      <Slide
+        ref={slideRef}
+        direction="bottom"
+        distance="50px"
+        duration={800}
+        easing={easingFunctions.easeOutCubic}
+        threshold={0.1}
+        onStart={() => console.log('Started')}
+        onComplete={() => console.log('Completed')}
+        style={{ padding: '20px' }}
+      >
+        <div>Content that slides in</div>
+      </Slide>
+      <button onClick={() => slideRef.current?.reset()}>Reset</button>
+    </div>
+  );
+}
+```
+
+#### Vue 3
+
+```vue
+<script setup>
+import { Slide } from 'masoneffect/vue/slide';
+import { easingFunctions } from 'masoneffect/vue/slide';
+</script>
+
+<template>
+  <Slide
+    direction="bottom"
+    distance="50px"
+    :duration="800"
+    :easing="easingFunctions.easeOutCubic"
+    :threshold="0.1"
+    @start="() => console.log('Started')"
+    @complete="() => console.log('Completed')"
+    style="padding: 20px"
+  >
+    <div>Content that slides in</div>
+  </Slide>
+</template>
+```
+
+#### Svelte
+
+```svelte
+<script lang="ts">
+  import { Slide } from 'masoneffect/svelte/slide';
+  import { easingFunctions } from 'masoneffect/svelte/slide';
+</script>
+
+<Slide
+  direction="bottom"
+  distance="50px"
+  duration={800}
+  easing={easingFunctions.easeOutCubic}
+  threshold={0.1}
+  on:start={() => console.log('Started')}
+  on:complete={() => console.log('Completed')}
+  style="padding: 20px"
+>
+  <div>Content that slides in</div>
+</Slide>
+```
+
 ---
 
 ## 📚 API Reference
@@ -337,6 +450,45 @@ easingFunctions.easeInOutQuad
 easingFunctions.easeOutCubic
 ```
 
+### Slide
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `direction` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` | Slide direction |
+| `distance` | `string` | `'50px'` | Slide distance (supports px, rem, em, %, vh, vw) |
+| `duration` | `number` | `800` | Animation duration in milliseconds |
+| `easing` | `function` | `easeOutCubic` | Easing function |
+| `threshold` | `number` | `0.1` | IntersectionObserver threshold |
+| `rootMargin` | `string` | `'0px'` | IntersectionObserver rootMargin |
+| `triggerOnce` | `boolean` | `false` | Trigger animation only once |
+| `enabled` | `boolean` | `true` | Enable/disable animation |
+| `onStart` | `function` | `null` | Animation start callback |
+| `onComplete` | `function` | `null` | Animation complete callback |
+
+#### Methods
+
+- `start()` - Start animation
+- `stop()` - Stop animation
+- `reset()` - Reset to initial position
+- `updateConfig(config: Partial<SlideOptions>)` - Update configuration
+- `destroy()` - Destroy instance and cleanup
+
+#### Easing Functions
+
+```typescript
+import { easingFunctions } from 'masoneffect/slide';
+
+// Available easing functions:
+easingFunctions.linear
+easingFunctions.easeInQuad
+easingFunctions.easeOutQuad
+easingFunctions.easeInOutQuad
+easingFunctions.easeOutCubic
+easingFunctions.easeInOutCubic
+```
+
 ---
 
 ## 🌳 Tree-shaking
@@ -400,6 +552,22 @@ However, we recommend using the new Tree-shaking-friendly imports for better per
 
 ### Count
 - 🔢 Animated number counting
+- 👁️ IntersectionObserver: Starts when element is visible
+- 🎯 Multiple easing functions
+- ⚡ Smooth animations with requestAnimationFrame
+- 🔄 Reset and restart support
+
+### Typing
+- ⌨️ Typing animation effect
+- 🇰🇷 Korean character decomposition (jamo support)
+- 👁️ IntersectionObserver: Starts when element is visible
+- ⚡ Smooth character-by-character animation
+- 🎨 Customizable cursor and speed
+
+### Slide
+- 🎬 Slide-in animation effect
+- 📐 Direction control (top, right, bottom, left)
+- 📏 Flexible distance units (px, rem, em, %, vh, vw)
 - 👁️ IntersectionObserver: Starts when element is visible
 - 🎯 Multiple easing functions
 - ⚡ Smooth animations with requestAnimationFrame
