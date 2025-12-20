@@ -6,6 +6,7 @@
 export interface VisibilityManagerOptions {
   threshold?: number;
   rootMargin?: string;
+  root?: HTMLElement | null; // IntersectionObserver의 root 옵션 (내부 스크롤 컨테이너 지원)
   onVisible?: () => void;
   onHidden?: () => void;
 }
@@ -23,6 +24,7 @@ export class VisibilityManager {
     this.options = {
       threshold: options.threshold ?? 0.1,
       rootMargin: options.rootMargin ?? '0px',
+      root: options.root ?? null, // 기본값은 null (viewport 기준)
       onVisible: options.onVisible,
       onHidden: options.onHidden,
     };
@@ -67,6 +69,7 @@ export class VisibilityManager {
       {
         threshold: this.options.threshold,
         rootMargin: this.options.rootMargin,
+        root: this.options.root || null, // null이면 viewport 기준, HTMLElement면 해당 요소 기준
       }
     );
 

@@ -1,6 +1,6 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
-**Release version 2.0.6**
+**Release version 2.0.10**
 
 A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with **Tree-shaking** support.
 
@@ -274,19 +274,27 @@ import { easingFunctions } from 'masoneffect/vue/count';
 
 ```javascript
 import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/scrollFadeIn';
 
 const container = document.querySelector('#scroll-fade-in-container');
+// For viewport-based scrolling (default)
 const scrollFadeIn = new ScrollFadeIn(container, {
   direction: 'bottom',
   distance: '50px',
   duration: 800,
-  easing: easingFunctions.easeOutCubic,
   threshold: 0.1,
   rootMargin: '0px',
   triggerOnce: false,
   onStart: () => console.log('Animation started'),
   onComplete: () => console.log('Animation completed'),
+});
+
+// For internal scroll container
+const scrollContainer = document.querySelector('.scroll-container');
+const scrollFadeInInContainer = new ScrollFadeIn(container, {
+  direction: 'bottom',
+  distance: '50px',
+  root: scrollContainer, // Specify scroll container element
+  threshold: 0.1,
 });
 
 // Methods
@@ -302,20 +310,20 @@ scrollFadeIn.destroy();
 ```tsx
 import React, { useRef } from 'react';
 import { ScrollFadeIn } from 'masoneffect/react/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/react/scrollFadeIn';
 import type { ScrollFadeInRef } from 'masoneffect/react/scrollFadeIn';
 
 function App() {
   const scrollFadeInRef = useRef<ScrollFadeInRef>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div>
+      {/* For viewport-based scrolling (default) */}
       <ScrollFadeIn
         ref={scrollFadeInRef}
         direction="bottom"
         distance="50px"
         duration={800}
-        easing={easingFunctions.easeOutCubic}
         threshold={0.1}
         onStart={() => console.log('Started')}
         onComplete={() => console.log('Completed')}
@@ -323,6 +331,14 @@ function App() {
       >
         <div>Content that fades in on scroll</div>
       </ScrollFadeIn>
+      
+      {/* For internal scroll container */}
+      <div ref={scrollContainerRef} style={{ height: '400px', overflow: 'auto' }}>
+        <ScrollFadeIn root={scrollContainerRef.current} direction="bottom" distance="50px">
+          <div>Content that fades in when scrolled within container</div>
+        </ScrollFadeIn>
+      </div>
+      
       <button onClick={() => scrollFadeInRef.current?.reset()}>Reset</button>
     </div>
   );
@@ -334,7 +350,6 @@ function App() {
 ```vue
 <script setup>
 import { ScrollFadeIn } from 'masoneffect/vue/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/vue/scrollFadeIn';
 </script>
 
 <template>
@@ -342,7 +357,6 @@ import { easingFunctions } from 'masoneffect/vue/scrollFadeIn';
     direction="bottom"
     distance="50px"
     :duration="800"
-    :easing="easingFunctions.easeOutCubic"
     :threshold="0.1"
     @start="() => console.log('Started')"
     @complete="() => console.log('Completed')"
@@ -358,14 +372,12 @@ import { easingFunctions } from 'masoneffect/vue/scrollFadeIn';
 ```svelte
 <script lang="ts">
   import { ScrollFadeIn } from 'masoneffect/svelte/scrollFadeIn';
-  import { easingFunctions } from 'masoneffect/svelte/scrollFadeIn';
 </script>
 
 <ScrollFadeIn
   direction="bottom"
   distance="50px"
   duration={800}
-  easing={easingFunctions.easeOutCubic}
   threshold={0.1}
   on:start={() => console.log('Started')}
   on:complete={() => console.log('Completed')}
@@ -459,9 +471,9 @@ easingFunctions.easeOutCubic
 | `direction` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` | Animation direction |
 | `distance` | `string` | `'50px'` | Animation distance (supports px, rem, em, %, vh, vw) |
 | `duration` | `number` | `800` | Animation duration in milliseconds |
-| `easing` | `function` | `easeOutCubic` | Easing function |
 | `threshold` | `number` | `0.1` | IntersectionObserver threshold |
 | `rootMargin` | `string` | `'0px'` | IntersectionObserver rootMargin |
+| `root` | `HTMLElement \| null` | `null` | IntersectionObserver root element (for internal scroll containers) |
 | `triggerOnce` | `boolean` | `false` | Trigger animation only once |
 | `enabled` | `boolean` | `true` | Enable/disable animation |
 | `onStart` | `function` | `null` | Animation start callback |
@@ -474,20 +486,6 @@ easingFunctions.easeOutCubic
 - `reset()` - Reset to initial position
 - `updateConfig(config: Partial<ScrollFadeInOptions>)` - Update configuration
 - `destroy()` - Destroy instance and cleanup
-
-#### Easing Functions
-
-```typescript
-import { easingFunctions } from 'masoneffect/scrollFadeIn';
-
-// Available easing functions:
-easingFunctions.linear
-easingFunctions.easeInQuad
-easingFunctions.easeOutQuad
-easingFunctions.easeInOutQuad
-easingFunctions.easeOutCubic
-easingFunctions.easeInOutCubic
-```
 
 ---
 
@@ -596,7 +594,7 @@ npm run serve
 ## 📦 CDN Usage (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.6/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.10/dist/index.umd.min.js"></script>
 <script>
   // TextToParticle (MasonEffect alias for backward compatibility)
   const container = document.getElementById('my-container');

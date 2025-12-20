@@ -18,7 +18,6 @@ export type { TypingRef, TypingOptions } from './typing/index.js';
 // ScrollFadeIn 컴포넌트
 export { default as ScrollFadeIn } from './scrollFadeIn/index.js';
 export type { ScrollFadeInRef, ScrollFadeInOptions } from './scrollFadeIn/index.js';
-export { easingFunctions as scrollFadeInEasingFunctions } from './scrollFadeIn/index.js';
 
 // 하위 호환성을 위한 alias (기존 MasonEffect 이름 유지)
 export { default as MasonEffect } from './textToParticle/index.js';

@@ -12,32 +12,26 @@ export interface ScrollFadeInOptions {
   direction?: 'top' | 'right' | 'bottom' | 'left';
   distance?: string; // CSS 단위 (예: '100px', '50%', '2rem')
   duration?: number; // 애니메이션 지속 시간 (ms)
-  easing?: (t: number) => number;
   threshold?: number; // IntersectionObserver threshold
   rootMargin?: string; // IntersectionObserver rootMargin
+  root?: HTMLElement | null; // IntersectionObserver의 root 옵션 (내부 스크롤 컨테이너 지원)
   triggerOnce?: boolean; // 한 번만 실행할지 여부
   enabled?: boolean; // 효과 활성화 여부
   onStart?: () => void;
   onComplete?: () => void;
 }
 
-// Easing 함수들
-export const easingFunctions = {
-  linear: (t: number) => t,
-  easeInQuad: (t: number) => t * t,
-  easeOutQuad: (t: number) => t * (2 - t),
-  easeInOutQuad: (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
-  easeOutCubic: (t: number) => --t * t * t + 1,
-  easeInOutCubic: (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
-};
+// 기본 easing 함수 (easeOutCubic)
+const defaultEasing = (t: number) => --t * t * t + 1;
 
 export class ScrollFadeIn {
   container: HTMLElement;
-  config: Required<Omit<ScrollFadeInOptions, 'onStart' | 'onComplete' | 'easing'>> & {
-    easing: (t: number) => number;
+  config: Required<Omit<ScrollFadeInOptions, 'onStart' | 'onComplete' | 'root'>> & {
+    root: HTMLElement | null;
     onStart: ScrollFadeInOptions['onStart'];
     onComplete: ScrollFadeInOptions['onComplete'];
   };
+  private easing: (t: number) => number;
   visibilityManager: VisibilityManager | null;
   animationFrameId: number | null;
   startTime: number | null;
@@ -61,14 +55,17 @@ export class ScrollFadeIn {
       direction: options.direction ?? 'bottom',
       distance: options.distance ?? '50px',
       duration: options.duration ?? 800,
-      easing: options.easing ?? easingFunctions.easeOutCubic,
       threshold: options.threshold ?? 0.1,
       rootMargin: options.rootMargin ?? '0px',
+      root: options.root ?? null, // 기본값은 null (viewport 기준)
       triggerOnce: options.triggerOnce ?? false,
       enabled: options.enabled ?? true,
       onStart: options.onStart || null,
       onComplete: options.onComplete || null,
     };
+    
+    // 기본 easing 함수 (고정)
+    this.easing = defaultEasing;
 
     // 상태
     this.visibilityManager = null;
@@ -177,17 +174,27 @@ export class ScrollFadeIn {
     this.visibilityManager = new VisibilityManager(this.container, {
       threshold: this.config.threshold,
       rootMargin: this.config.rootMargin,
+      root: this.config.root, // 내부 스크롤 컨테이너 지원
       onVisible: () => {
         // 요소가 화면에 보일 때 시작
-        if (!this.hasTriggered && this.config.enabled) {
-          this.hasTriggered = true;
-          this.start();
+        if (this.config.enabled) {
+          // triggerOnce가 false이거나 아직 트리거되지 않았을 때만 시작
+          if (!this.config.triggerOnce || !this.hasTriggered) {
+            this.hasTriggered = true;
+            this.start();
+          }
         }
       },
       onHidden: () => {
-        // 요소가 화면에서 벗어났을 때
-        if (!this.config.triggerOnce && this.isRunning) {
-          this.reset();
+        // 요소가 화면에서 벗어났을 때 항상 초기 위치로 복귀
+        if (this.config.enabled) {
+          this.stop();
+          // triggerOnce가 false이면 hasTriggered도 초기화하여 다시 실행 가능하게
+          if (!this.config.triggerOnce) {
+            this.hasTriggered = false;
+          }
+          // 초기 위치로 복귀
+          this.setInitialPosition();
         }
       },
     });
@@ -216,7 +223,7 @@ export class ScrollFadeIn {
     const progress = Math.min(elapsed / this.config.duration, 1);
     
     // Easing 적용
-    const easedProgress = this.config.easing(progress);
+    const easedProgress = this.easing(progress);
 
     // 현재 위치 계산
     const direction = this.config.direction;
@@ -302,7 +309,6 @@ export class ScrollFadeIn {
     this.config = {
       ...this.config,
       ...newConfig,
-      easing: newConfig.easing ?? this.config.easing,
       onStart: newConfig.onStart ?? this.config.onStart,
       onComplete: newConfig.onComplete ?? this.config.onComplete,
     };
@@ -316,7 +322,7 @@ export class ScrollFadeIn {
     this.setInitialPosition();
 
     // VisibilityManager 재설정
-    if (newConfig.threshold !== undefined || newConfig.rootMargin !== undefined) {
+    if (newConfig.threshold !== undefined || newConfig.rootMargin !== undefined || newConfig.root !== undefined) {
       if (this.visibilityManager) {
         this.visibilityManager.destroy();
         this.visibilityManager = null;

@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "2.0.6",
+  "version": "2.0.10",
   "description": "A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with Tree-shaking support.",
   "type": "npm-package",
   "packageManager": "npm",
@@ -180,16 +180,17 @@
       },
       {
         "name": "scrollFadeIn",
-        "description": "Scroll-triggered fade-in animation effect with direction control and flexible distance units",
-        "keywords": ["scroll", "fade-in", "reveal", "entrance", "animation", "scroll-reveal"],
+        "description": "Scroll-triggered fade-in animation effect with direction control, flexible distance units, and scroll container support",
+        "keywords": ["scroll", "fade-in", "reveal", "entrance", "animation", "scroll-reveal", "scroll-container"],
         "useCases": [
           "Content reveal animations",
           "Scroll-triggered animations",
           "Entrance effects",
           "Directional fade-in animations",
-          "Page section animations"
+          "Page section animations",
+          "Internal scroll container animations"
         ],
-        "special": "Supports multiple directions (top, right, bottom, left) and flexible distance units (px, rem, em, %, vh, vw)"
+        "special": "Supports multiple directions (top, right, bottom, left), flexible distance units (px, rem, em, %, vh, vw), and custom scroll container via root option"
       }
     ]
   },

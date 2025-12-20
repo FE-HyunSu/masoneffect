@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.6.
+MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.10.
 
 **Package Name:** masoneffect  
 **Installation:** `npm install masoneffect`  
@@ -35,10 +35,10 @@ MasonEffect is a collection of animation effects library that supports React, Vu
    - Keywords: typing, type, typewriter, terminal, code, korean, 한글
    - Special: Korean characters are decomposed into consonants and vowels for realistic typing effect
 
-4. **ScrollFadeIn**: Scroll-triggered fade-in animation effect with direction control
-   - Use cases: Content reveal animations, scroll-triggered animations, entrance effects
-   - Keywords: scroll, fade-in, reveal, entrance, animation, scroll-reveal
-   - Special: Supports multiple directions (top, right, bottom, left) and flexible distance units
+4. **ScrollFadeIn**: Scroll-triggered fade-in animation effect with direction control and scroll container support
+   - Use cases: Content reveal animations, scroll-triggered animations, entrance effects, internal scroll container animations
+   - Keywords: scroll, fade-in, reveal, entrance, animation, scroll-reveal, scroll-container
+   - Special: Supports multiple directions (top, right, bottom, left), flexible distance units (px, rem, em, %, vh, vw), and custom scroll container via root option
 
 ## Project Structure
 
@@ -350,12 +350,11 @@ const typing = new Typing(container, {
 ```tsx
 import React, { useRef } from 'react';
 import { ScrollFadeIn } from 'masoneffect/react/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/react/scrollFadeIn';
 import type { ScrollFadeInRef } from 'masoneffect/react/scrollFadeIn';
 function App() {
   const ref = useRef<ScrollFadeInRef>(null);
   return (
-    <ScrollFadeIn ref={ref} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
+    <ScrollFadeIn ref={ref} direction="bottom" distance="50px" duration={800}>
       <div>Content that fades in on scroll</div>
     </ScrollFadeIn>
   );
@@ -367,11 +366,10 @@ function App() {
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ScrollFadeIn } from 'masoneffect/vue/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/vue/scrollFadeIn';
 const scrollFadeInRef = ref(null);
 </script>
 <template>
-  <ScrollFadeIn direction="bottom" distance="50px" :duration="800" :easing="easingFunctions.easeOutCubic">
+  <ScrollFadeIn direction="bottom" distance="50px" :duration="800">
     <div>Content that fades in on scroll</div>
   </ScrollFadeIn>
 </template>
@@ -381,10 +379,9 @@ const scrollFadeInRef = ref(null);
 ```svelte
 <script lang="ts">
 import { ScrollFadeIn } from 'masoneffect/svelte/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/svelte/scrollFadeIn';
 let scrollFadeInRef: any = null;
 </script>
-<ScrollFadeIn bind:this={scrollFadeInRef} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
+<ScrollFadeIn bind:this={scrollFadeInRef} direction="bottom" distance="50px" duration={800}>
   <div>Content that fades in on scroll</div>
 </ScrollFadeIn>
 ```
@@ -392,15 +389,22 @@ let scrollFadeInRef: any = null;
 ### Vanilla JS + ScrollFadeIn
 ```javascript
 import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
-import { easingFunctions } from 'masoneffect/scrollFadeIn';
 const container = document.querySelector('#scroll-fade-in-container');
+// For viewport-based scrolling (default)
 const scrollFadeIn = new ScrollFadeIn(container, {
   direction: 'bottom',
   distance: '50px',
   duration: 800,
-  easing: easingFunctions.easeOutCubic,
   threshold: 0.1,
   triggerOnce: false
+});
+// For internal scroll container
+const scrollContainer = document.querySelector('.scroll-container');
+const scrollFadeInInContainer = new ScrollFadeIn(container, {
+  direction: 'bottom',
+  distance: '50px',
+  root: scrollContainer, // Specify scroll container element
+  threshold: 0.1
 });
 ```
 
@@ -422,7 +426,7 @@ const scrollFadeIn = new ScrollFadeIn(container, {
 
 ## Version
 
-Current version: 2.0.6
+Current version: 2.0.10
 
 ## License
 

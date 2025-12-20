@@ -24,7 +24,6 @@ export type { TypingOptions } from './core/index.js';
 // ScrollFadeIn 효과
 export { ScrollFadeIn } from './core/index.js';
 export type { ScrollFadeInOptions } from './core/index.js';
-export { easingFunctions as scrollFadeInEasingFunctions } from './core/index.js';
 
 // 하위 호환성을 위한 기본 export
 export { default } from './core/index.js';

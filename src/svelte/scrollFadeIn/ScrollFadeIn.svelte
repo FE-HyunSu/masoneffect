@@ -6,9 +6,9 @@
   export let direction: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
   export let distance: string = '50px';
   export let duration: number = 800;
-  export let easing: (t: number) => number = (t) => t;
   export let threshold: number = 0.1;
   export let rootMargin: string = '0px';
+  export let root: HTMLElement | null = null;
   export let triggerOnce: boolean = false;
   export let enabled: boolean = true;
   export let className: string = '';
@@ -28,9 +28,9 @@
         direction,
         distance,
         duration,
-        easing,
         threshold,
         rootMargin,
+        root,
         triggerOnce,
         enabled,
         onStart: () => {
@@ -50,9 +50,9 @@
       direction,
       distance,
       duration,
-      easing,
       threshold,
       rootMargin,
+      root,
       triggerOnce,
       enabled,
       onStart: () => {
