@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.5.
+MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.6.
 
 **Package Name:** masoneffect  
 **Installation:** `npm install masoneffect`  
@@ -35,9 +35,9 @@ MasonEffect is a collection of animation effects library that supports React, Vu
    - Keywords: typing, type, typewriter, terminal, code, korean, 한글
    - Special: Korean characters are decomposed into consonants and vowels for realistic typing effect
 
-4. **Slide**: Slide-in animation effect with direction control
+4. **ScrollFadeIn**: Scroll-triggered fade-in animation effect with direction control
    - Use cases: Content reveal animations, scroll-triggered animations, entrance effects
-   - Keywords: slide, slide-in, reveal, entrance, animation, scroll
+   - Keywords: scroll, fade-in, reveal, entrance, animation, scroll-reveal
    - Special: Supports multiple directions (top, right, bottom, left) and flexible distance units
 
 ## Project Structure
@@ -84,7 +84,7 @@ masoneffect/
 - TextToParticle: `{framework}/textToParticle`
 - Count: `{framework}/count`
 - Typing: `{framework}/typing`
-- Slide: `{framework}/slide`
+- ScrollFadeIn: `{framework}/scrollFadeIn`
 
 **Example:**
 ```typescript
@@ -132,7 +132,7 @@ Based on user request keywords:
 - Text/Particle/Morph → TextToParticle
 - Number/Count/Stat → Count
 - Typing/Typewriter/Terminal/Code/Korean → Typing
-- Slide/Reveal/Entrance/Scroll → Slide
+- Scroll/Reveal/Entrance/FadeIn → ScrollFadeIn
 
 ## Build System
 
@@ -346,55 +346,55 @@ const typing = new Typing(container, {
 });
 ```
 
-### React + TypeScript + Slide
+### React + TypeScript + ScrollFadeIn
 ```tsx
 import React, { useRef } from 'react';
-import { Slide } from 'masoneffect/react/slide';
-import { easingFunctions } from 'masoneffect/react/slide';
-import type { SlideRef } from 'masoneffect/react/slide';
+import { ScrollFadeIn } from 'masoneffect/react/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/react/scrollFadeIn';
+import type { ScrollFadeInRef } from 'masoneffect/react/scrollFadeIn';
 function App() {
-  const ref = useRef<SlideRef>(null);
+  const ref = useRef<ScrollFadeInRef>(null);
   return (
-    <Slide ref={ref} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
-      <div>Content that slides in</div>
-    </Slide>
+    <ScrollFadeIn ref={ref} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
+      <div>Content that fades in on scroll</div>
+    </ScrollFadeIn>
   );
 }
 ```
 
-### Vue 3 + Composition API + Slide
+### Vue 3 + Composition API + ScrollFadeIn
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Slide } from 'masoneffect/vue/slide';
-import { easingFunctions } from 'masoneffect/vue/slide';
-const slideRef = ref(null);
+import { ScrollFadeIn } from 'masoneffect/vue/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/vue/scrollFadeIn';
+const scrollFadeInRef = ref(null);
 </script>
 <template>
-  <Slide direction="bottom" distance="50px" :duration="800" :easing="easingFunctions.easeOutCubic">
-    <div>Content that slides in</div>
-  </Slide>
+  <ScrollFadeIn direction="bottom" distance="50px" :duration="800" :easing="easingFunctions.easeOutCubic">
+    <div>Content that fades in on scroll</div>
+  </ScrollFadeIn>
 </template>
 ```
 
-### Svelte + TypeScript + Slide
+### Svelte + TypeScript + ScrollFadeIn
 ```svelte
 <script lang="ts">
-import { Slide } from 'masoneffect/svelte/slide';
-import { easingFunctions } from 'masoneffect/svelte/slide';
-let slideRef: any = null;
+import { ScrollFadeIn } from 'masoneffect/svelte/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/svelte/scrollFadeIn';
+let scrollFadeInRef: any = null;
 </script>
-<Slide bind:this={slideRef} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
-  <div>Content that slides in</div>
-</Slide>
+<ScrollFadeIn bind:this={scrollFadeInRef} direction="bottom" distance="50px" duration={800} easing={easingFunctions.easeOutCubic}>
+  <div>Content that fades in on scroll</div>
+</ScrollFadeIn>
 ```
 
-### Vanilla JS + Slide
+### Vanilla JS + ScrollFadeIn
 ```javascript
-import { Slide } from 'masoneffect/slide';
-import { easingFunctions } from 'masoneffect/slide';
-const container = document.querySelector('#slide-container');
-const slide = new Slide(container, {
+import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/scrollFadeIn';
+const container = document.querySelector('#scroll-fade-in-container');
+const scrollFadeIn = new ScrollFadeIn(container, {
   direction: 'bottom',
   distance: '50px',
   duration: 800,
@@ -422,7 +422,7 @@ const slide = new Slide(container, {
 
 ## Version
 
-Current version: 2.0.5
+Current version: 2.0.6
 
 ## License
 

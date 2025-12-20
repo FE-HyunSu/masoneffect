@@ -155,17 +155,17 @@ const typingCoreBuild = {
   ],
 };
 
-// Slide core build (ESM + CJS) - 독립 빌드
-const slideCoreBuild = {
-  input: 'src/core/slide/index.ts',
+// ScrollFadeIn core build (ESM + CJS) - 독립 빌드
+const scrollFadeInCoreBuild = {
+  input: 'src/core/scrollFadeIn/index.ts',
   output: [
     {
-      file: 'dist/slide/index.mjs',
+      file: 'dist/scrollFadeIn/index.mjs',
       format: 'es',
       exports: 'named',
     },
     {
-      file: 'dist/slide/index.cjs',
+      file: 'dist/scrollFadeIn/index.cjs',
       format: 'cjs',
       exports: 'named',
     },
@@ -175,7 +175,7 @@ const slideCoreBuild = {
     typescript({
       tsconfig: './tsconfig.json',
       declaration: true,
-      declarationDir: 'dist/slide',
+      declarationDir: 'dist/scrollFadeIn',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
       compilerOptions: {
@@ -310,17 +310,17 @@ const reactTypingBuild = {
   ],
 };
 
-// React Slide component build (ESM + CJS) - 독립 빌드
-const reactSlideBuild = {
-  input: 'src/react/slide/index.ts',
+// React ScrollFadeIn component build (ESM + CJS) - 독립 빌드
+const reactScrollFadeInBuild = {
+  input: 'src/react/scrollFadeIn/index.ts',
   output: [
     {
-      file: 'dist/react/slide/index.mjs',
+      file: 'dist/react/scrollFadeIn/index.mjs',
       format: 'es',
       exports: 'named',
     },
     {
-      file: 'dist/react/slide/index.cjs',
+      file: 'dist/react/scrollFadeIn/index.cjs',
       format: 'cjs',
       exports: 'named',
     },
@@ -331,7 +331,7 @@ const reactSlideBuild = {
     typescript({
       tsconfig: './tsconfig.json',
       declaration: true,
-      declarationDir: 'dist/react/slide',
+      declarationDir: 'dist/react/scrollFadeIn',
       rootDir: 'src',
       exclude: ['src/vue/**/*', 'src/svelte/**/*'],
       compilerOptions: {
@@ -358,12 +358,12 @@ const reactIndexBuild = {
   external: (id, importer) => {
     // react, react-dom은 external
     if (id === 'react' || id === 'react-dom') return true;
-    // src/react/index.ts에서 ./textToParticle, ./count, ./typing, ./slide를 import하는 경우 external로 처리
+    // src/react/index.ts에서 ./textToParticle, ./count, ./typing, ./scrollFadeIn를 import하는 경우 external로 처리
     if (importer && importer.includes('src/react/index.ts')) {
       if (id === './textToParticle' || id.startsWith('./textToParticle')) return true;
       if (id === './count' || id.startsWith('./count')) return true;
       if (id === './typing' || id.startsWith('./typing')) return true;
-      if (id === './slide' || id.startsWith('./slide')) return true;
+      if (id === './scrollFadeIn' || id.startsWith('./scrollFadeIn')) return true;
     }
     return false;
   },
@@ -384,12 +384,12 @@ const reactIndexBuild = {
     {
       name: 'resolve-import-extension',
       renderChunk(code, chunk, options) {
-        // ESM 파일에서 ./textToParticle, ./count, ./typing, ./slide를 .mjs 확장자로 변경
+        // ESM 파일에서 ./textToParticle, ./count, ./typing, ./scrollFadeIn를 .mjs 확장자로 변경
         if (chunk.fileName === 'index.mjs') {
           code = code.replace(/from ['"]\.\/textToParticle(\/index)?['"]/g, "from './textToParticle/index.mjs'");
           code = code.replace(/from ['"]\.\/count(\/index)?['"]/g, "from './count/index.mjs'");
           code = code.replace(/from ['"]\.\/typing(\/index)?['"]/g, "from './typing/index.mjs'");
-          code = code.replace(/from ['"]\.\/slide(\/index)?['"]/g, "from './slide/index.mjs'");
+          code = code.replace(/from ['"]\.\/scrollFadeIn(\/index)?['"]/g, "from './scrollFadeIn/index.mjs'");
           return code;
         }
         return null;
@@ -406,11 +406,11 @@ export default [
   textToParticleCoreBuild,
   countCoreBuild,
   typingCoreBuild,
-  slideCoreBuild,
+  scrollFadeInCoreBuild,
   umdBuild,
   reactTextToParticleBuild,
   reactCountBuild,
   reactTypingBuild,
-  reactSlideBuild,
+  reactScrollFadeInBuild,
   reactIndexBuild,
 ];

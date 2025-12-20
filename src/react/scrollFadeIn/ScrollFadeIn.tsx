@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Slide } from '../../core/slide/index.js';
-import type { SlideOptions } from '../../core/slide/index.js';
+import { ScrollFadeIn } from '../../core/scrollFadeIn/index.js';
+import type { ScrollFadeInOptions } from '../../core/scrollFadeIn/index.js';
 
-export interface SlideRef {
+export interface ScrollFadeInRef {
   start: () => void;
   stop: () => void;
   reset: () => void;
-  updateConfig: (config: Partial<SlideOptions>) => void;
+  updateConfig: (config: Partial<ScrollFadeInOptions>) => void;
   destroy: () => void;
 }
 
-interface SlideProps extends Omit<SlideOptions, 'onStart' | 'onComplete'> {
+interface ScrollFadeInProps extends Omit<ScrollFadeInOptions, 'onStart' | 'onComplete'> {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
@@ -18,10 +18,10 @@ interface SlideProps extends Omit<SlideOptions, 'onStart' | 'onComplete'> {
   onComplete?: () => void;
 }
 
-const SlideComponent = forwardRef<SlideRef, SlideProps>(
+const ScrollFadeInComponent = forwardRef<ScrollFadeInRef, ScrollFadeInProps>(
   (props, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const instanceRef = useRef<Slide | null>(null);
+    const instanceRef = useRef<ScrollFadeIn | null>(null);
 
     useEffect(() => {
       if (!containerRef.current) return;
@@ -47,7 +47,7 @@ const SlideComponent = forwardRef<SlideRef, SlideProps>(
         onComplete,
       } = props;
 
-      const options: SlideOptions = {
+      const options: ScrollFadeInOptions = {
         direction,
         distance,
         duration,
@@ -60,7 +60,7 @@ const SlideComponent = forwardRef<SlideRef, SlideProps>(
         onComplete,
       };
 
-      instanceRef.current = new Slide(containerRef.current, options);
+      instanceRef.current = new ScrollFadeIn(containerRef.current, options);
 
       return () => {
         if (instanceRef.current) {
@@ -115,28 +115,28 @@ const SlideComponent = forwardRef<SlideRef, SlideProps>(
     useImperativeHandle(ref, () => ({
       start: () => {
         if (!instanceRef.current) {
-          console.warn('Slide: 인스턴스가 아직 초기화되지 않았습니다.');
+          console.warn('ScrollFadeIn: 인스턴스가 아직 초기화되지 않았습니다.');
           return;
         }
         instanceRef.current.start();
       },
       stop: () => {
         if (!instanceRef.current) {
-          console.warn('Slide: 인스턴스가 아직 초기화되지 않았습니다.');
+          console.warn('ScrollFadeIn: 인스턴스가 아직 초기화되지 않았습니다.');
           return;
         }
         instanceRef.current.stop();
       },
       reset: () => {
         if (!instanceRef.current) {
-          console.warn('Slide: 인스턴스가 아직 초기화되지 않았습니다.');
+          console.warn('ScrollFadeIn: 인스턴스가 아직 초기화되지 않았습니다.');
           return;
         }
         instanceRef.current.reset();
       },
-      updateConfig: (config: Partial<SlideOptions>) => {
+      updateConfig: (config: Partial<ScrollFadeInOptions>) => {
         if (!instanceRef.current) {
-          console.warn('Slide: 인스턴스가 아직 초기화되지 않았습니다.');
+          console.warn('ScrollFadeIn: 인스턴스가 아직 초기화되지 않았습니다.');
           return;
         }
         instanceRef.current.updateConfig(config);
@@ -161,7 +161,7 @@ const SlideComponent = forwardRef<SlideRef, SlideProps>(
   }
 );
 
-SlideComponent.displayName = 'Slide';
+ScrollFadeInComponent.displayName = 'ScrollFadeIn';
 
-export default SlideComponent;
+export default ScrollFadeInComponent;
 

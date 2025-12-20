@@ -1,14 +1,14 @@
 /**
- * Slide - 슬라이드 인 애니메이션 효과
+ * ScrollFadeIn - 스크롤 기반 페이드 인 애니메이션 효과
  * 바닐라 JS 코어 클래스
  * 
  * 사용법:
- * import { Slide } from 'masoneffect/slide';
+ * import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
  */
 
 import { VisibilityManager } from '../utils/visibilityManager.js';
 
-export interface SlideOptions {
+export interface ScrollFadeInOptions {
   direction?: 'top' | 'right' | 'bottom' | 'left';
   distance?: string; // CSS 단위 (예: '100px', '50%', '2rem')
   duration?: number; // 애니메이션 지속 시간 (ms)
@@ -31,12 +31,12 @@ export const easingFunctions = {
   easeInOutCubic: (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
 };
 
-export class Slide {
+export class ScrollFadeIn {
   container: HTMLElement;
-  config: Required<Omit<SlideOptions, 'onStart' | 'onComplete' | 'easing'>> & {
+  config: Required<Omit<ScrollFadeInOptions, 'onStart' | 'onComplete' | 'easing'>> & {
     easing: (t: number) => number;
-    onStart: SlideOptions['onStart'];
-    onComplete: SlideOptions['onComplete'];
+    onStart: ScrollFadeInOptions['onStart'];
+    onComplete: ScrollFadeInOptions['onComplete'];
   };
   visibilityManager: VisibilityManager | null;
   animationFrameId: number | null;
@@ -46,7 +46,7 @@ export class Slide {
   initialTransform: string;
   targetDistance: number; // 계산된 거리 (px)
 
-  constructor(container: HTMLElement | string, options: SlideOptions = {}) {
+  constructor(container: HTMLElement | string, options: ScrollFadeInOptions = {}) {
     // 컨테이너 요소
     this.container = typeof container === 'string' 
       ? document.querySelector(container) as HTMLElement
@@ -168,7 +168,7 @@ export class Slide {
       this.container.style.transform = translate;
     }
     
-    // opacity도 초기값 설정 (선택사항)
+    // opacity도 초기값 설정
     this.container.style.opacity = '0';
     this.container.style.transition = 'none'; // 초기에는 transition 없음
   }
@@ -295,7 +295,7 @@ export class Slide {
   }
 
   // 설정 업데이트
-  updateConfig(newConfig: Partial<SlideOptions>): void {
+  updateConfig(newConfig: Partial<ScrollFadeInOptions>): void {
     const wasRunning = this.isRunning;
     this.stop();
 
@@ -345,5 +345,5 @@ export class Slide {
 }
 
 // 기본 export
-export default Slide;
+export default ScrollFadeIn;
 

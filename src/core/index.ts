@@ -21,10 +21,10 @@ export { easingFunctions } from './count/index.js';
 export { Typing, default as TypingDefault } from './typing/index.js';
 export type { TypingOptions } from './typing/index.js';
 
-// Slide 효과 (하위 호환성을 위해 re-export)
-export { Slide, default as SlideDefault } from './slide/index.js';
-export type { SlideOptions } from './slide/index.js';
-export { easingFunctions as slideEasingFunctions } from './slide/index.js';
+// ScrollFadeIn 효과 (하위 호환성을 위해 re-export)
+export { ScrollFadeIn, default as ScrollFadeInDefault } from './scrollFadeIn/index.js';
+export type { ScrollFadeInOptions } from './scrollFadeIn/index.js';
+export { easingFunctions as scrollFadeInEasingFunctions } from './scrollFadeIn/index.js';
 
 // 하위 호환성을 위한 alias (기존 MasonEffect 이름 유지)
 export { TextToParticle as MasonEffect } from './textToParticle/index.js';

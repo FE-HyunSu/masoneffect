@@ -21,10 +21,10 @@ export { easingFunctions } from './core/index.js';
 export { Typing } from './core/index.js';
 export type { TypingOptions } from './core/index.js';
 
-// Slide 효과
-export { Slide } from './core/index.js';
-export type { SlideOptions } from './core/index.js';
-export { easingFunctions as slideEasingFunctions } from './core/index.js';
+// ScrollFadeIn 효과
+export { ScrollFadeIn } from './core/index.js';
+export type { ScrollFadeInOptions } from './core/index.js';
+export { easingFunctions as scrollFadeInEasingFunctions } from './core/index.js';
 
 // 하위 호환성을 위한 기본 export
 export { default } from './core/index.js';

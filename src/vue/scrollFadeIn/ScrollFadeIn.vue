@@ -6,10 +6,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
-import { Slide } from '../../core/slide/index';
-import type { SlideOptions } from '../../core/slide/index';
+import { ScrollFadeIn } from '../../core/scrollFadeIn/index';
+import type { ScrollFadeInOptions } from '../../core/scrollFadeIn/index';
 
-interface Props extends Partial<SlideOptions> {
+interface Props extends Partial<ScrollFadeInOptions> {
   className?: string;
   style?: Record<string, any>;
 }
@@ -35,12 +35,12 @@ const emit = defineEmits<{
 }>();
 
 const container = ref<HTMLElement | null>(null);
-let instance: Slide | null = null;
+let instance: ScrollFadeIn | null = null;
 
 const init = () => {
   if (!container.value) return;
 
-  const options: SlideOptions = {
+  const options: ScrollFadeInOptions = {
     direction: props.direction,
     distance: props.distance,
     duration: props.duration,
@@ -59,7 +59,7 @@ const init = () => {
     },
   };
 
-  instance = new Slide(container.value, options);
+  instance = new ScrollFadeIn(container.value, options);
 };
 
 // props 변경 감지
@@ -120,7 +120,7 @@ defineExpose({
   reset: () => {
     if (instance) instance.reset();
   },
-  updateConfig: (config: Partial<SlideOptions>) => {
+  updateConfig: (config: Partial<ScrollFadeInOptions>) => {
     if (instance) instance.updateConfig(config);
   },
   destroy: () => {

@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with Tree-shaking support.",
   "type": "npm-package",
   "packageManager": "npm",
@@ -49,10 +49,10 @@
       "require": "./dist/typing/index.cjs",
       "types": "./dist/typing/index.d.ts"
     },
-    "./slide": {
-      "import": "./dist/slide/index.mjs",
-      "require": "./dist/slide/index.cjs",
-      "types": "./dist/slide/index.d.ts"
+    "./scrollFadeIn": {
+      "import": "./dist/scrollFadeIn/index.mjs",
+      "require": "./dist/scrollFadeIn/index.cjs",
+      "types": "./dist/scrollFadeIn/index.d.ts"
     },
     "./react": {
       "import": "./dist/react/index.mjs",
@@ -74,10 +74,10 @@
       "require": "./dist/react/typing/index.cjs",
       "types": "./dist/react/typing/index.d.ts"
     },
-    "./react/slide": {
-      "import": "./dist/react/slide/index.mjs",
-      "require": "./dist/react/slide/index.cjs",
-      "types": "./dist/react/slide/index.d.ts"
+    "./react/scrollFadeIn": {
+      "import": "./dist/react/scrollFadeIn/index.mjs",
+      "require": "./dist/react/scrollFadeIn/index.cjs",
+      "types": "./dist/react/scrollFadeIn/index.d.ts"
     },
     "./vue": {
       "import": "./dist/vue/index.mjs",
@@ -99,10 +99,10 @@
       "require": "./dist/vue/typing/index.cjs",
       "types": "./dist/vue/typing/index.d.ts"
     },
-    "./vue/slide": {
-      "import": "./dist/vue/slide/index.mjs",
-      "require": "./dist/vue/slide/index.cjs",
-      "types": "./dist/vue/slide/index.d.ts"
+    "./vue/scrollFadeIn": {
+      "import": "./dist/vue/scrollFadeIn/index.mjs",
+      "require": "./dist/vue/scrollFadeIn/index.cjs",
+      "types": "./dist/vue/scrollFadeIn/index.d.ts"
     },
     "./svelte": {
       "import": "./dist/svelte/index.mjs",
@@ -124,10 +124,10 @@
       "require": "./dist/svelte/typing/index.cjs",
       "types": "./dist/svelte/typing/index.d.ts"
     },
-    "./svelte/slide": {
-      "import": "./dist/svelte/slide/index.mjs",
-      "require": "./dist/svelte/slide/index.cjs",
-      "types": "./dist/svelte/slide/index.d.ts"
+    "./svelte/scrollFadeIn": {
+      "import": "./dist/svelte/scrollFadeIn/index.mjs",
+      "require": "./dist/svelte/scrollFadeIn/index.cjs",
+      "types": "./dist/svelte/scrollFadeIn/index.d.ts"
     }
   },
   "features": {
@@ -179,14 +179,14 @@
         "special": "Korean characters are decomposed into consonants and vowels for realistic typing effect"
       },
       {
-        "name": "slide",
-        "description": "Slide-in animation effect with direction control and flexible distance units",
-        "keywords": ["slide", "slide-in", "reveal", "entrance", "animation", "scroll"],
+        "name": "scrollFadeIn",
+        "description": "Scroll-triggered fade-in animation effect with direction control and flexible distance units",
+        "keywords": ["scroll", "fade-in", "reveal", "entrance", "animation", "scroll-reveal"],
         "useCases": [
           "Content reveal animations",
           "Scroll-triggered animations",
           "Entrance effects",
-          "Directional slide animations",
+          "Directional fade-in animations",
           "Page section animations"
         ],
         "special": "Supports multiple directions (top, right, bottom, left) and flexible distance units (px, rem, em, %, vh, vw)"
@@ -217,25 +217,25 @@
       "textToParticle": "masoneffect/react/textToParticle",
       "count": "masoneffect/react/count",
       "typing": "masoneffect/react/typing",
-      "slide": "masoneffect/react/slide"
+      "scrollFadeIn": "masoneffect/react/scrollFadeIn"
     },
     "vue": {
       "textToParticle": "masoneffect/vue/textToParticle",
       "count": "masoneffect/vue/count",
       "typing": "masoneffect/vue/typing",
-      "slide": "masoneffect/vue/slide"
+      "scrollFadeIn": "masoneffect/vue/scrollFadeIn"
     },
     "svelte": {
       "textToParticle": "masoneffect/svelte/textToParticle",
       "count": "masoneffect/svelte/count",
       "typing": "masoneffect/svelte/typing",
-      "slide": "masoneffect/svelte/slide"
+      "scrollFadeIn": "masoneffect/svelte/scrollFadeIn"
     },
     "vanilla": {
       "textToParticle": "masoneffect/textToParticle",
       "count": "masoneffect/count",
       "typing": "masoneffect/typing",
-      "slide": "masoneffect/slide"
+      "scrollFadeIn": "masoneffect/scrollFadeIn"
     }
   },
   "build": {
@@ -268,7 +268,7 @@
       "textToParticle": ["text", "particle", "morph", "title", "banner", "hero"],
       "count": ["number", "count", "counter", "stat", "statistic"],
       "typing": ["typing", "type", "typewriter", "terminal", "code", "korean", "한글"],
-      "slide": ["slide", "slide-in", "reveal", "entrance", "animation", "scroll"]
+      "scrollFadeIn": ["scroll", "fade-in", "reveal", "entrance", "animation", "scroll-reveal"]
     },
     "rules": [
       "Always use direct import paths for tree-shaking",

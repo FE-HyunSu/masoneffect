@@ -228,7 +228,6 @@ const MasonEffectComponent = forwardRef<MasonEffectRef, MasonEffectProps>(
     const defaultStyle: React.CSSProperties = {
       width: '100%',
       height: '100%',
-      minHeight: props.height || 400,
       position: 'relative',
       ...props.style,
     };

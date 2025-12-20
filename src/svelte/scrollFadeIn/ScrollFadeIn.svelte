@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { Slide } from '../../core/slide/index';
-  import type { SlideOptions } from '../../core/slide/index';
+  import { ScrollFadeIn } from '../../core/scrollFadeIn/index';
+  import type { ScrollFadeInOptions } from '../../core/scrollFadeIn/index';
 
   export let direction: 'top' | 'right' | 'bottom' | 'left' = 'bottom';
   export let distance: string = '50px';
@@ -20,7 +20,7 @@
   }>();
 
   let container: HTMLDivElement;
-  let instance: Slide | null = null;
+  let instance: ScrollFadeIn | null = null;
 
   $: {
     if (instance) {
@@ -46,7 +46,7 @@
   onMount(() => {
     if (!container) return;
 
-    const options: SlideOptions = {
+    const options: ScrollFadeInOptions = {
       direction,
       distance,
       duration,
@@ -63,7 +63,7 @@
       },
     };
 
-    instance = new Slide(container, options);
+    instance = new ScrollFadeIn(container, options);
   });
 
   onDestroy(() => {
@@ -91,7 +91,7 @@
     }
   }
 
-  export function updateConfig(config: Partial<SlideOptions>) {
+  export function updateConfig(config: Partial<ScrollFadeInOptions>) {
     if (instance) {
       instance.updateConfig(config);
     }

@@ -1,6 +1,6 @@
 # MasonEffect ![npm](https://img.shields.io/npm/dy/masoneffect)
 
-**Release version 2.0.5**
+**Release version 2.0.6**
 
 A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with **Tree-shaking** support.
 
@@ -42,8 +42,8 @@ Animated number counting with intersection observer support.
 ### 3. Typing
 Typing animation effect with Korean character decomposition.
 
-### 4. Slide
-Slide-in animation effect with IntersectionObserver and Page Visibility API support.
+### 4. ScrollFadeIn
+Scroll-triggered fade-in animation effect with IntersectionObserver and Page Visibility API support.
 
 ---
 
@@ -268,16 +268,16 @@ import { easingFunctions } from 'masoneffect/vue/count';
 </div>
 ```
 
-### Slide Effect
+### ScrollFadeIn Effect
 
 #### Vanilla JavaScript
 
 ```javascript
-import { Slide } from 'masoneffect/slide';
-import { easingFunctions } from 'masoneffect/slide';
+import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/scrollFadeIn';
 
-const container = document.querySelector('#slide-container');
-const slide = new Slide(container, {
+const container = document.querySelector('#scroll-fade-in-container');
+const scrollFadeIn = new ScrollFadeIn(container, {
   direction: 'bottom',
   distance: '50px',
   duration: 800,
@@ -290,28 +290,28 @@ const slide = new Slide(container, {
 });
 
 // Methods
-slide.start();
-slide.stop();
-slide.reset();
-slide.updateConfig({ distance: '100px' });
-slide.destroy();
+scrollFadeIn.start();
+scrollFadeIn.stop();
+scrollFadeIn.reset();
+scrollFadeIn.updateConfig({ distance: '100px' });
+scrollFadeIn.destroy();
 ```
 
 #### React
 
 ```tsx
 import React, { useRef } from 'react';
-import { Slide } from 'masoneffect/react/slide';
-import { easingFunctions } from 'masoneffect/react/slide';
-import type { SlideRef } from 'masoneffect/react/slide';
+import { ScrollFadeIn } from 'masoneffect/react/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/react/scrollFadeIn';
+import type { ScrollFadeInRef } from 'masoneffect/react/scrollFadeIn';
 
 function App() {
-  const slideRef = useRef<SlideRef>(null);
+  const scrollFadeInRef = useRef<ScrollFadeInRef>(null);
 
   return (
     <div>
-      <Slide
-        ref={slideRef}
+      <ScrollFadeIn
+        ref={scrollFadeInRef}
         direction="bottom"
         distance="50px"
         duration={800}
@@ -321,9 +321,9 @@ function App() {
         onComplete={() => console.log('Completed')}
         style={{ padding: '20px' }}
       >
-        <div>Content that slides in</div>
-      </Slide>
-      <button onClick={() => slideRef.current?.reset()}>Reset</button>
+        <div>Content that fades in on scroll</div>
+      </ScrollFadeIn>
+      <button onClick={() => scrollFadeInRef.current?.reset()}>Reset</button>
     </div>
   );
 }
@@ -333,12 +333,12 @@ function App() {
 
 ```vue
 <script setup>
-import { Slide } from 'masoneffect/vue/slide';
-import { easingFunctions } from 'masoneffect/vue/slide';
+import { ScrollFadeIn } from 'masoneffect/vue/scrollFadeIn';
+import { easingFunctions } from 'masoneffect/vue/scrollFadeIn';
 </script>
 
 <template>
-  <Slide
+  <ScrollFadeIn
     direction="bottom"
     distance="50px"
     :duration="800"
@@ -348,8 +348,8 @@ import { easingFunctions } from 'masoneffect/vue/slide';
     @complete="() => console.log('Completed')"
     style="padding: 20px"
   >
-    <div>Content that slides in</div>
-  </Slide>
+    <div>Content that fades in on scroll</div>
+  </ScrollFadeIn>
 </template>
 ```
 
@@ -357,11 +357,11 @@ import { easingFunctions } from 'masoneffect/vue/slide';
 
 ```svelte
 <script lang="ts">
-  import { Slide } from 'masoneffect/svelte/slide';
-  import { easingFunctions } from 'masoneffect/svelte/slide';
+  import { ScrollFadeIn } from 'masoneffect/svelte/scrollFadeIn';
+  import { easingFunctions } from 'masoneffect/svelte/scrollFadeIn';
 </script>
 
-<Slide
+<ScrollFadeIn
   direction="bottom"
   distance="50px"
   duration={800}
@@ -371,8 +371,8 @@ import { easingFunctions } from 'masoneffect/vue/slide';
   on:complete={() => console.log('Completed')}
   style="padding: 20px"
 >
-  <div>Content that slides in</div>
-</Slide>
+  <div>Content that fades in on scroll</div>
+</ScrollFadeIn>
 ```
 
 ---
@@ -450,14 +450,14 @@ easingFunctions.easeInOutQuad
 easingFunctions.easeOutCubic
 ```
 
-### Slide
+### ScrollFadeIn
 
 #### Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `direction` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` | Slide direction |
-| `distance` | `string` | `'50px'` | Slide distance (supports px, rem, em, %, vh, vw) |
+| `direction` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` | Animation direction |
+| `distance` | `string` | `'50px'` | Animation distance (supports px, rem, em, %, vh, vw) |
 | `duration` | `number` | `800` | Animation duration in milliseconds |
 | `easing` | `function` | `easeOutCubic` | Easing function |
 | `threshold` | `number` | `0.1` | IntersectionObserver threshold |
@@ -472,13 +472,13 @@ easingFunctions.easeOutCubic
 - `start()` - Start animation
 - `stop()` - Stop animation
 - `reset()` - Reset to initial position
-- `updateConfig(config: Partial<SlideOptions>)` - Update configuration
+- `updateConfig(config: Partial<ScrollFadeInOptions>)` - Update configuration
 - `destroy()` - Destroy instance and cleanup
 
 #### Easing Functions
 
 ```typescript
-import { easingFunctions } from 'masoneffect/slide';
+import { easingFunctions } from 'masoneffect/scrollFadeIn';
 
 // Available easing functions:
 easingFunctions.linear
@@ -596,7 +596,7 @@ npm run serve
 ## 📦 CDN Usage (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.5/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.6/dist/index.umd.min.js"></script>
 <script>
   // TextToParticle (MasonEffect alias for backward compatibility)
   const container = document.getElementById('my-container');

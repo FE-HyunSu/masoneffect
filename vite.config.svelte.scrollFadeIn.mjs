@@ -1,25 +1,27 @@
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import sveltePreprocess from 'svelte-preprocess';
 
 export default defineConfig({
   plugins: [
-    vue({
-      script: {
-        defineModel: true,
-        propsDestructure: true,
+    svelte({
+      compilerOptions: {
+        css: 'external',
       },
+      preprocess: sveltePreprocess(),
     }),
     dts({
-      include: ['src/vue/slide/**/*.ts', 'src/vue/slide/**/*.vue'],
-      exclude: ['src/vue/slide/**/*.test.*', 'src/vue/slide/**/*.spec.*'],
-      outDir: 'dist/vue/slide',
+      include: ['src/svelte/scrollFadeIn/**/*.ts', 'src/svelte/scrollFadeIn/**/*.svelte'],
+      exclude: ['src/svelte/scrollFadeIn/**/*.test.*', 'src/svelte/scrollFadeIn/**/*.spec.*'],
+      outDir: 'dist/svelte/scrollFadeIn',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
         declarationMap: false,
       },
+      skipDiagnostics: true, // TypeScript 에러 무시 (Svelte 파일 타입 체크 스킵)
     }),
   ],
   resolve: {
@@ -29,20 +31,20 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/vue/slide/index.ts'),
-      name: 'MasonEffectVueSlide',
+      entry: resolve(import.meta.dirname, 'src/svelte/scrollFadeIn/index.ts'),
+      name: 'MasonEffectSvelteScrollFadeIn',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['vue'],
+      external: ['svelte'],
       output: {
         globals: {
-          vue: 'Vue',
+          svelte: 'Svelte',
         },
       },
     },
-    outDir: 'dist/vue/slide',
+    outDir: 'dist/svelte/scrollFadeIn',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
