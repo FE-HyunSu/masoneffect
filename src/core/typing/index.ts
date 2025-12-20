@@ -174,8 +174,31 @@ export class Typing {
     // 초기 상태 표시 (빈 텍스트 또는 커서만)
     this.updateDisplay('');
 
+    // CSS 스타일 주입 (fade-in 효과를 위한 transition)
+    this.injectStyles();
+
     // VisibilityManager 설정
     this.setupVisibilityManager();
+  }
+
+  private injectStyles(): void {
+    // 이미 스타일이 주입되었는지 확인
+    if (document.getElementById('masoneffect-typing-styles')) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = 'masoneffect-typing-styles';
+    style.textContent = `
+      .typing-char {
+        transition: opacity 0.2s ease-in;
+        display: inline-block;
+      }
+      .typing-cursor {
+        display: inline-block;
+      }
+    `;
+    document.head.appendChild(style);
   }
 
   setupVisibilityManager(): void {
@@ -310,7 +333,55 @@ export class Typing {
   }
 
   updateDisplay(text: string): void {
-    this.container.textContent = text;
+    // 커서 문자 제거 (커서는 별도로 처리)
+    const textWithoutCursor = text.replace(new RegExp(this.escapeHtml(this.config.cursorChar) + '$'), '');
+    const hasCursor = text.endsWith(this.config.cursorChar);
+    
+    // 이전에 표시된 텍스트와 비교하여 새로 추가된 부분만 fade-in 적용
+    const previousTextContent = this.container.textContent || '';
+    const previousTextWithoutCursor = previousTextContent.replace(new RegExp(this.config.cursorChar + '$'), '');
+    
+    // HTML로 변환하여 각 문자를 span으로 감싸기
+    let html = '';
+    for (let i = 0; i < textWithoutCursor.length; i++) {
+      const char = textWithoutCursor[i];
+      const isNewChar = i >= previousTextWithoutCursor.length;
+      
+      if (isNewChar) {
+        // 새로 추가된 문자는 fade-in 클래스 추가
+        html += `<span class="typing-char typing-fade-in" style="opacity: 0;">${this.escapeHtml(char)}</span>`;
+      } else {
+        // 기존 문자는 그대로
+        html += `<span class="typing-char" style="opacity: 1;">${this.escapeHtml(char)}</span>`;
+      }
+    }
+    
+    // 커서 추가
+    if (hasCursor) {
+      html += `<span class="typing-cursor">${this.escapeHtml(this.config.cursorChar)}</span>`;
+    }
+    
+    this.container.innerHTML = html;
+    
+    // 새로 추가된 문자에 fade-in 애니메이션 적용
+    const newChars = this.container.querySelectorAll('.typing-fade-in');
+    if (newChars.length > 0) {
+      // 다음 프레임에 opacity를 1로 변경하여 transition 효과 발생
+      requestAnimationFrame(() => {
+        newChars.forEach((char) => {
+          (char as HTMLElement).style.opacity = '1';
+          // fade-in 클래스 제거 (다음 업데이트에서 중복 방지)
+          char.classList.remove('typing-fade-in');
+        });
+      });
+    }
+  }
+  
+  // HTML 이스케이프 유틸리티
+  private escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   // 텍스트 변경
