@@ -178,8 +178,10 @@ export class TextToParticle {
   }
 
   resize(): void {
-    const width = this.config.width || this.container.clientWidth || window.innerWidth;
-    const height = this.config.height || this.container.clientHeight || window.innerHeight * 0.7;
+    // getBoundingClientRect를 사용하여 실제 렌더링된 크기 확인
+    const rect = this.container.getBoundingClientRect();
+    const width = this.config.width || rect.width || this.container.clientWidth || window.innerWidth;
+    const height = this.config.height || rect.height || this.container.clientHeight || window.innerHeight * 0.7;
     
     // 최소 크기 보장
     if (width <= 0 || height <= 0) {

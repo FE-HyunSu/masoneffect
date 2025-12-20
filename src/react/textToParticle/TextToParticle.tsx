@@ -23,6 +23,7 @@ const TextToParticleComponent = forwardRef<TextToParticleRef, TextToParticleProp
       if (!containerRef.current) return;
 
       let resizeObserver: ResizeObserver | null = null;
+      let tempResizeObserver: ResizeObserver | null = null;
       let initTimeout: number | null = null;
 
       // 컨테이너가 실제 크기를 가지도록 대기
@@ -41,18 +42,48 @@ const TextToParticleComponent = forwardRef<TextToParticleRef, TextToParticleProp
           existingCanvas.remove();
         }
 
-        // 컨테이너 크기가 0이거나 너무 작으면 다음 프레임에 다시 시도
+        // 컨테이너 크기 확인 (getBoundingClientRect 사용)
         const rect = container.getBoundingClientRect();
-        if (rect.width <= 0 || rect.height <= 0) {
-          initTimeout = window.setTimeout(initEffect, 50);
-          return;
-        }
+        const hasValidSize = rect.width > 0 && rect.height > 0;
         
-        // 최소 크기 보장 (너무 작으면 기본값 사용)
-        const minSize = 100;
-        if (rect.width < minSize || rect.height < minSize) {
-          container.style.minWidth = minSize + 'px';
-          container.style.minHeight = minSize + 'px';
+        // 크기가 없으면 ResizeObserver로 대기하거나 재시도
+        if (!hasValidSize) {
+          // ResizeObserver가 있으면 그것을 사용, 없으면 재시도
+          if (typeof ResizeObserver !== 'undefined') {
+            let resizeCheckCount = 0;
+            const maxResizeChecks = 20; // 최대 1초 대기 (50ms * 20)
+            
+            // 기존 tempResizeObserver가 있으면 정리
+            if (tempResizeObserver) {
+              tempResizeObserver.disconnect();
+              tempResizeObserver = null;
+            }
+            
+            tempResizeObserver = new ResizeObserver(() => {
+              resizeCheckCount++;
+              const newRect = container.getBoundingClientRect();
+              if (newRect.width > 0 && newRect.height > 0) {
+                if (tempResizeObserver) {
+                  tempResizeObserver.disconnect();
+                  tempResizeObserver = null;
+                }
+                initEffect();
+              } else if (resizeCheckCount >= maxResizeChecks) {
+                // 최대 대기 시간 초과 시 fallback으로 진행
+                if (tempResizeObserver) {
+                  tempResizeObserver.disconnect();
+                  tempResizeObserver = null;
+                }
+                initEffect();
+              }
+            });
+            tempResizeObserver.observe(container);
+            return;
+          } else {
+            // ResizeObserver가 없으면 재시도
+            initTimeout = window.setTimeout(initEffect, 50);
+            return;
+          }
         }
 
         const {
@@ -114,6 +145,10 @@ const TextToParticleComponent = forwardRef<TextToParticleRef, TextToParticleProp
         if (initTimeout) {
           clearTimeout(initTimeout);
           initTimeout = null;
+        }
+        if (tempResizeObserver) {
+          tempResizeObserver.disconnect();
+          tempResizeObserver = null;
         }
         if (resizeObserver) {
           resizeObserver.disconnect();
