@@ -246,6 +246,7 @@ const TextToParticleComponent = forwardRef<TextToParticleRef, TextToParticleProp
     const defaultStyle: React.CSSProperties = {
       width: '100%',
       height: '100%',
+      minHeight: 300,
       position: 'relative',
       ...props.style,
     };
