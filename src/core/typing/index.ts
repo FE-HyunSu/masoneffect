@@ -191,7 +191,7 @@ export class Typing {
     style.id = 'masoneffect-typing-styles';
     style.textContent = `
       .typing-char {
-        transition: opacity 0.2s ease-in;
+        transition: opacity 0.3s ease-in;
         display: inline-block;
       }
       .typing-cursor {
@@ -199,6 +199,9 @@ export class Typing {
       }
     `;
     document.head.appendChild(style);
+    
+    // 컨테이너에 white-space 스타일 적용 (띄어쓰기 유지)
+    this.container.style.whiteSpace = 'pre-wrap';
   }
 
   setupVisibilityManager(): void {
@@ -347,12 +350,15 @@ export class Typing {
       const char = textWithoutCursor[i];
       const isNewChar = i >= previousTextWithoutCursor.length;
       
+      // 띄어쓰기는 &nbsp;로 변환하여 유지
+      const displayChar = char === ' ' ? '&nbsp;' : this.escapeHtml(char);
+      
       if (isNewChar) {
         // 새로 추가된 문자는 fade-in 클래스 추가
-        html += `<span class="typing-char typing-fade-in" style="opacity: 0;">${this.escapeHtml(char)}</span>`;
+        html += `<span class="typing-char typing-fade-in" style="opacity: 0;">${displayChar}</span>`;
       } else {
         // 기존 문자는 그대로
-        html += `<span class="typing-char" style="opacity: 1;">${this.escapeHtml(char)}</span>`;
+        html += `<span class="typing-char" style="opacity: 1;">${displayChar}</span>`;
       }
     }
     
