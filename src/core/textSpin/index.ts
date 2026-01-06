@@ -102,7 +102,6 @@ export class TextSpin {
         display: inline-block;
         opacity: 0;
         transform: rotateY(90deg);
-        transition: opacity ${this.config.duration}s ease-out, transform ${this.config.duration}s ease-out;
       }
       .masoneffect-textspin-char.active {
         opacity: 1;
@@ -133,6 +132,9 @@ export class TextSpin {
     chars.forEach((char, index) => {
       const charElement = document.createElement('span');
       charElement.className = 'masoneffect-textspin-char';
+      
+      // transition을 인라인으로 적용 (duration 변경 시 즉시 반영)
+      charElement.style.transition = `opacity ${this.config.duration}s ease-out, transform ${this.config.duration}s ease-out`;
       
       // 공백 문자 처리
       if (char === ' ') {
@@ -232,6 +234,13 @@ export class TextSpin {
     }
   }
 
+  // 모든 문자 요소의 transition 업데이트
+  updateTransitions(): void {
+    this.textElements.forEach((element) => {
+      element.style.transition = `opacity ${this.config.duration}s ease-out, transform ${this.config.duration}s ease-out`;
+    });
+  }
+
   // 설정 업데이트
   updateConfig(newConfig: Partial<TextSpinOptions>): void {
     const wasActive = this.isActive;
@@ -248,6 +257,9 @@ export class TextSpin {
     // 텍스트가 변경되었으면 구조 재생성
     if (newConfig.text !== undefined) {
       this.createTextStructure();
+    } else if (newConfig.duration !== undefined) {
+      // duration이 변경되었으면 transition 업데이트
+      this.updateTransitions();
     }
 
     // VisibilityManager 재설정
