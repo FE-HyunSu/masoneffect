@@ -40,6 +40,11 @@ MasonEffect is a collection of animation effects library that supports React, Vu
    - Keywords: scroll, fade-in, reveal, entrance, animation, scroll-reveal, scroll-container
    - Special: Supports multiple directions (top, right, bottom, left), flexible distance units (px, rem, em, %, vh, vw), and custom scroll container via root option
 
+5. **TextSpin**: Text animation effect that splits text into individual characters and reveals them randomly with a spin effect
+   - Use cases: Title animations, text reveal effects, character-by-character animations, random text appearances
+   - Keywords: text-spin, text-animation, character-animation, random-text, text-reveal
+   - Special: Each character appears with a random delay and 3D rotation effect. Inherits parent styles by default.
+
 ## Project Structure
 
 ```
@@ -85,6 +90,7 @@ masoneffect/
 - Count: `{framework}/count`
 - Typing: `{framework}/typing`
 - ScrollFadeIn: `{framework}/scrollFadeIn`
+- TextSpin: `{framework}/textSpin`
 
 **Example:**
 ```typescript
@@ -133,6 +139,7 @@ Based on user request keywords:
 - Number/Count/Stat → Count
 - Typing/Typewriter/Terminal/Code/Korean → Typing
 - Scroll/Reveal/Entrance/FadeIn → ScrollFadeIn
+- TextSpin/CharacterAnimation/RandomText/TextReveal → TextSpin
 
 ## Build System
 
@@ -406,6 +413,78 @@ const scrollFadeInInContainer = new ScrollFadeIn(container, {
   root: scrollContainer, // Specify scroll container element
   threshold: 0.1
 });
+```
+
+### React + TypeScript + TextSpin
+```tsx
+import React, { useRef } from 'react';
+import { TextSpin } from 'masoneffect/react/textSpin';
+import type { TextSpinRef } from 'masoneffect/react/textSpin';
+
+function App() {
+  const ref = useRef<TextSpinRef>(null);
+  return (
+    <TextSpin
+      ref={ref}
+      text="Hello World"
+      delay={0.2}
+      duration={0.6}
+      randomDelay={2}
+      threshold={0.1}
+      style={{ fontSize: '2rem', color: '#fff' }}
+    />
+  );
+}
+```
+
+### Vue 3 + Composition API + TextSpin
+```vue
+<script setup lang="ts">
+import { TextSpin } from 'masoneffect/vue/textSpin';
+</script>
+
+<template>
+  <TextSpin
+    text="Hello World"
+    :delay="0.2"
+    :duration="0.6"
+    :random-delay="2"
+    :threshold="0.1"
+    style="font-size: 2rem; color: #fff"
+  />
+</template>
+```
+
+### Svelte + TypeScript + TextSpin
+```svelte
+<script lang="ts">
+import { TextSpin } from 'masoneffect/svelte/textSpin';
+</script>
+
+<TextSpin
+  text="Hello World"
+  delay={0.2}
+  duration={0.6}
+  randomDelay={2}
+  threshold={0.1}
+  style="font-size: 2rem; color: #fff"
+/>
+```
+
+### Vanilla JS + TextSpin
+```javascript
+import { TextSpin } from 'masoneffect/textSpin';
+const container = document.querySelector('#text-spin-container');
+const textSpin = new TextSpin(container, {
+  text: 'Hello World',
+  delay: 0.2,
+  duration: 0.6,
+  randomDelay: 2,
+  threshold: 0.1,
+  triggerOnce: false
+});
+// Update text
+textSpin.updateText('New Text');
 ```
 
 ## Critical Rules

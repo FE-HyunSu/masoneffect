@@ -31,6 +31,11 @@
       "require": "./dist/scrollFadeIn/index.cjs",
       "types": "./dist/scrollFadeIn/index.d.ts"
     },
+    "./textSpin": {
+      "import": "./dist/textSpin/index.mjs",
+      "require": "./dist/textSpin/index.cjs",
+      "types": "./dist/textSpin/index.d.ts"
+    },
     "./react": {
       "import": "./dist/react/index.mjs",
       "require": "./dist/react/index.cjs",
@@ -55,6 +60,11 @@
       "import": "./dist/react/scrollFadeIn/index.mjs",
       "require": "./dist/react/scrollFadeIn/index.cjs",
       "types": "./dist/react/scrollFadeIn/index.d.ts"
+    },
+    "./react/textSpin": {
+      "import": "./dist/react/textSpin/index.mjs",
+      "require": "./dist/react/textSpin/index.cjs",
+      "types": "./dist/react/textSpin/index.d.ts"
     },
     "./vue": {
       "import": "./dist/vue/index.mjs",
@@ -81,6 +91,11 @@
       "require": "./dist/vue/scrollFadeIn/index.cjs",
       "types": "./dist/vue/scrollFadeIn/index.d.ts"
     },
+    "./vue/textSpin": {
+      "import": "./dist/vue/textSpin/index.mjs",
+      "require": "./dist/vue/textSpin/index.cjs",
+      "types": "./dist/vue/textSpin/index.d.ts"
+    },
     "./svelte": {
       "import": "./dist/svelte/index.mjs",
       "require": "./dist/svelte/index.cjs",
@@ -105,23 +120,30 @@
       "import": "./dist/svelte/scrollFadeIn/index.mjs",
       "require": "./dist/svelte/scrollFadeIn/index.cjs",
       "types": "./dist/svelte/scrollFadeIn/index.d.ts"
+    },
+    "./svelte/textSpin": {
+      "import": "./dist/svelte/textSpin/index.mjs",
+      "require": "./dist/svelte/textSpin/index.cjs",
+      "types": "./dist/svelte/textSpin/index.d.ts"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:vue:textToParticle && npm run build:vue:count && npm run build:vue:typing && npm run build:vue:scrollFadeIn && npm run build:svelte && npm run build:svelte:textToParticle && npm run build:svelte:count && npm run build:svelte:typing && npm run build:svelte:scrollFadeIn && node scripts/generate-react-types.js",
+    "build": "rollup -c rollup.config.mjs && npm run build:vue && npm run build:vue:textToParticle && npm run build:vue:count && npm run build:vue:typing && npm run build:vue:scrollFadeIn && npm run build:vue:textSpin && npm run build:svelte && npm run build:svelte:textToParticle && npm run build:svelte:count && npm run build:svelte:typing && npm run build:svelte:scrollFadeIn && npm run build:svelte:textSpin && node scripts/generate-react-types.js",
     "build:vue": "vite build --config vite.config.vue.mjs",
     "build:vue:textToParticle": "vite build --config vite.config.vue.textToParticle.mjs",
     "build:vue:count": "vite build --config vite.config.vue.count.mjs",
     "build:vue:typing": "vite build --config vite.config.vue.typing.mjs",
     "build:vue:scrollFadeIn": "vite build --config vite.config.vue.scrollFadeIn.mjs",
+    "build:vue:textSpin": "vite build --config vite.config.vue.textSpin.mjs",
     "build:svelte": "vite build --config vite.config.svelte.mjs",
     "build:svelte:textToParticle": "vite build --config vite.config.svelte.textToParticle.mjs",
     "build:svelte:count": "vite build --config vite.config.svelte.count.mjs",
     "build:svelte:typing": "vite build --config vite.config.svelte.typing.mjs",
     "build:svelte:scrollFadeIn": "vite build --config vite.config.svelte.scrollFadeIn.mjs",
+    "build:svelte:textSpin": "vite build --config vite.config.svelte.textSpin.mjs",
     "dev": "rollup -c rollup.config.mjs -w",
     "serve": "npx http-server . -p 8080 -o --cors",
     "dev:example": "npm run serve",
@@ -136,6 +158,8 @@
     "count",
     "scroll-fade-in",
     "scroll-reveal",
+    "text-spin",
+    "text-animation",
     "canvas",
     "react",
     "vue",

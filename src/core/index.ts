@@ -25,6 +25,10 @@ export type { TypingOptions } from './typing/index.js';
 export { ScrollFadeIn, default as ScrollFadeInDefault } from './scrollFadeIn/index.js';
 export type { ScrollFadeInOptions } from './scrollFadeIn/index.js';
 
+// TextSpin 효과 (하위 호환성을 위해 re-export)
+export { TextSpin, default as TextSpinDefault } from './textSpin/index.js';
+export type { TextSpinOptions } from './textSpin/index.js';
+
 // 하위 호환성을 위한 alias (기존 MasonEffect 이름 유지)
 export { TextToParticle as MasonEffect } from './textToParticle/index.js';
 export type { TextToParticleOptions as MasonEffectOptions } from './textToParticle/index.js';

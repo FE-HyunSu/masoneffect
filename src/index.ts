@@ -25,5 +25,9 @@ export type { TypingOptions } from './core/index.js';
 export { ScrollFadeIn } from './core/index.js';
 export type { ScrollFadeInOptions } from './core/index.js';
 
+// TextSpin 효과
+export { TextSpin } from './core/index.js';
+export type { TextSpinOptions } from './core/index.js';
+
 // 하위 호환성을 위한 기본 export
 export { default } from './core/index.js';

@@ -45,6 +45,9 @@ Typing animation effect with Korean character decomposition.
 ### 4. ScrollFadeIn
 Scroll-triggered fade-in animation effect with IntersectionObserver and Page Visibility API support.
 
+### 5. TextSpin
+Text animation effect that splits text into individual characters and reveals them randomly with a spin effect.
+
 ---
 
 ## 🚀 Quick Start
@@ -387,6 +390,100 @@ import { ScrollFadeIn } from 'masoneffect/vue/scrollFadeIn';
 </ScrollFadeIn>
 ```
 
+### TextSpin Effect
+
+#### Vanilla JavaScript
+
+```javascript
+import { TextSpin } from 'masoneffect/textSpin';
+
+const container = document.querySelector('#text-spin-container');
+const textSpin = new TextSpin(container, {
+  text: 'Hello World',
+  delay: 0.2,
+  duration: 0.6,
+  randomDelay: 2,
+  threshold: 0.1,
+  triggerOnce: false,
+  onStart: () => console.log('Animation started'),
+  onComplete: () => console.log('Animation completed'),
+});
+
+// Update text
+textSpin.updateText('New Text');
+```
+
+#### React
+
+```tsx
+import React, { useRef } from 'react';
+import { TextSpin } from 'masoneffect/react/textSpin';
+import type { TextSpinRef } from 'masoneffect/react/textSpin';
+
+function App() {
+  const textSpinRef = useRef<TextSpinRef>(null);
+
+  return (
+    <div>
+      <TextSpin
+        ref={textSpinRef}
+        text="Hello World"
+        delay={0.2}
+        duration={0.6}
+        randomDelay={2}
+        threshold={0.1}
+        onStart={() => console.log('Started')}
+        onComplete={() => console.log('Completed')}
+        style={{ fontSize: '2rem', color: '#fff' }}
+      />
+      <button onClick={() => textSpinRef.current?.updateText('New Text')}>
+        Update Text
+      </button>
+    </div>
+  );
+}
+```
+
+#### Vue 3
+
+```vue
+<script setup>
+import { TextSpin } from 'masoneffect/vue/textSpin';
+</script>
+
+<template>
+  <TextSpin
+    text="Hello World"
+    :delay="0.2"
+    :duration="0.6"
+    :random-delay="2"
+    :threshold="0.1"
+    @start="() => console.log('Started')"
+    @complete="() => console.log('Completed')"
+    style="font-size: 2rem; color: #fff"
+  />
+</template>
+```
+
+#### Svelte
+
+```svelte
+<script lang="ts">
+  import { TextSpin } from 'masoneffect/svelte/textSpin';
+</script>
+
+<TextSpin
+  text="Hello World"
+  delay={0.2}
+  duration={0.6}
+  randomDelay={2}
+  threshold={0.1}
+  on:start={() => console.log('Started')}
+  on:complete={() => console.log('Completed')}
+  style="font-size: 2rem; color: #fff"
+/>
+```
+
 ---
 
 ## 📚 API Reference
@@ -486,6 +583,35 @@ easingFunctions.easeOutCubic
 - `reset()` - Reset to initial position
 - `updateConfig(config: Partial<ScrollFadeInOptions>)` - Update configuration
 - `destroy()` - Destroy instance and cleanup
+
+### TextSpin
+
+#### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `text` | `string` | **required** | Text to animate |
+| `delay` | `number` | `0.2` | Base delay in seconds before animation starts |
+| `duration` | `number` | `0.6` | Animation duration in seconds for each character |
+| `randomDelay` | `number` | `2` | Random delay range in seconds (0 to randomDelay) |
+| `threshold` | `number` | `0.1` | IntersectionObserver threshold |
+| `rootMargin` | `string` | `'0px'` | IntersectionObserver rootMargin |
+| `root` | `HTMLElement \| null` | `null` | IntersectionObserver root element (for internal scroll containers) |
+| `triggerOnce` | `boolean` | `false` | Trigger animation only once |
+| `enabled` | `boolean` | `true` | Enable/disable animation |
+| `onStart` | `function` | `null` | Animation start callback |
+| `onComplete` | `function` | `null` | Animation complete callback |
+
+#### Methods
+
+- `start()` - Start animation
+- `stop()` - Stop animation
+- `reset()` - Reset animation state
+- `updateText(text: string)` - Update text and restart animation
+- `updateConfig(config: Partial<TextSpinOptions>)` - Update configuration
+- `destroy()` - Destroy instance and cleanup
+
+**Note**: TextSpin inherits parent styles by default. The container element will maintain the parent's font size, color, and other text styles.
 
 ---
 
