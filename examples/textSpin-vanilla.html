@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MasonEffect - TextSpin Example</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 50px;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 20px;
+    }
+    .text-spin-container {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #fff;
+      margin: 50px 0;
+      text-align: center;
+    }
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      padding: 10px 20px;
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #444;
+    }
+    .section {
+      margin: 100px 0;
+      padding: 50px;
+      border: 1px solid #333;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>MasonEffect - TextSpin Example</h1>
+  
+  <div class="container">
+    <div class="section">
+      <h2>Basic TextSpin</h2>
+      <div id="text-spin-1" class="text-spin-container"></div>
+    </div>
+
+    <div class="section">
+      <h2>Custom Duration</h2>
+      <div id="text-spin-2" class="text-spin-container"></div>
+    </div>
+
+    <div class="section">
+      <h2>Long Text</h2>
+      <div id="text-spin-3" class="text-spin-container"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="update-btn-1">Update Text 1</button>
+    <button id="update-btn-2">Update Text 2</button>
+    <button id="update-btn-3">Update Text 3</button>
+    <button id="reset-btn">Reset All</button>
+  </div>
+
+  <script type="module">
+    import { TextSpin } from '../dist/textSpin/index.mjs';
+
+    // Basic TextSpin
+    const container1 = document.getElementById('text-spin-1');
+    const textSpin1 = new TextSpin(container1, {
+      text: 'Hello World',
+      delay: 0.2,
+      duration: 0.6,
+      randomDelay: 2,
+      threshold: 0.1,
+      onStart: () => console.log('TextSpin 1 started'),
+      onComplete: () => console.log('TextSpin 1 completed'),
+    });
+
+    // Custom Duration
+    const container2 = document.getElementById('text-spin-2');
+    const textSpin2 = new TextSpin(container2, {
+      text: 'Custom Duration',
+      delay: 0.1,
+      duration: 1.0,
+      randomDelay: 1.5,
+      threshold: 0.1,
+    });
+
+    // Long Text
+    const container3 = document.getElementById('text-spin-3');
+    const textSpin3 = new TextSpin(container3, {
+      text: 'This is a longer text to test the animation effect',
+      delay: 0.2,
+      duration: 0.8,
+      randomDelay: 3,
+      threshold: 0.1,
+    });
+
+    // Controls
+    document.getElementById('update-btn-1').addEventListener('click', () => {
+      const texts = ['Hello', 'World', 'Mason', 'Effect', 'TextSpin'];
+      const randomText = texts[Math.floor(Math.random() * texts.length)];
+      textSpin1.updateText(randomText);
+    });
+
+    document.getElementById('update-btn-2').addEventListener('click', () => {
+      const texts = ['Fast', 'Slow', 'Custom', 'Duration', 'Test'];
+      const randomText = texts[Math.floor(Math.random() * texts.length)];
+      textSpin2.updateText(randomText);
+    });
+
+    document.getElementById('update-btn-3').addEventListener('click', () => {
+      const texts = [
+        'This is a longer text to test',
+        'Another long text example here',
+        'Random text appears with spin effect',
+      ];
+      const randomText = texts[Math.floor(Math.random() * texts.length)];
+      textSpin3.updateText(randomText);
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      textSpin1.reset();
+      textSpin2.reset();
+      textSpin3.reset();
+    });
+  </script>
+</body>
+</html>
+

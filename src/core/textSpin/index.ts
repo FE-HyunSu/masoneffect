@@ -10,14 +10,14 @@ import { VisibilityManager } from '../utils/visibilityManager.js';
 
 export interface TextSpinOptions {
   text: string;
-  delay?: number; // 기본 지연 시간 (초)
-  duration?: number; // 애니메이션 지속 시간 (초)
-  randomDelay?: number; // 랜덤 지연 시간 범위 (초, 기본값: 2)
+  delay?: number; // 기본 지연 시간 (초) - 예: 0.2 = 200ms
+  duration?: number; // 애니메이션 지속 시간 (초) - 예: 0.6 = 600ms
+  randomDelay?: number; // 랜덤 지연 시간 범위 (초, 기본값: 2) - 예: 2 = 0~2000ms 범위
   threshold?: number; // IntersectionObserver threshold
   rootMargin?: string; // IntersectionObserver rootMargin
   root?: HTMLElement | null; // IntersectionObserver의 root 옵션 (내부 스크롤 컨테이너 지원)
   triggerOnce?: boolean; // 한 번만 실행할지 여부
-  enabled?: boolean; // 효과 활성화 여부
+  enabled?: boolean; // 효과 활성화 여부 (false로 변경 시 자동으로 stop)
   onStart?: () => void;
   onComplete?: () => void;
 }
@@ -244,7 +244,16 @@ export class TextSpin {
   // 설정 업데이트
   updateConfig(newConfig: Partial<TextSpinOptions>): void {
     const wasActive = this.isActive;
-    this.stop();
+    const wasEnabled = this.config.enabled;
+    const isEnabledChanging = newConfig.enabled !== undefined && newConfig.enabled !== this.config.enabled;
+    
+    // enabled가 false로 변경되면 즉시 stop
+    if (isEnabledChanging && newConfig.enabled === false) {
+      this.stop();
+    } else if (wasActive) {
+      // enabled가 true이거나 변경되지 않았고, 활성화되어 있었으면 일시 중지
+      this.stop();
+    }
 
     this.config = {
       ...this.config,
@@ -271,9 +280,15 @@ export class TextSpin {
       this.setupVisibilityManager();
     }
 
-    // 실행 중이었으면 다시 시작
-    if (wasActive && this.config.enabled) {
-      this.start();
+    // enabled가 true이고, 이전에 활성화되어 있었거나 enabled가 true로 변경되었으면 다시 시작
+    if (this.config.enabled) {
+      if (wasActive || (isEnabledChanging && newConfig.enabled === true)) {
+        // VisibilityManager가 자동으로 시작하지만, 즉시 시작하려면 수동 호출
+        // 단, 화면에 보이는 경우에만
+        if (this.visibilityManager?.getIsVisible()) {
+          this.start();
+        }
+      }
     }
   }
 
