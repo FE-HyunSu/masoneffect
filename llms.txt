@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.12.
+MasonEffect is a collection of animation effects library that supports React, Vue, Svelte, and vanilla JavaScript with tree-shaking support. Version 2.0.16.
 
 **Package Name:** masoneffect  
 **Installation:** `npm install masoneffect`  
@@ -505,7 +505,7 @@ textSpin.updateText('New Text');
 
 ## Version
 
-Current version: 2.0.12
+Current version: 2.0.16
 
 ## License
 

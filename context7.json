@@ -1,6 +1,6 @@
 {
   "name": "masoneffect",
-  "version": "2.0.12",
+  "version": "2.0.16",
   "description": "A collection of animation effects library. Supports React, Vue, Svelte, and vanilla JavaScript with Tree-shaking support.",
   "type": "npm-package",
   "packageManager": "npm",
@@ -54,6 +54,11 @@
       "require": "./dist/scrollFadeIn/index.cjs",
       "types": "./dist/scrollFadeIn/index.d.ts"
     },
+    "./textSpin": {
+      "import": "./dist/textSpin/index.mjs",
+      "require": "./dist/textSpin/index.cjs",
+      "types": "./dist/textSpin/index.d.ts"
+    },
     "./react": {
       "import": "./dist/react/index.mjs",
       "require": "./dist/react/index.cjs",
@@ -78,6 +83,11 @@
       "import": "./dist/react/scrollFadeIn/index.mjs",
       "require": "./dist/react/scrollFadeIn/index.cjs",
       "types": "./dist/react/scrollFadeIn/index.d.ts"
+    },
+    "./react/textSpin": {
+      "import": "./dist/react/textSpin/index.mjs",
+      "require": "./dist/react/textSpin/index.cjs",
+      "types": "./dist/react/textSpin/index.d.ts"
     },
     "./vue": {
       "import": "./dist/vue/index.mjs",
@@ -104,6 +114,11 @@
       "require": "./dist/vue/scrollFadeIn/index.cjs",
       "types": "./dist/vue/scrollFadeIn/index.d.ts"
     },
+    "./vue/textSpin": {
+      "import": "./dist/vue/textSpin/index.mjs",
+      "require": "./dist/vue/textSpin/index.cjs",
+      "types": "./dist/vue/textSpin/index.d.ts"
+    },
     "./svelte": {
       "import": "./dist/svelte/index.mjs",
       "require": "./dist/svelte/index.cjs",
@@ -128,6 +143,11 @@
       "import": "./dist/svelte/scrollFadeIn/index.mjs",
       "require": "./dist/svelte/scrollFadeIn/index.cjs",
       "types": "./dist/svelte/scrollFadeIn/index.d.ts"
+    },
+    "./svelte/textSpin": {
+      "import": "./dist/svelte/textSpin/index.mjs",
+      "require": "./dist/svelte/textSpin/index.cjs",
+      "types": "./dist/svelte/textSpin/index.d.ts"
     }
   },
   "features": {
@@ -191,6 +211,19 @@
           "Internal scroll container animations"
         ],
         "special": "Supports multiple directions (top, right, bottom, left), flexible distance units (px, rem, em, %, vh, vw), and custom scroll container via root option"
+      },
+      {
+        "name": "textSpin",
+        "description": "Text animation effect that splits text into individual characters and reveals them randomly with a 3D spin effect",
+        "keywords": ["text-spin", "text-animation", "character-animation", "random-text", "text-reveal"],
+        "useCases": [
+          "Title animations",
+          "Text reveal effects",
+          "Character-by-character animations",
+          "Random text appearances",
+          "Hero section text effects"
+        ],
+        "special": "Each character appears with a random delay and 3D rotation effect (rotateY). Inherits parent styles by default. Time values are in seconds (not milliseconds)."
       }
     ]
   },
@@ -218,25 +251,29 @@
       "textToParticle": "masoneffect/react/textToParticle",
       "count": "masoneffect/react/count",
       "typing": "masoneffect/react/typing",
-      "scrollFadeIn": "masoneffect/react/scrollFadeIn"
+      "scrollFadeIn": "masoneffect/react/scrollFadeIn",
+      "textSpin": "masoneffect/react/textSpin"
     },
     "vue": {
       "textToParticle": "masoneffect/vue/textToParticle",
       "count": "masoneffect/vue/count",
       "typing": "masoneffect/vue/typing",
-      "scrollFadeIn": "masoneffect/vue/scrollFadeIn"
+      "scrollFadeIn": "masoneffect/vue/scrollFadeIn",
+      "textSpin": "masoneffect/vue/textSpin"
     },
     "svelte": {
       "textToParticle": "masoneffect/svelte/textToParticle",
       "count": "masoneffect/svelte/count",
       "typing": "masoneffect/svelte/typing",
-      "scrollFadeIn": "masoneffect/svelte/scrollFadeIn"
+      "scrollFadeIn": "masoneffect/svelte/scrollFadeIn",
+      "textSpin": "masoneffect/svelte/textSpin"
     },
     "vanilla": {
       "textToParticle": "masoneffect/textToParticle",
       "count": "masoneffect/count",
       "typing": "masoneffect/typing",
-      "scrollFadeIn": "masoneffect/scrollFadeIn"
+      "scrollFadeIn": "masoneffect/scrollFadeIn",
+      "textSpin": "masoneffect/textSpin"
     }
   },
   "build": {
@@ -269,7 +306,8 @@
       "textToParticle": ["text", "particle", "morph", "title", "banner", "hero"],
       "count": ["number", "count", "counter", "stat", "statistic"],
       "typing": ["typing", "type", "typewriter", "terminal", "code", "korean", "한글"],
-      "scrollFadeIn": ["scroll", "fade-in", "reveal", "entrance", "animation", "scroll-reveal"]
+      "scrollFadeIn": ["scroll", "fade-in", "reveal", "entrance", "animation", "scroll-reveal"],
+      "textSpin": ["text-spin", "text-animation", "character-animation", "random-text", "text-reveal"]
     },
     "rules": [
       "Always use direct import paths for tree-shaking",
