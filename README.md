@@ -33,20 +33,11 @@ This guide is optimized for AI agents to automatically configure MasonEffect cor
 
 ## 🎯 Available Effects
 
-### 1. TextToParticle
-Converts text into animated particles with morphing effects.
-
-### 2. Count
-Animated number counting with intersection observer support.
-
-### 3. Typing
-Typing animation effect with Korean character decomposition.
-
-### 4. ScrollFadeIn
-Scroll-triggered fade-in animation effect with IntersectionObserver and Page Visibility API support.
-
-### 5. TextSpin
-Text animation effect that splits text into individual characters and reveals them randomly with a spin effect.
+1. **TextToParticle** - Converts text into animated particles with morphing effects
+2. **Count** - Animated number counting with intersection observer support
+3. **Typing** - Typing animation effect with Korean character decomposition
+4. **ScrollFadeIn** - Scroll-triggered fade-in animation effect
+5. **TextSpin** - Text animation that splits text into characters and reveals them randomly with a spin effect
 
 ---
 
@@ -54,26 +45,33 @@ Text animation effect that splits text into individual characters and reveals th
 
 ### Tree-shaking (Recommended)
 
-Import only the effects you need:
-
 ```typescript
 // ✅ Recommended: Import only what you need
 import { TextToParticle } from 'masoneffect/textToParticle';
 import { Count } from 'masoneffect/count';
 ```
 
-### Legacy Import (Backward Compatible)
+### Framework-specific imports
 
 ```typescript
-// ⚠️ Not recommended: Imports all effects
-import { TextToParticle, Count } from 'masoneffect';
+// React
+import TextToParticle from 'masoneffect/react/textToParticle';
+import Count from 'masoneffect/react/count';
+
+// Vue
+import TextToParticle from 'masoneffect/vue/textToParticle';
+import Count from 'masoneffect/vue/count';
+
+// Svelte
+import TextToParticle from 'masoneffect/svelte/textToParticle';
+import Count from 'masoneffect/svelte/count';
 ```
 
 ---
 
-## 📖 Usage
+## 📖 Usage Examples
 
-### TextToParticle Effect
+### TextToParticle
 
 #### Vanilla JavaScript
 
@@ -87,13 +85,7 @@ const effect = new TextToParticle(container, {
   maxParticles: 2000,
 });
 
-// Change text
 effect.morph({ text: 'New Text' });
-
-// Multi-line text support
-effect.morph({ text: 'Line 1\nLine 2\nLine 3' });
-
-// Return particles to initial position
 effect.scatter();
 ```
 
@@ -114,9 +106,6 @@ function App() {
         text="Hello React"
         particleColor="#00ff88"
         maxParticles={2000}
-        onReady={(instance) => {
-          console.log('Ready!', instance);
-        }}
       />
       <button onClick={() => effectRef.current?.morph({ text: 'Morphed!' })}>
         Morph
@@ -126,53 +115,7 @@ function App() {
 }
 ```
 
-#### Vue 3
-
-```vue
-<script setup>
-import TextToParticle from 'masoneffect/vue/textToParticle';
-
-const effectRef = ref(null);
-</script>
-
-<template>
-  <div style="width: 100%; height: 70vh; background: #000">
-    <TextToParticle
-      ref="effectRef"
-      text="Hello Vue"
-      particle-color="#00ff88"
-      :max-particles="2000"
-    />
-    <button @click="effectRef?.morph({ text: 'Morphed!' })">Morph</button>
-  </div>
-</template>
-```
-
-#### Svelte
-
-```svelte
-<script lang="ts">
-  import TextToParticle from 'masoneffect/svelte/textToParticle';
-
-  let effectRef: TextToParticle | null = null;
-</script>
-
-<div style="width: 100%; height: 70vh; background: #000">
-  <TextToParticle
-    bind:this={effectRef}
-    text="Hello Svelte"
-    particleColor="#00ff88"
-    maxParticles={2000}
-  />
-  <button on:click={() => effectRef?.morph({ text: 'Morphed!' })}>
-    Morph
-  </button>
-</div>
-```
-
----
-
-### Count Effect
+### Count
 
 #### Vanilla JavaScript
 
@@ -183,95 +126,32 @@ const container = document.getElementById('count-container');
 const count = new Count(container, {
   targetValue: 1000,
   duration: 2000,
-  startValue: 0,
   easing: easingFunctions.easeOutCubic,
-  onUpdate: (value) => {
-    console.log(value);
-  },
-  onComplete: () => {
-    console.log('Complete!');
-  }
 });
 
-// Start animation
 count.start();
-
-// Reset
-count.reset();
 ```
 
 #### React
 
 ```tsx
-import React, { useRef } from 'react';
+import React from 'react';
 import Count from 'masoneffect/react/count';
 import { easingFunctions } from 'masoneffect/react/count';
-import type { CountRef } from 'masoneffect/react/count';
 
 function App() {
-  const countRef = useRef<CountRef>(null);
-
   return (
-    <div>
-      <Count
-        ref={countRef}
-        targetValue={1000}
-        duration={2000}
-        easing={easingFunctions.easeOutCubic}
-        onUpdate={(value) => console.log(value)}
-        onComplete={() => console.log('Complete!')}
-        style={{ fontSize: '3rem', fontWeight: 'bold' }}
-      />
-      <button onClick={() => countRef.current?.reset()}>Reset</button>
-      <button onClick={() => countRef.current?.start()}>Start</button>
-    </div>
+    <Count
+      targetValue={1000}
+      duration={2000}
+      easing={easingFunctions.easeOutCubic}
+      style={{ fontSize: '3rem', fontWeight: 'bold' }}
+    />
   );
 }
 ```
 
-#### Vue 3
-
-```vue
-<script setup>
-import Count from 'masoneffect/vue/count';
-import { easingFunctions } from 'masoneffect/vue/count';
-</script>
-
-<template>
-  <div>
-    <Count
-      :target-value="1000"
-      :duration="2000"
-      :easing="easingFunctions.easeOutCubic"
-      @update="(value) => console.log(value)"
-      @complete="() => console.log('Complete!')"
-      style="font-size: 3rem; font-weight: bold"
-    />
-  </div>
-</template>
-```
-
-#### Svelte
-
-```svelte
-<script lang="ts">
-  import Count from 'masoneffect/svelte/count';
-  import { easingFunctions } from 'masoneffect/svelte/count';
-</script>
-
-<div>
-  <Count
-    targetValue={1000}
-    duration={2000}
-    easing={easingFunctions.easeOutCubic}
-    on:update={(e) => console.log(e.detail)}
-    on:complete={() => console.log('Complete!')}
-    style="font-size: 3rem; font-weight: bold"
-  />
-</div>
-```
-
-### ScrollFadeIn Effect
+### ScrollFadeIn
 
 #### Vanilla JavaScript
 
@@ -279,16 +159,10 @@ import { easingFunctions } from 'masoneffect/vue/count';
 import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
 
 const container = document.querySelector('#scroll-fade-in-container');
-// For viewport-based scrolling (default)
 const scrollFadeIn = new ScrollFadeIn(container, {
   direction: 'bottom',
   distance: '50px',
   duration: 800,
-  threshold: 0.1,
-  rootMargin: '0px',
-  triggerOnce: false,
-  onStart: () => console.log('Animation started'),
-  onComplete: () => console.log('Animation completed'),
 });
 
 // For internal scroll container
@@ -297,100 +171,25 @@ const scrollFadeInInContainer = new ScrollFadeIn(container, {
   direction: 'bottom',
   distance: '50px',
   root: scrollContainer, // Specify scroll container element
-  threshold: 0.1,
 });
-
-// Methods
-scrollFadeIn.start();
-scrollFadeIn.stop();
-scrollFadeIn.reset();
-scrollFadeIn.updateConfig({ distance: '100px' });
-scrollFadeIn.destroy();
 ```
 
 #### React
 
 ```tsx
-import React, { useRef } from 'react';
+import React from 'react';
 import { ScrollFadeIn } from 'masoneffect/react/scrollFadeIn';
-import type { ScrollFadeInRef } from 'masoneffect/react/scrollFadeIn';
 
 function App() {
-  const scrollFadeInRef = useRef<ScrollFadeInRef>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
   return (
-    <div>
-      {/* For viewport-based scrolling (default) */}
-      <ScrollFadeIn
-        ref={scrollFadeInRef}
-        direction="bottom"
-        distance="50px"
-        duration={800}
-        threshold={0.1}
-        onStart={() => console.log('Started')}
-        onComplete={() => console.log('Completed')}
-        style={{ padding: '20px' }}
-      >
-        <div>Content that fades in on scroll</div>
-      </ScrollFadeIn>
-      
-      {/* For internal scroll container */}
-      <div ref={scrollContainerRef} style={{ height: '400px', overflow: 'auto' }}>
-        <ScrollFadeIn root={scrollContainerRef.current} direction="bottom" distance="50px">
-          <div>Content that fades in when scrolled within container</div>
-        </ScrollFadeIn>
-      </div>
-      
-      <button onClick={() => scrollFadeInRef.current?.reset()}>Reset</button>
-    </div>
+    <ScrollFadeIn direction="bottom" distance="50px" duration={800}>
+      <div>Content that fades in on scroll</div>
+    </ScrollFadeIn>
   );
 }
 ```
 
-#### Vue 3
-
-```vue
-<script setup>
-import { ScrollFadeIn } from 'masoneffect/vue/scrollFadeIn';
-</script>
-
-<template>
-  <ScrollFadeIn
-    direction="bottom"
-    distance="50px"
-    :duration="800"
-    :threshold="0.1"
-    @start="() => console.log('Started')"
-    @complete="() => console.log('Completed')"
-    style="padding: 20px"
-  >
-    <div>Content that fades in on scroll</div>
-  </ScrollFadeIn>
-</template>
-```
-
-#### Svelte
-
-```svelte
-<script lang="ts">
-  import { ScrollFadeIn } from 'masoneffect/svelte/scrollFadeIn';
-</script>
-
-<ScrollFadeIn
-  direction="bottom"
-  distance="50px"
-  duration={800}
-  threshold={0.1}
-  on:start={() => console.log('Started')}
-  on:complete={() => console.log('Completed')}
-  style="padding: 20px"
->
-  <div>Content that fades in on scroll</div>
-</ScrollFadeIn>
-```
-
-### TextSpin Effect
+### TextSpin
 
 #### Vanilla JavaScript
 
@@ -403,86 +202,31 @@ const textSpin = new TextSpin(container, {
   delay: 0.2,
   duration: 0.6,
   randomDelay: 2,
-  threshold: 0.1,
-  triggerOnce: false,
-  onStart: () => console.log('Animation started'),
-  onComplete: () => console.log('Animation completed'),
 });
 
-// Update text
 textSpin.updateText('New Text');
 ```
 
 #### React
 
 ```tsx
-import React, { useRef } from 'react';
+import React from 'react';
 import { TextSpin } from 'masoneffect/react/textSpin';
-import type { TextSpinRef } from 'masoneffect/react/textSpin';
 
 function App() {
-  const textSpinRef = useRef<TextSpinRef>(null);
-
   return (
-    <div>
-      <TextSpin
-        ref={textSpinRef}
-        text="Hello World"
-        delay={0.2}
-        duration={0.6}
-        randomDelay={2}
-        threshold={0.1}
-        onStart={() => console.log('Started')}
-        onComplete={() => console.log('Completed')}
-        style={{ fontSize: '2rem', color: '#fff' }}
-      />
-      <button onClick={() => textSpinRef.current?.updateText('New Text')}>
-        Update Text
-      </button>
-    </div>
+    <TextSpin
+      text="Hello World"
+      delay={0.2}
+      duration={0.6}
+      randomDelay={2}
+      style={{ fontSize: '2rem', color: '#fff' }}
+    />
   );
 }
 ```
 
-#### Vue 3
-
-```vue
-<script setup>
-import { TextSpin } from 'masoneffect/vue/textSpin';
-</script>
-
-<template>
-  <TextSpin
-    text="Hello World"
-    :delay="0.2"
-    :duration="0.6"
-    :random-delay="2"
-    :threshold="0.1"
-    @start="() => console.log('Started')"
-    @complete="() => console.log('Completed')"
-    style="font-size: 2rem; color: #fff"
-  />
-</template>
-```
-
-#### Svelte
-
-```svelte
-<script lang="ts">
-  import { TextSpin } from 'masoneffect/svelte/textSpin';
-</script>
-
-<TextSpin
-  text="Hello World"
-  delay={0.2}
-  duration={0.6}
-  randomDelay={2}
-  threshold={0.1}
-  on:start={() => console.log('Started')}
-  on:complete={() => console.log('Completed')}
-  style="font-size: 2rem; color: #fff"
-/>
-```
+> 💡 **Note**: For Vue and Svelte examples, see [llms.txt](./llms.txt) or check the framework-specific import paths above.
 
 ---
 
@@ -551,13 +295,11 @@ import { TextSpin } from 'masoneffect/vue/textSpin';
 ```typescript
 import { easingFunctions } from 'masoneffect/count';
 
-// Available easing functions:
-easingFunctions.linear
-easingFunctions.easeInQuad
-easingFunctions.easeOutQuad
-easingFunctions.easeInOutQuad
+// Available: linear, easeInQuad, easeOutQuad, easeInOutQuad, easeOutCubic
 easingFunctions.easeOutCubic
 ```
+
+---
 
 ### ScrollFadeIn
 
@@ -583,6 +325,8 @@ easingFunctions.easeOutCubic
 - `reset()` - Reset to initial position
 - `updateConfig(config: Partial<ScrollFadeInOptions>)` - Update configuration
 - `destroy()` - Destroy instance and cleanup
+
+---
 
 ### TextSpin
 
@@ -627,22 +371,6 @@ import { Count } from 'masoneffect/count';
 import { Count } from 'masoneffect';
 ```
 
-### Framework-specific imports
-
-```typescript
-// React
-import Count from 'masoneffect/react/count';
-import TextToParticle from 'masoneffect/react/textToParticle';
-
-// Vue
-import Count from 'masoneffect/vue/count';
-import TextToParticle from 'masoneffect/vue/textToParticle';
-
-// Svelte
-import Count from 'masoneffect/svelte/count';
-import TextToParticle from 'masoneffect/svelte/textToParticle';
-```
-
 ---
 
 ## 🔄 Backward Compatibility
@@ -659,43 +387,6 @@ const effect = new MasonEffect(container, { text: 'Hello' });
 ```
 
 However, we recommend using the new Tree-shaking-friendly imports for better performance.
-
----
-
-## 🎨 Features
-
-### TextToParticle
-- 🎨 Morphing effect that converts text into particles
-- 🖱️ Mouse interaction support (repel/attract)
-- 📱 Responsive design
-- ⚡ High-performance Canvas rendering
-- 👁️ IntersectionObserver: Automatically pauses when not visible
-- ⏱️ Debouncing: Prevents excessive calls
-- 📝 Multi-line text support
-- 🔤 Auto font size adjustment
-
-### Count
-- 🔢 Animated number counting
-- 👁️ IntersectionObserver: Starts when element is visible
-- 🎯 Multiple easing functions
-- ⚡ Smooth animations with requestAnimationFrame
-- 🔄 Reset and restart support
-
-### Typing
-- ⌨️ Typing animation effect
-- 🇰🇷 Korean character decomposition (jamo support)
-- 👁️ IntersectionObserver: Starts when element is visible
-- ⚡ Smooth character-by-character animation
-- 🎨 Customizable cursor and speed
-
-### Slide
-- 🎬 Slide-in animation effect
-- 📐 Direction control (top, right, bottom, left)
-- 📏 Flexible distance units (px, rem, em, %, vh, vw)
-- 👁️ IntersectionObserver: Starts when element is visible
-- 🎯 Multiple easing functions
-- ⚡ Smooth animations with requestAnimationFrame
-- 🔄 Reset and restart support
 
 ---
 
@@ -720,7 +411,7 @@ npm run serve
 ## 📦 CDN Usage (UMD)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.12/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/masoneffect@2.0.18/dist/index.umd.min.js"></script>
 <script>
   // TextToParticle (MasonEffect alias for backward compatibility)
   const container = document.getElementById('my-container');
