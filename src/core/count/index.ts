@@ -1,7 +1,7 @@
 /**
  * Count - 숫자 카운팅 애니메이션 효과
  * 바닐라 JS 코어 클래스
- * 
+ *
  * 사용법:
  * import { Count } from 'masoneffect/count';
  */
@@ -45,10 +45,11 @@ export class Count {
 
   constructor(container: HTMLElement | string, options: CountOptions) {
     // 컨테이너 요소
-    this.container = typeof container === 'string' 
-      ? document.querySelector(container) as HTMLElement
-      : container;
-    
+    this.container =
+      typeof container === 'string'
+        ? (document.querySelector(container) as HTMLElement)
+        : container;
+
     if (!this.container) {
       throw new Error('Container element not found');
     }
@@ -124,11 +125,11 @@ export class Count {
       const elapsed = currentTime - this.startTime;
       const progress = Math.min(elapsed / this.config.duration, 1);
       const easedProgress = this.config.easing(progress);
-      
+
       this.currentValue = Math.floor(
         this.config.startValue + (this.config.targetValue - this.config.startValue) * easedProgress
       );
-      
+
       this.updateDisplay(this.currentValue);
 
       if (this.config.onUpdate) {
@@ -142,7 +143,7 @@ export class Count {
         this.currentValue = this.config.targetValue;
         this.updateDisplay(this.currentValue);
         this.isRunning = false;
-        
+
         if (this.config.onComplete) {
           this.config.onComplete();
         }
@@ -187,7 +188,8 @@ export class Count {
       ...this.config,
       ...newConfig,
       onUpdate: newConfig.onUpdate !== undefined ? newConfig.onUpdate : this.config.onUpdate,
-      onComplete: newConfig.onComplete !== undefined ? newConfig.onComplete : this.config.onComplete,
+      onComplete:
+        newConfig.onComplete !== undefined ? newConfig.onComplete : this.config.onComplete,
     };
 
     // targetValue가 변경되면 리셋 후 재시작
@@ -221,4 +223,3 @@ export class Count {
 
 // 기본 export
 export default Count;
-

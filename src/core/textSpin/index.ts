@@ -1,7 +1,7 @@
 /**
  * TextSpin - 텍스트를 개별 문자로 분리하여 랜덤하게 나타나는 애니메이션 효과
  * 바닐라 JS 코어 클래스
- * 
+ *
  * 사용법:
  * import { TextSpin } from 'masoneffect/textSpin';
  */
@@ -37,10 +37,11 @@ export class TextSpin {
 
   constructor(container: HTMLElement | string, options: TextSpinOptions) {
     // 컨테이너 요소
-    this.container = typeof container === 'string' 
-      ? document.querySelector(container) as HTMLElement
-      : container;
-    
+    this.container =
+      typeof container === 'string'
+        ? (document.querySelector(container) as HTMLElement)
+        : container;
+
     if (!this.container) {
       throw new Error('Container element not found');
     }
@@ -78,10 +79,10 @@ export class TextSpin {
   init(): void {
     // 스타일 주입
     this.injectStyles();
-    
+
     // 텍스트 구조 생성
     this.createTextStructure();
-    
+
     // VisibilityManager 설정
     this.setupVisibilityManager();
   }
@@ -122,20 +123,20 @@ export class TextSpin {
 
     // 텍스트를 문자 단위로 분리
     const chars = this.config.text.split('');
-    
+
     // 각 문자에 대한 랜덤 포인트 생성
     chars.forEach(() => {
       this.randomPoints.push(Math.random());
     });
 
     // 문자 요소 생성
-    chars.forEach((char, index) => {
+    chars.forEach((char) => {
       const charElement = document.createElement('span');
       charElement.className = 'masoneffect-textspin-char';
-      
+
       // transition을 인라인으로 적용 (duration 변경 시 즉시 반영)
       charElement.style.transition = `opacity ${this.config.duration}s ease-out, transform ${this.config.duration}s ease-out`;
-      
+
       // 공백 문자 처리
       if (char === ' ') {
         charElement.classList.add('space');
@@ -179,7 +180,7 @@ export class TextSpin {
 
   start(): void {
     if (this.isActive) return;
-    
+
     this.isActive = true;
 
     if (this.config.onStart) {
@@ -188,9 +189,9 @@ export class TextSpin {
 
     // 각 문자에 랜덤 지연 시간 적용
     this.textElements.forEach((element, index) => {
-      const delay = this.config.delay + (this.randomPoints[index] * this.config.randomDelay);
+      const delay = this.config.delay + this.randomPoints[index] * this.config.randomDelay;
       element.style.transitionDelay = `${delay}s`;
-      
+
       // 다음 프레임에 active 클래스 추가
       requestAnimationFrame(() => {
         element.classList.add('active');
@@ -208,7 +209,7 @@ export class TextSpin {
 
   stop(): void {
     if (!this.isActive) return;
-    
+
     this.isActive = false;
 
     // 모든 문자의 active 클래스 제거
@@ -227,7 +228,7 @@ export class TextSpin {
   updateText(newText: string): void {
     this.config.text = newText;
     this.createTextStructure();
-    
+
     // 활성화되어 있으면 다시 시작
     if (this.isActive) {
       this.start();
@@ -244,9 +245,9 @@ export class TextSpin {
   // 설정 업데이트
   updateConfig(newConfig: Partial<TextSpinOptions>): void {
     const wasActive = this.isActive;
-    const wasEnabled = this.config.enabled;
-    const isEnabledChanging = newConfig.enabled !== undefined && newConfig.enabled !== this.config.enabled;
-    
+    const isEnabledChanging =
+      newConfig.enabled !== undefined && newConfig.enabled !== this.config.enabled;
+
     // enabled가 false로 변경되면 즉시 stop
     if (isEnabledChanging && newConfig.enabled === false) {
       this.stop();
@@ -272,7 +273,11 @@ export class TextSpin {
     }
 
     // VisibilityManager 재설정
-    if (newConfig.threshold !== undefined || newConfig.rootMargin !== undefined || newConfig.root !== undefined) {
+    if (
+      newConfig.threshold !== undefined ||
+      newConfig.rootMargin !== undefined ||
+      newConfig.root !== undefined
+    ) {
       if (this.visibilityManager) {
         this.visibilityManager.destroy();
         this.visibilityManager = null;
@@ -307,4 +312,3 @@ export class TextSpin {
 
 // 기본 export
 export default TextSpin;
-

@@ -23,6 +23,10 @@ interface Props extends Omit<TypingOptions, 'onUpdate' | 'onComplete'> {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  className: undefined,
+  style: undefined,
+  onUpdate: undefined,
+  onComplete: undefined,
   speed: 50,
   delay: 0,
   enabled: true,
@@ -84,4 +88,6 @@ defineExpose({
   },
 });
 </script>
+
+
 

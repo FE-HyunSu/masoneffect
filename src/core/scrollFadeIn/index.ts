@@ -1,7 +1,7 @@
 /**
  * ScrollFadeIn - 스크롤 기반 페이드 인 애니메이션 효과
  * 바닐라 JS 코어 클래스
- * 
+ *
  * 사용법:
  * import { ScrollFadeIn } from 'masoneffect/scrollFadeIn';
  */
@@ -42,10 +42,11 @@ export class ScrollFadeIn {
 
   constructor(container: HTMLElement | string, options: ScrollFadeInOptions = {}) {
     // 컨테이너 요소
-    this.container = typeof container === 'string' 
-      ? document.querySelector(container) as HTMLElement
-      : container;
-    
+    this.container =
+      typeof container === 'string'
+        ? (document.querySelector(container) as HTMLElement)
+        : container;
+
     if (!this.container) {
       throw new Error('Container element not found');
     }
@@ -63,7 +64,7 @@ export class ScrollFadeIn {
       onStart: options.onStart || null,
       onComplete: options.onComplete || null,
     };
-    
+
     // 기본 easing 함수 (고정)
     this.easing = defaultEasing;
 
@@ -83,16 +84,17 @@ export class ScrollFadeIn {
   init(): void {
     // 초기 transform 저장
     const computedStyle = window.getComputedStyle(this.container);
-    this.initialTransform = computedStyle.transform !== 'none' 
-      ? computedStyle.transform 
-      : this.container.style.transform || '';
-    
+    this.initialTransform =
+      computedStyle.transform !== 'none'
+        ? computedStyle.transform
+        : this.container.style.transform || '';
+
     // 거리를 픽셀 단위로 계산
     this.targetDistance = this.parseDistance(this.config.distance);
-    
+
     // 초기 위치 설정 (애니메이션 시작 위치)
     this.setInitialPosition();
-    
+
     // VisibilityManager 설정
     this.setupVisibilityManager();
   }
@@ -113,17 +115,20 @@ export class ScrollFadeIn {
       case 'px':
         return value;
       case 'rem':
-      case 'em':
+      case 'em': {
         // 1rem = 16px (기본값)
         const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
         return value * fontSize;
-      case '%':
+      }
+      case '%': {
         // 컨테이너 크기의 백분율
         const rect = this.container.getBoundingClientRect();
-        const dimension = this.config.direction === 'top' || this.config.direction === 'bottom' 
-          ? rect.height 
-          : rect.width;
+        const dimension =
+          this.config.direction === 'top' || this.config.direction === 'bottom'
+            ? rect.height
+            : rect.width;
         return (value / 100) * dimension;
+      }
       case 'vh':
         return (value / 100) * window.innerHeight;
       case 'vw':
@@ -157,14 +162,14 @@ export class ScrollFadeIn {
     // 기존 transform 유지하면서 translate 추가
     const existingTransform = this.initialTransform || '';
     const translate = `translate(${translateX}px, ${translateY}px)`;
-    
+
     // 기존 transform이 있으면 조합, 없으면 새로 생성
     if (existingTransform && existingTransform !== 'none') {
       this.container.style.transform = `${translate} ${existingTransform}`;
     } else {
       this.container.style.transform = translate;
     }
-    
+
     // opacity도 초기값 설정
     this.container.style.opacity = '0';
     this.container.style.transition = 'none'; // 초기에는 transition 없음
@@ -202,10 +207,10 @@ export class ScrollFadeIn {
 
   start(): void {
     if (this.isRunning) return;
-    
+
     this.isRunning = true;
     this.startTime = performance.now();
-    
+
     if (this.config.onStart) {
       this.config.onStart();
     }
@@ -221,7 +226,7 @@ export class ScrollFadeIn {
     const currentTime = performance.now();
     const elapsed = currentTime - (this.startTime || 0);
     const progress = Math.min(elapsed / this.config.duration, 1);
-    
+
     // Easing 적용
     const easedProgress = this.easing(progress);
 
@@ -248,7 +253,7 @@ export class ScrollFadeIn {
     // Transform 적용
     const existingTransform = this.initialTransform || '';
     const translate = `translate(${translateX}px, ${translateY}px)`;
-    
+
     if (existingTransform && existingTransform !== 'none') {
       this.container.style.transform = `${translate} ${existingTransform}`;
     } else {
@@ -268,7 +273,7 @@ export class ScrollFadeIn {
 
   complete(): void {
     this.isRunning = false;
-    
+
     // 최종 위치 설정 (transform 제거, 원래 위치로)
     if (this.initialTransform && this.initialTransform !== 'none') {
       this.container.style.transform = this.initialTransform;
@@ -276,7 +281,7 @@ export class ScrollFadeIn {
       this.container.style.transform = '';
     }
     this.container.style.opacity = '1';
-    
+
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
@@ -322,7 +327,11 @@ export class ScrollFadeIn {
     this.setInitialPosition();
 
     // VisibilityManager 재설정
-    if (newConfig.threshold !== undefined || newConfig.rootMargin !== undefined || newConfig.root !== undefined) {
+    if (
+      newConfig.threshold !== undefined ||
+      newConfig.rootMargin !== undefined ||
+      newConfig.root !== undefined
+    ) {
       if (this.visibilityManager) {
         this.visibilityManager.destroy();
         this.visibilityManager = null;
@@ -352,4 +361,3 @@ export class ScrollFadeIn {
 
 // 기본 export
 export default ScrollFadeIn;
-

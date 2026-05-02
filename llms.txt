@@ -54,20 +54,28 @@ masoneffect/
 │   │   ├── textToParticle/
 │   │   ├── count/
 │   │   ├── typing/
+│   │   ├── scrollFadeIn/
+│   │   ├── textSpin/
 │   │   └── utils/         # Shared utilities
 │   │       └── visibilityManager.ts  # IntersectionObserver + Page Visibility API
 │   ├── react/             # React components
 │   │   ├── textToParticle/
 │   │   ├── count/
-│   │   └── typing/
+│   │   ├── typing/
+│   │   ├── scrollFadeIn/
+│   │   └── textSpin/
 │   ├── vue/               # Vue components
 │   │   ├── textToParticle/
 │   │   ├── count/
-│   │   └── typing/
+│   │   ├── typing/
+│   │   ├── scrollFadeIn/
+│   │   └── textSpin/
 │   └── svelte/            # Svelte components
 │       ├── textToParticle/
 │       ├── count/
-│       └── typing/
+│       ├── typing/
+│       ├── scrollFadeIn/
+│       └── textSpin/
 ├── dist/                  # Built files (not in repo)
 ├── examples/              # Usage examples
 ├── scripts/               # Build and utility scripts

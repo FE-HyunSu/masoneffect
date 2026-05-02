@@ -144,4 +144,3 @@ export class VisibilityManager {
 }
 
 export default VisibilityManager;
-

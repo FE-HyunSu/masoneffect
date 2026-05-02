@@ -25,7 +25,10 @@ export type { TextSpinRef, TextSpinOptions } from './textSpin/index.js';
 
 // 하위 호환성을 위한 alias (기존 MasonEffect 이름 유지)
 export { default as MasonEffect } from './textToParticle/index.js';
-export type { TextToParticleRef as MasonEffectRef, TextToParticleOptions as MasonEffectOptions } from './textToParticle/index.js';
+export type {
+  TextToParticleRef as MasonEffectRef,
+  TextToParticleOptions as MasonEffectOptions,
+} from './textToParticle/index.js';
 
 // 기본 export는 TextToParticle (하위 호환성을 위해 MasonEffect도 지원)
 export { default } from './textToParticle/index.js';

@@ -1,7 +1,7 @@
 /**
  * TextToParticle - 텍스트를 파티클로 변환하는 효과
  * 바닐라 JS 코어 클래스
- * 
+ *
  * 사용법:
  * import { TextToParticle } from 'masoneffect/textToParticle';
  */
@@ -81,10 +81,11 @@ export class TextToParticle {
 
   constructor(container: HTMLElement | string, options: TextToParticleOptions = {}) {
     // 컨테이너 요소
-    this.container = typeof container === 'string' 
-      ? document.querySelector(container) as HTMLElement
-      : container;
-    
+    this.container =
+      typeof container === 'string'
+        ? (document.querySelector(container) as HTMLElement)
+        : container;
+
     if (!this.container) {
       throw new Error('Container element not found');
     }
@@ -149,7 +150,10 @@ export class TextToParticle {
 
     // morph와 updateConfig를 위한 디바운스된 내부 메서드
     this._debouncedMorph = debounce(this._morphInternal.bind(this), this.debounceDelay);
-    this._debouncedUpdateConfig = debounce(this._updateConfigInternal.bind(this), this.debounceDelay);
+    this._debouncedUpdateConfig = debounce(
+      this._updateConfigInternal.bind(this),
+      this.debounceDelay
+    );
 
     // 초기화
     this.init();
@@ -180,17 +184,19 @@ export class TextToParticle {
   resize(): void {
     // getBoundingClientRect를 사용하여 실제 렌더링된 크기 확인
     const rect = this.container.getBoundingClientRect();
-    const width = this.config.width || rect.width || this.container.clientWidth || window.innerWidth;
-    const height = this.config.height || rect.height || this.container.clientHeight || window.innerHeight * 0.7;
-    
+    const width =
+      this.config.width || rect.width || this.container.clientWidth || window.innerWidth;
+    const height =
+      this.config.height || rect.height || this.container.clientHeight || window.innerHeight * 0.7;
+
     // 최소 크기 보장
     if (width <= 0 || height <= 0) {
       return;
     }
-    
+
     this.W = Math.floor(width * this.DPR);
     this.H = Math.floor(height * this.DPR);
-    
+
     // 캔버스 크기 제한 (메모리 오류 방지)
     // getImageData는 최대 약 268MB (4096x4096x4)까지 지원
     const MAX_CANVAS_SIZE = 4096;
@@ -200,7 +206,7 @@ export class TextToParticle {
       this.H = Math.floor(this.H * scale);
       this.DPR = this.DPR * scale;
     }
-    
+
     this.canvas.width = this.W;
     this.canvas.height = this.H;
     this.canvas.style.width = width + 'px';
@@ -223,35 +229,39 @@ export class TextToParticle {
    * @param maxHeight 최대 높이
    * @returns { width: number, height: number, fits: boolean }
    */
-  private measureTextFit(fontSize: number, text: string, maxWidth: number, maxHeight: number): { width: number; height: number; fits: boolean } {
+  private measureTextFit(
+    fontSize: number,
+    text: string,
+    maxWidth: number,
+    maxHeight: number
+  ): { width: number; height: number; fits: boolean } {
     this.offCtx.font = `400 ${fontSize}px ${this.config.fontFamily}`;
-    
+
     // 줄바꿈으로 텍스트 분리
     const lines = text.split('\n');
     const lineHeight = fontSize;
     const lineSpacing = fontSize * 0.1; // 줄 간격
     const spacing = fontSize * 0.05; // 글자 간격
-    
+
     let maxLineWidth = 0;
-    
+
     // 각 줄의 너비 계산
     for (const line of lines) {
       if (line.length === 0) continue; // 빈 줄 스킵
-      
+
       const textWidth = this.offCtx.measureText(line).width;
       const totalWidth = textWidth + spacing * (line.length > 0 ? line.length - 1 : 0);
       maxLineWidth = Math.max(maxLineWidth, totalWidth);
     }
-    
+
     // 전체 높이 계산 (줄 높이 + 줄 간격)
-    const totalHeight = lines.length > 0 
-      ? (lineHeight * lines.length) + (lineSpacing * (lines.length - 1))
-      : lineHeight;
-    
+    const totalHeight =
+      lines.length > 0 ? lineHeight * lines.length + lineSpacing * (lines.length - 1) : lineHeight;
+
     return {
       width: maxLineWidth,
       height: totalHeight,
-      fits: maxLineWidth <= maxWidth && totalHeight <= maxHeight
+      fits: maxLineWidth <= maxWidth && totalHeight <= maxHeight,
     };
   }
 
@@ -259,30 +269,35 @@ export class TextToParticle {
    * 이진 검색을 사용하여 적절한 폰트 크기를 찾는 최적화된 함수
    * 반복 횟수를 O(log n)으로 줄여 성능 개선 (최대 15회 반복, 기존 최대 100회에서 대폭 감소)
    */
-  private findOptimalFontSize(text: string, maxWidth: number, maxHeight: number, initialFontSize: number): number {
+  private findOptimalFontSize(
+    text: string,
+    maxWidth: number,
+    maxHeight: number,
+    initialFontSize: number
+  ): number {
     const minFontSize = 12;
-    
+
     // 초기값이 이미 맞는지 확인 (최적화: 불필요한 계산 방지)
     const initialMeasure = this.measureTextFit(initialFontSize, text, maxWidth, maxHeight);
     if (initialMeasure.fits) {
       return initialFontSize;
     }
-    
+
     // 초기값이 너무 작거나 같은 경우
     if (initialFontSize <= minFontSize) {
       return minFontSize;
     }
-    
+
     // 이진 검색으로 최적 폰트 크기 찾기
     let low = minFontSize;
     let high = initialFontSize;
     let bestSize = minFontSize;
-    
+
     // 최대 15회 반복으로 충분 (log2(3000) ≈ 12)
     while (low <= high) {
       const mid = Math.floor((low + high) / 2);
       const measure = this.measureTextFit(mid, text, maxWidth, maxHeight);
-      
+
       if (measure.fits) {
         bestSize = mid; // fit하는 크기 기록
         low = mid + 1; // 더 큰 크기도 시도
@@ -290,7 +305,7 @@ export class TextToParticle {
         high = mid - 1; // 더 작은 크기로 시도
       }
     }
-    
+
     return bestSize;
   }
 
@@ -299,7 +314,7 @@ export class TextToParticle {
     if (this.W <= 0 || this.H <= 0) {
       return;
     }
-    
+
     const text = this.config.text;
     this.offCanvas.width = this.W;
     this.offCanvas.height = this.H;
@@ -308,15 +323,15 @@ export class TextToParticle {
     // 초기 폰트 크기 계산 (개선된 추정)
     const base = Math.min(this.W, this.H);
     const initialFontSize = this.config.fontSize || Math.max(80, Math.floor(base * 0.18));
-    
+
     // 텍스트가 영역을 벗어나지 않도록 폰트 크기 자동 조정
     const padding = 40; // 여유 공간 (픽셀)
     const maxWidth = this.W - padding * 2;
     const maxHeight = this.H - padding * 2;
-    
+
     // 이진 검색으로 최적 폰트 크기 찾기 (성능 최적화)
     const fontSize = this.findOptimalFontSize(text, maxWidth, maxHeight, initialFontSize);
-    
+
     // 최종 렌더링
     this.offCtx.fillStyle = '#ffffff';
     this.offCtx.textAlign = 'center';
@@ -328,15 +343,14 @@ export class TextToParticle {
     const lineHeight = fontSize;
     const lineSpacing = fontSize * 0.1; // 줄 간격
     const spacing = fontSize * 0.05; // 글자 간격
-    
+
     // 전체 텍스트 높이 계산 (세로 중앙 정렬용)
-    const totalTextHeight = lines.length > 0
-      ? (lineHeight * lines.length) + (lineSpacing * (lines.length - 1))
-      : lineHeight;
-    
+    const totalTextHeight =
+      lines.length > 0 ? lineHeight * lines.length + lineSpacing * (lines.length - 1) : lineHeight;
+
     // 첫 번째 줄의 시작 y 위치 (세로 중앙 정렬)
     let startY = this.H / 2 - totalTextHeight / 2 + lineHeight / 2;
-    
+
     // 각 줄 렌더링
     for (const line of lines) {
       if (line.length === 0) {
@@ -344,17 +358,18 @@ export class TextToParticle {
         startY += lineHeight + lineSpacing;
         continue;
       }
-      
+
       // 글자 간격 계산 및 그리기
       const chars = line.split('');
-      const totalWidth = this.offCtx.measureText(line).width + spacing * (chars.length > 0 ? chars.length - 1 : 0);
+      const totalWidth =
+        this.offCtx.measureText(line).width + spacing * (chars.length > 0 ? chars.length - 1 : 0);
       let x = this.W / 2 - totalWidth / 2;
-      
+
       for (const ch of chars) {
         this.offCtx.fillText(ch, x + this.offCtx.measureText(ch).width / 2, startY);
         x += this.offCtx.measureText(ch).width + spacing;
       }
-      
+
       // 다음 줄로 이동
       startY += lineHeight + lineSpacing;
     }
@@ -363,7 +378,7 @@ export class TextToParticle {
     const step = Math.max(2, this.config.densityStep);
     const img = this.offCtx.getImageData(0, 0, this.W, this.H).data;
     const targets: Array<{ x: number; y: number }> = [];
-    
+
     for (let y = 0; y < this.H; y += step) {
       for (let x = 0; x < this.W; x += step) {
         const i = (y * this.W + x) * 4;
@@ -456,7 +471,7 @@ export class TextToParticle {
     if (this.W === 0 || this.H === 0) {
       this.resize();
     }
-    
+
     if (typeof textOrOptions === 'string') {
       // 문자열인 경우: 기존 동작 유지
       this.config.text = textOrOptions;
