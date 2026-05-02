@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .cursor/
+.cursorrules
 *.log
 .DS_Store
 .vscode/

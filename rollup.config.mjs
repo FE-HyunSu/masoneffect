@@ -463,7 +463,7 @@ const reactIndexBuild = {
   ],
 };
 
-// Vue component is built separately using Vite (see vite.config.ts)
+// Vue/Svelte bundles: Vite (config/vite/vite.config.*.mjs)
 // This is because Vue SFC compilation requires @vitejs/plugin-vue
 
 export default [

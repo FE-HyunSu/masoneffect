@@ -4,7 +4,10 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import sveltePreprocess from 'svelte-preprocess';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     svelte({
       compilerOptions: {
@@ -26,12 +29,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/svelte/textToParticle/index.ts'),
+      entry: resolve(root, 'src/svelte/textToParticle/index.ts'),
       name: 'MasonEffectSvelteTextToParticle',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
@@ -55,4 +58,3 @@ export default defineConfig({
     },
   },
 });
-

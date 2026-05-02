@@ -1,20 +1,24 @@
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import sveltePreprocess from 'svelte-preprocess';
+
+const root = resolve(import.meta.dirname, '../..');
 
 export default defineConfig({
+  root,
   plugins: [
-    vue({
-      script: {
-        defineModel: true,
-        propsDestructure: true,
+    svelte({
+      compilerOptions: {
+        css: 'external',
       },
+      preprocess: sveltePreprocess(),
     }),
     dts({
-      include: ['src/vue/count/**/*.ts', 'src/vue/count/**/*.vue'],
-      exclude: ['src/vue/count/**/*.test.*', 'src/vue/count/**/*.spec.*'],
-      outDir: 'dist/vue/count',
+      include: ['src/svelte/**/*.ts', 'src/svelte/**/*.svelte'],
+      exclude: ['src/svelte/**/*.test.*', 'src/svelte/**/*.spec.*'],
+      outDir: 'dist/svelte',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -24,25 +28,25 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/vue/count/index.ts'),
-      name: 'MasonEffectVueCount',
+      entry: resolve(root, 'src/svelte/index.ts'),
+      name: 'MasonEffectSvelte',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['vue'],
+      external: ['svelte'],
       output: {
         globals: {
-          vue: 'Vue',
+          svelte: 'Svelte',
         },
       },
     },
-    outDir: 'dist/vue/count',
+    outDir: 'dist/svelte',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -53,6 +57,3 @@ export default defineConfig({
     },
   },
 });
-
-
-

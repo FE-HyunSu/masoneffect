@@ -77,6 +77,9 @@ masoneffect/
 │       ├── scrollFadeIn/
 │       └── textSpin/
 ├── dist/                  # Built files (not in repo)
+├── config/                # Vite + Vitest configs (Vue/Svelte library builds)
+│   ├── vite/              # vite.config.*.mjs per framework bundle
+│   └── vitest.config.mjs
 ├── examples/              # Usage examples
 ├── scripts/               # Build and utility scripts
 ├── AI_SETUP_GUIDE.md      # AI agent setup guide (IMPORTANT)
@@ -127,10 +130,6 @@ import { TextToParticle } from 'masoneffect';
 
 4. **package.json** - Contains `aiAgentGuide` field
 
-5. **.cursorrules** - Cursor-specific instructions
-
-6. **.github/copilot-instructions.md** - GitHub Copilot instructions
-
 Note: AI_SETUP_GUIDE.md exists but llms.txt is the primary reference.
 
 ## Environment Detection
@@ -152,7 +151,7 @@ Based on user request keywords:
 ## Build System
 
 - Core: Rollup (rollup.config.mjs)
-- Vue/Svelte: Vite (vite.config.*.mjs)
+- Vue/Svelte: Vite (`config/vite/vite.config.*.mjs`)
 - Output: ESM (.mjs), CJS (.cjs), TypeScript declarations (.d.ts)
 
 ## Visibility Management & GPU Optimization

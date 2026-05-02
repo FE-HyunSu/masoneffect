@@ -3,7 +3,10 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     vue({
       script: {
@@ -12,9 +15,9 @@ export default defineConfig({
       },
     }),
     dts({
-      include: ['src/vue/scrollFadeIn/**/*.ts', 'src/vue/scrollFadeIn/**/*.vue'],
-      exclude: ['src/vue/scrollFadeIn/**/*.test.*', 'src/vue/scrollFadeIn/**/*.spec.*'],
-      outDir: 'dist/vue/scrollFadeIn',
+      include: ['src/vue/typing/**/*.ts', 'src/vue/typing/**/*.vue'],
+      exclude: ['src/vue/typing/**/*.test.*', 'src/vue/typing/**/*.spec.*'],
+      outDir: 'dist/vue/typing',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -24,13 +27,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/vue/scrollFadeIn/index.ts'),
-      name: 'MasonEffectVueScrollFadeIn',
+      entry: resolve(root, 'src/vue/typing/index.ts'),
+      name: 'MasonEffectVueTyping',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
@@ -42,7 +45,7 @@ export default defineConfig({
         },
       },
     },
-    outDir: 'dist/vue/scrollFadeIn',
+    outDir: 'dist/vue/typing',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -53,6 +56,3 @@ export default defineConfig({
     },
   },
 });
-
-
-

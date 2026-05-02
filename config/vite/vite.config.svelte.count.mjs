@@ -4,7 +4,10 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import sveltePreprocess from 'svelte-preprocess';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     svelte({
       compilerOptions: {
@@ -13,9 +16,9 @@ export default defineConfig({
       preprocess: sveltePreprocess(),
     }),
     dts({
-      include: ['src/svelte/typing/**/*.ts', 'src/svelte/typing/**/*.svelte'],
-      exclude: ['src/svelte/typing/**/*.test.*', 'src/svelte/typing/**/*.spec.*'],
-      outDir: 'dist/svelte/typing',
+      include: ['src/svelte/count/**/*.ts', 'src/svelte/count/**/*.svelte'],
+      exclude: ['src/svelte/count/**/*.test.*', 'src/svelte/count/**/*.spec.*'],
+      outDir: 'dist/svelte/count',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -26,13 +29,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/svelte/typing/index.ts'),
-      name: 'MasonEffectSvelteTyping',
+      entry: resolve(root, 'src/svelte/count/index.ts'),
+      name: 'MasonEffectSvelteCount',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
@@ -44,7 +47,7 @@ export default defineConfig({
         },
       },
     },
-    outDir: 'dist/svelte/typing',
+    outDir: 'dist/svelte/count',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -55,6 +58,3 @@ export default defineConfig({
     },
   },
 });
-
-
-

@@ -242,8 +242,6 @@
     "primaryAiGuide": "llms.txt",
     "readme": "README.md",
     "package": "package.json",
-    "cursorRules": ".cursorrules",
-    "copilotInstructions": ".github/copilot-instructions.md",
     "context7": "context7.json"
   },
   "importPaths": {

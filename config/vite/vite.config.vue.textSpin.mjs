@@ -1,21 +1,23 @@
 import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
+import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-import sveltePreprocess from 'svelte-preprocess';
+
+const root = resolve(import.meta.dirname, '../..');
 
 export default defineConfig({
+  root,
   plugins: [
-    svelte({
-      compilerOptions: {
-        css: 'external',
+    vue({
+      script: {
+        defineModel: true,
+        propsDestructure: true,
       },
-      preprocess: sveltePreprocess(),
     }),
     dts({
-      include: ['src/svelte/**/*.ts', 'src/svelte/**/*.svelte'],
-      exclude: ['src/svelte/**/*.test.*', 'src/svelte/**/*.spec.*'],
-      outDir: 'dist/svelte',
+      include: ['src/vue/textSpin/**/*.ts', 'src/vue/textSpin/**/*.vue'],
+      exclude: ['src/vue/textSpin/**/*.test.*', 'src/vue/textSpin/**/*.spec.*'],
+      outDir: 'dist/vue/textSpin',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -25,25 +27,25 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/svelte/index.ts'),
-      name: 'MasonEffectSvelte',
+      entry: resolve(root, 'src/vue/textSpin/index.ts'),
+      name: 'MasonEffectVueTextSpin',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['svelte'],
+      external: ['vue'],
       output: {
         globals: {
-          svelte: 'Svelte',
+          vue: 'Vue',
         },
       },
     },
-    outDir: 'dist/svelte',
+    outDir: 'dist/vue/textSpin',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -54,4 +56,3 @@ export default defineConfig({
     },
   },
 });
-

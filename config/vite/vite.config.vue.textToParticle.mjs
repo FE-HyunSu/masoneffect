@@ -3,7 +3,10 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     vue({
       script: {
@@ -12,9 +15,9 @@ export default defineConfig({
       },
     }),
     dts({
-      include: ['src/vue/**/*.ts', 'src/vue/**/*.vue'],
-      exclude: ['src/vue/**/*.test.*', 'src/vue/**/*.spec.*'],
-      outDir: 'dist/vue',
+      include: ['src/vue/textToParticle/**/*.ts', 'src/vue/textToParticle/**/*.vue'],
+      exclude: ['src/vue/textToParticle/**/*.test.*', 'src/vue/textToParticle/**/*.spec.*'],
+      outDir: 'dist/vue/textToParticle',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -24,13 +27,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/vue/index.ts'),
-      name: 'MasonEffectVue',
+      entry: resolve(root, 'src/vue/textToParticle/index.ts'),
+      name: 'MasonEffectVueTextToParticle',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
@@ -42,7 +45,7 @@ export default defineConfig({
         },
       },
     },
-    outDir: 'dist/vue',
+    outDir: 'dist/vue/textToParticle',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -53,4 +56,3 @@ export default defineConfig({
     },
   },
 });
-

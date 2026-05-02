@@ -3,7 +3,10 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     vue({
       script: {
@@ -12,9 +15,9 @@ export default defineConfig({
       },
     }),
     dts({
-      include: ['src/vue/textSpin/**/*.ts', 'src/vue/textSpin/**/*.vue'],
-      exclude: ['src/vue/textSpin/**/*.test.*', 'src/vue/textSpin/**/*.spec.*'],
-      outDir: 'dist/vue/textSpin',
+      include: ['src/vue/scrollFadeIn/**/*.ts', 'src/vue/scrollFadeIn/**/*.vue'],
+      exclude: ['src/vue/scrollFadeIn/**/*.test.*', 'src/vue/scrollFadeIn/**/*.spec.*'],
+      outDir: 'dist/vue/scrollFadeIn',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -24,13 +27,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/vue/textSpin/index.ts'),
-      name: 'MasonEffectVueTextSpin',
+      entry: resolve(root, 'src/vue/scrollFadeIn/index.ts'),
+      name: 'MasonEffectVueScrollFadeIn',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
@@ -42,7 +45,7 @@ export default defineConfig({
         },
       },
     },
-    outDir: 'dist/vue/textSpin',
+    outDir: 'dist/vue/scrollFadeIn',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -53,4 +56,3 @@ export default defineConfig({
     },
   },
 });
-

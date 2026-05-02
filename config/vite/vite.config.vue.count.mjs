@@ -3,7 +3,10 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     vue({
       script: {
@@ -12,9 +15,9 @@ export default defineConfig({
       },
     }),
     dts({
-      include: ['src/vue/typing/**/*.ts', 'src/vue/typing/**/*.vue'],
-      exclude: ['src/vue/typing/**/*.test.*', 'src/vue/typing/**/*.spec.*'],
-      outDir: 'dist/vue/typing',
+      include: ['src/vue/count/**/*.ts', 'src/vue/count/**/*.vue'],
+      exclude: ['src/vue/count/**/*.test.*', 'src/vue/count/**/*.spec.*'],
+      outDir: 'dist/vue/count',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -24,13 +27,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/vue/typing/index.ts'),
-      name: 'MasonEffectVueTyping',
+      entry: resolve(root, 'src/vue/count/index.ts'),
+      name: 'MasonEffectVueCount',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
@@ -42,7 +45,7 @@ export default defineConfig({
         },
       },
     },
-    outDir: 'dist/vue/typing',
+    outDir: 'dist/vue/count',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -53,6 +56,3 @@ export default defineConfig({
     },
   },
 });
-
-
-

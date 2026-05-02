@@ -4,7 +4,10 @@ import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import sveltePreprocess from 'svelte-preprocess';
 
+const root = resolve(import.meta.dirname, '../..');
+
 export default defineConfig({
+  root,
   plugins: [
     svelte({
       compilerOptions: {
@@ -13,9 +16,9 @@ export default defineConfig({
       preprocess: sveltePreprocess(),
     }),
     dts({
-      include: ['src/svelte/scrollFadeIn/**/*.ts', 'src/svelte/scrollFadeIn/**/*.svelte'],
-      exclude: ['src/svelte/scrollFadeIn/**/*.test.*', 'src/svelte/scrollFadeIn/**/*.spec.*'],
-      outDir: 'dist/svelte/scrollFadeIn',
+      include: ['src/svelte/textSpin/**/*.ts', 'src/svelte/textSpin/**/*.svelte'],
+      exclude: ['src/svelte/textSpin/**/*.test.*', 'src/svelte/textSpin/**/*.spec.*'],
+      outDir: 'dist/svelte/textSpin',
       rollupTypes: true,
       compilerOptions: {
         declaration: true,
@@ -26,13 +29,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+      '@': resolve(root, 'src'),
     },
   },
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/svelte/scrollFadeIn/index.ts'),
-      name: 'MasonEffectSvelteScrollFadeIn',
+      entry: resolve(root, 'src/svelte/textSpin/index.ts'),
+      name: 'MasonEffectSvelteTextSpin',
       formats: ['es', 'cjs'],
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
@@ -44,7 +47,7 @@ export default defineConfig({
         },
       },
     },
-    outDir: 'dist/svelte/scrollFadeIn',
+    outDir: 'dist/svelte/textSpin',
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
@@ -55,6 +58,3 @@ export default defineConfig({
     },
   },
 });
-
-
-
