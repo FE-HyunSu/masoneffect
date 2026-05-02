@@ -78,7 +78,7 @@ masoneffect/
 │       └── textSpin/
 ├── dist/                  # Built files (not in repo)
 ├── config/                # Vite + Vitest configs (Vue/Svelte library builds)
-│   ├── vite/              # vite.config.*.mjs per framework bundle
+│   ├── vite/              # vite.config.*.mjs (thin) + library-config.mjs (shared factory)
 │   └── vitest.config.mjs
 ├── examples/              # Usage examples
 ├── scripts/               # Build and utility scripts
